@@ -1,0 +1,15 @@
+<html>
+<head>
+    <title></title>
+    <script src="/static/js/test.js"></script>
+    <link href="/static/css/test.css" rel="stylesheet">
+</head>
+<body>
+{{.error}}
+<form action="/register/" method="POST">
+    用户名:<input type="text" name="loginName">
+    密码:<input type="password" name="password">
+    <input type="submit" value="注册" >
+</form>
+</body>
+</html>

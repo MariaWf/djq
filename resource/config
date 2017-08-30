@@ -1,0 +1,21 @@
+
+redis_user =
+redis_password =
+redis_port = 127.0.0.1:2183
+
+mysql_user =
+mysql_password =
+mysql_port =
+
+
+#日志相关配置
+//release,debug,test
+#log_mode = release
+output_log = false
+router_info_log = c:/logs/djq/router_info.log
+router_error_log = c:/logs/djq/router_error.log
+global_log = c:/logs/djq/global.log
+
+#极验证码
+geetest_id = be848e06bb2ece0298314b2bbd9cbb40
+geetest_key = 76873c2020baa1261cae50a1070384aa

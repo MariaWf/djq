@@ -1,0 +1,13 @@
+{{define "head"}}
+<div>
+    {{if .authentication}}
+    {{.loginName}}
+    <form action="/logout/" method="POST">
+        <input type="submit" value="退出"/>
+    </form>
+    {{else}}
+    未登录
+    {{end}}
+
+</div>
+{{end}}

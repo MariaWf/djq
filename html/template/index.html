@@ -1,0 +1,80 @@
+<html>
+<head>
+    <script src="/static/js/test.js"></script>
+    <link href="/static/css/test.css" rel="stylesheet">
+    <script src="/static/js/jquery-2.1.1.min.js"></script>
+</head>
+<body>
+index
+<div id="myDiv"><h2>Let AJAX change this text</h2></div>
+<button id="b01" type="button">Change Content</button>
+
+<form enctype="multipart/form-data" method="post" id="uploadForm">
+    <input type="file" name="theFile"  accept="image/gif, image/jpeg, image/png"/>
+    <input type="text" name="wawaName" value="文件名称" />
+    <button id="b02" type="button">upload</button>
+</form>
+</body>
+<script>
+    $(function () {
+        $("#b01").click(function () {
+//            htmlobj = $.ajax({url: "http://api.djq.tunnel.qydev.com/user", async: false});
+//
+//            $("#myDiv").html(htmlobj.responseText);
+
+            var formData = {
+                id:"id1",
+                name:"name1",
+                description:"",
+                contentUrl:"",
+                preImageUrl:"",
+                secondHandHouseId:""
+            };
+            $.ajax({
+                type:'GET',
+                url:"http://djq.tunnel.qydev.com/user",
+//                data: formData,
+                async: true,
+                cache: false,
+                dataType : "json",
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    $("#myDiv").html(data.status)
+                },
+                error: function (data) {
+                },
+                complete:function(){
+                }
+            });
+        });
+        $("#b02").click(function () {
+            var formData = new FormData($("#uploadForm")[0]);
+            $.ajax({
+                type:'POST',
+                url:"http://djq.tunnel.qydev.com/upload",
+                data: formData,
+                async: true,
+                cache: false,
+                dataType : "json",
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if(data.status){
+                        alert(data.result)
+                    }else{
+                        alert(data.msg);
+                    }
+                },
+                error: function (data) {
+                    alert("上传失败");
+                },
+                complete:function(){
+                }
+            });
+        })
+
+
+    })
+</script>
+</html>
