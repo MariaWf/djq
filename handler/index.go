@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"fmt"
 	"mimi/djq/util"
+	"mimi/djq/config"
+	"strings"
 )
 
 func NotFound(c *gin.Context) {
@@ -16,6 +18,28 @@ func NotFound(c *gin.Context) {
 }
 
 func ApiGlobal(c *gin.Context) {
+	//c.Writer.Header().Set("Access-Control-Allow-Origin", "http://192.168.1.104:8080")
+	//c.Writer.Header().Add("Access-Control-Allow-Origin", "http://localhost:8080")
+	origins := strings.Split(config.Get("allowOrigin"), ",")
+	if origins != nil && len(origins) != 0 {
+		for _, origin := range origins {
+			if c.Request.Header.Get("origin") == origin {
+				c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
+				c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+				c.Writer.Header().Set("Access-Control-Allow-Method", "POST,GET")
+				c.Writer.Header().Set("Access-Control-Allow-Headers", "X-Requested-With")
+				break;
+			}
+		}
+	}
+	//c.Writer.Header().Set("Access-Control-Allow-Origin","*")
+	//Access-Control-Allow-Origin: http://api.bob.com
+	//Access-Control-Allow-Credentials: true
+	//Access-Control-Expose-Headers: FooBar
+	//c.Writer.Header().Add("Access-Control-Allow-Origin","http://localhost:8080,http://192.168.1.104:8080")
+	//c.Writer.Header().Add("Access-Control-Allow-Credentials","true")
+	//c.Writer.Header().Add("Access-Control-Expose-Headers","FooBar")
+	//c.Request.Referer()
 	//if !strings.Contains(c.Request.Host, "djq.51zxiu.cn") && !strings.Contains(c.Request.Host, "djq.tunnel.qydev.com") {
 	//	c.AbortWithStatusJSON(http.StatusForbidden, util.BuildFailResult("禁止访问"))
 	//}
@@ -53,6 +77,11 @@ func Index2(c *gin.Context) {
 	//t, _ := template.ParseFiles("html/template/index.html", "html/template/head.html")
 	//t.ExecuteTemplate(c.Writer, "head", values)
 
+	//c.Writer.Header().Add("Access-Control-Allow-Origin","http://localhost:8080,http://192.168.1.104:8080")
+	//c.Writer.Header().Set("Access-Control-Allow-Origin","*")
+	//c.Writer.Header().Set("Access-Control-Allow-Credentials","true")
+	//c.Writer.Header().Set("Access-Control-Allow-Method","POST,GET")
+	//c.Writer.Header().Add("Access-Control-Expose-Headers","FooBar")
 	t, _ := template.ParseFiles("html/template/index.html")
 	t.Execute(c.Writer, values)
 }

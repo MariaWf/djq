@@ -34,12 +34,30 @@ func TestAdminList(t *testing.T) {
 }
 
 func TestAdminAdd(t *testing.T) {
-	password,_ := util.EncryptPassword("s,3214.")
-	roleIds :="d3490d47eaee4e7c85077baa9542908b,,"
+	password,_ := util.EncryptPassword("123123")
+	roleIds :="d3490d47eaee4e7c85077baa9542908b"
 	fmt.Println(password)
 	fmt.Println(util.DecryptPassword(password))
-	resp, err := http.PostForm("http://djq.tunnel.qydev.com/mi/admin/?name=mimi",
-		url.Values{"mobile": {"12222222222"}, "name": {"mimiWithRoles4"},"password":{password},"locked":{"true"},"roleIds":{roleIds}})
+	resp, err := http.PostForm("http://localhost:8080/mi/admin/?name=mimi",
+		url.Values{"mobile": {"12222222222"}, "name": {"mimiLogin1"},"password":{password},"locked":{"false"},"roleIds":{roleIds}})
+
+	if err != nil {
+		// handle error
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		// handle error
+	}
+
+	fmt.Println(string(body))
+}
+func TestAdminLogin(t *testing.T) {
+	password,_ := util.EncryptPassword("123123")
+	fmt.Println(util.BuildPassword4DB("123123"))
+	resp, err := http.PostForm("http://localhost:8080/mi/login",
+		url.Values{ "name": {"mimiLogin1"},"password":{password}})
 
 	if err != nil {
 		// handle error

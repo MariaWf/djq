@@ -1,7 +1,7 @@
 drop table if exists tbl_admin;
 create table tbl_admin(
 id varchar(64) not null primary key,
-name varchar(32) not null default '',
+name varchar(32) not null unique default '',
 mobile varchar(32) not null default '',
 password varchar(128) not null default '',
 locked tinyint(1) default false,
@@ -11,7 +11,7 @@ del_flag tinyint(1) default false
 drop table if exists tbl_role;
 create table tbl_role(
 id varchar(64) not null primary key,
-name varchar(32) not null default '',
+name varchar(32) not null unique default '',
 permission_list_str varchar(1000) not null default '',
 description varchar(200) not null default '',
 del_flag tinyint(1) default false

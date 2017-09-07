@@ -19,6 +19,9 @@ func Begin() {
 	ui.POST("/login", handler.AdminList)
 
 	mi := router.Group("/mi", handler.ApiGlobal, handler.AdminCheckLogin)
+	mi.GET("/login",handler.AdminLogin)
+	mi.POST("/login",handler.AdminLogin)
+	mi.POST("/logout",handler.AdminLogout)
 	miAdmin := mi.Group("/admin")
 	miAdmin.GET("/", handler.PermissionAdminR, handler.AdminList)
 	miAdmin.GET("/:id", handler.PermissionAdminR, handler.AdminGet)

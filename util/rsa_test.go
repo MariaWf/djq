@@ -34,11 +34,13 @@ func TestRsaEncrypt(t *testing.T) {
 }
 
 func TestPasswordEncrypt(t *testing.T) {
-	source := "mimixixi"
+	source := "123123"
 	mid, err := EncryptPassword(source)
 	if err != nil {
 		t.Error(err)
 	}
+	//mid = "JkZNmat0d4K2FChbwshGrDbga6tUo1R0P1V4cI7YkHr//TP5B5GEZq0p/wPzUzmmvCLAfWOY6Jl6CVhn1VlzNpnivapxo92Q8pyZ7MZJfyxSL8qmxRvv1C8wZlfAwC4S15/dBpHapzpOynPBHxiUButVtKiQE3tyjpQxiTXjYTRIgB0HqpoOXmz3e7tjRSCpj fTIswPacVpZgrllyOspBGHd9xeZkpFkJW2aImGFtqFrwfMsYw6Wk5Mj1eyktSDpam6KPAeY1AK9j yPygFbZtzRtZfXdhbHjmbtaprBmjt/LwEtPsdqorpCsBLXmpE20BpwUtPaHdLPYQWN7rA0g=="
+	//mid = "JkZNmat0d4K2FChbwshGrDbga6tUo1R0P1V4cI7YkHr//TP5B5GEZq0p/wPzUzmmvCLAfWOY6Jl6CVhn1VlzNpnivapxo92Q8pyZ7MZJfyxSL8qmxRvv1C8wZlfAwC4S15/dBpHapzpOynPBHxiUButVtKiQE3tyjpQxiTXjYTRIgB0HqpoOXmz3e7tjRSCpj+fTIswPacVpZgrllyOspBGHd9xeZkpFkJW2aImGFtqFrwfMsYw6Wk5Mj1eyktSDpam6KPAeY1AK9j+yPygFbZtzRtZfXdhbHjmbtaprBmjt/LwEtPsdqorpCsBLXmpE20BpwUtPaHdLPYQWN7rA0g=="
 	result, err := DecryptPassword(mid)
 	if err != nil {
 		t.Error(err)

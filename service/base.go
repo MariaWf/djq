@@ -32,6 +32,7 @@ func checkErr(err error) error {
 	if err == dao.ErrObjectNotFound {
 		return ErrObjectNotFound
 	}
+
 	return errors.Wrap(err,"操作失败，请稍后重试")
 	//return ErrUnknown
 }

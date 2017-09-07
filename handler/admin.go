@@ -9,9 +9,26 @@ import (
 	"mimi/djq/service"
 	"mimi/djq/model"
 	"strings"
+	"fmt"
 )
 
 func AdminLogin(c *gin.Context) {
+	obj := &model.Admin{}
+	err := c.Bind(obj)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+		return
+	}
+	serviceObj := &service.Admin{}
+	obj, err = serviceObj.CheckLogin(obj)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(obj)
+	c.JSON(http.StatusOK, result)
 }
 
 func AdminLogout(c *gin.Context) {
@@ -20,7 +37,10 @@ func AdminLogout(c *gin.Context) {
 
 func AdminCheckLogin(c *gin.Context) {
 	if c.DefaultQuery("name", "") != "mimi" {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, util.BuildNeedLoginResult())
+		fmt.Println(c.Request.URL.Path)
+		if c.Request.URL.Path != "/mi/login" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, util.BuildNeedLoginResult())
+		}
 	}
 }
 
@@ -29,7 +49,7 @@ func AdminList(c *gin.Context) {
 	err := c.Bind(argObj)
 	if err != nil {
 		log.Println(err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, util.BuildFailResult(ErrParamException.Error()))
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
 		return
 	}
 	serviceObj := &service.Admin{}
@@ -45,7 +65,7 @@ func AdminGet(c *gin.Context) {
 	obj, err := serviceObj.Get(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, util.BuildFailResult(err.Error()))
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
 	result := util.BuildSuccessResult(obj)
@@ -58,10 +78,9 @@ func AdminPost(c *gin.Context) {
 	err := c.Bind(admin)
 	if err != nil {
 		log.Println(err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, util.BuildFailResult(ErrParamException.Error()))
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
 		return
 	}
-	log.Println(admin)
 	if roleIds != "" {
 		roleIdList := strings.Split(roleIds, ",")
 		if roleIdList != nil && len(roleIdList) != 0 {
@@ -75,11 +94,11 @@ func AdminPost(c *gin.Context) {
 	serviceObj := &service.Admin{}
 	obj, err := serviceObj.Add(admin)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, util.BuildFailResult(err.Error()))
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
 	result := util.BuildSuccessResult(obj.Id)
-	log.Println(obj)
 	c.JSON(http.StatusOK, result)
 }
 
@@ -87,14 +106,14 @@ func AdminPatch(c *gin.Context) {
 	//admin := &model.Admin{}
 	//err := c.Bind(admin)
 	//if err != nil {
-	//	c.AbortWithStatusJSON(http.StatusInternalServerError, util.BuildFailResult(err.Error()))
+	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 	//}
 	//conn, _ := mysql.Get()
 	//defer mysql.Close(conn)
 	//adminDao := &dao.AdminDao{conn}
 	//admin, err = adminDao.Update(admin)
 	//if err != nil {
-	//	c.AbortWithStatusJSON(http.StatusInternalServerError, util.BuildFailResult(err.Error()))
+	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 	//}
 	//c.JSON(http.StatusOK, util.BuildSuccessResult(admin))
 }
@@ -103,7 +122,7 @@ func AdminDelete(c *gin.Context) {
 	//args := &arg.Admin{}
 	//err := c.Bind(args)
 	//if err != nil {
-	//	c.AbortWithStatusJSON(http.StatusInternalServerError, util.BuildFailResult(err.Error()))
+	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 	//	return
 	//}
 	//conn, _ := mysql.Get()
@@ -111,7 +130,7 @@ func AdminDelete(c *gin.Context) {
 	//adminDao := &dao.AdminDao{conn}
 	//count, err := adminDao.Delete(args)
 	//if err != nil {
-	//	c.AbortWithStatusJSON(http.StatusInternalServerError, util.BuildFailResult(err.Error()))
+	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 	//}
 	//c.JSON(http.StatusOK, util.BuildSuccessResult(count))
 }

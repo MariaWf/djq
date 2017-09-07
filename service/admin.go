@@ -7,6 +7,7 @@ import (
 	"mimi/djq/db/mysql"
 	"mimi/djq/util"
 	"mimi/djq/dao/arg"
+	"github.com/pkg/errors"
 )
 
 type Admin struct {
@@ -15,6 +16,65 @@ type Admin struct {
 
 func (service *Admin) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
 	return &dao.Admin{conn}
+}
+func (service *Admin) CheckLogin(obj *model.Admin) (*model.Admin, error) {
+	if obj == nil {
+		return nil, ErrObjectEmpty
+	}
+	if obj.Name == "" {
+		return nil, errors.New("登录名为空")
+	}
+	var err error
+	obj.Password, err = util.DecryptPassword(obj.Password)
+	if err != nil {
+		return nil, errors.Wrap(err, "未能识别登录密码")
+	}
+	obj.Password = util.BuildPassword4DB(obj.Password)
+	argObj := &arg.Admin{}
+	argObj.NameEqual = obj.Name
+	argObj.PasswordEqual = obj.Password
+	argObj.PageSize = 1
+	conn, err := mysql.Get()
+	if err != nil {
+		return nil, checkErr(err)
+	}
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+	daoObj := service.GetDaoInstance(conn).(*dao.Admin)
+	list, err := dao.Find(daoObj, argObj)
+	if err != nil {
+		rollback = true
+		return nil, checkErr(err)
+	}
+	if list == nil || len(list) == 0 {
+		rollback = true
+		return nil, errors.New("登录失败，账号或密码错误")
+	}
+	newObj := list[0].(*model.Admin)
+	if newObj.Locked {
+		rollback = true
+		return nil, errors.New("账号已被冻结")
+	}
+
+	roleDao := &dao.Role{conn}
+	roleIds, err := roleDao.ListRoleIdsByAdminId(newObj.GetId())
+	if err != nil {
+		rollback = true
+		return nil, checkErr(err)
+	}
+
+	if roleIds != nil && len(roleIds) != 0 {
+		argRole := roleDao.GetArgInstance().(*arg.Role)
+		argRole.SetIdsIn(roleIds)
+		roles, err := dao.Find(roleDao, argRole)
+		if err != nil {
+			rollback = true
+			return nil, checkErr(err)
+		}
+		newObj.SetRoleListFromInterfaceArr(roles)
+		newObj.BindPermissionList()
+	}
+	return newObj, nil
 }
 
 func (service *Admin) Get(id string) (*model.Admin, error) {
@@ -68,10 +128,23 @@ func (service *Admin) Add(obj *model.Admin) (*model.Admin, error) {
 	if err != nil {
 		return nil, err
 	}
+	obj.Password = util.BuildPassword4DB(obj.Password)
 
 	rollback := false
 	defer mysql.Close(conn, &rollback)
 	daoObj := service.GetDaoInstance(conn).(*dao.Admin)
+
+	argObj := &arg.Admin{}
+	argObj.NameEqual = obj.Name
+	count, err := dao.Count(daoObj, argObj)
+	if err != nil {
+		rollback = true
+		return nil, checkErr(err)
+	}
+	if count > 0 {
+		rollback = true
+		return nil, errors.New("用户名已存在")
+	}
 
 	_, err = dao.Add(daoObj, obj)
 	if err != nil {
@@ -175,12 +248,24 @@ func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
 	if err != nil {
 		return nil, err
 	}
+	if obj.Password != "" {
+		obj.Password = util.BuildPassword4DB(obj.Password)
+	}
+
 	rollback := false
 	defer mysql.Close(conn, &rollback)
 	daoObj := service.GetDaoInstance(conn)
 
-	if obj.Password != "" {
-		obj.Password = util.BuildPassword4DB(obj.Password)
+	argObj := &arg.Admin{}
+	argObj.NameEqual = obj.Name
+	list, err := dao.Find(daoObj, argObj)
+	if err != nil {
+		rollback = true
+		return nil, checkErr(err)
+	}
+	if len(list) > 1 || (len(list) > 0 && list[0].(*model.Admin).GetId() == obj.GetId()) {
+		rollback = true
+		return nil, errors.New("用户名已存在")
 	}
 
 	_, err = dao.Update(daoObj, obj, "name", "mobile", "password", "Locked")

@@ -12,8 +12,8 @@ index
 <button id="b01" type="button">Change Content</button>
 
 <form enctype="multipart/form-data" method="post" id="uploadForm">
-    <input type="file" name="theFile"  accept="image/gif, image/jpeg, image/png"/>
-    <input type="text" name="wawaName" value="文件名称" />
+    <input type="file" name="theFile" accept="image/gif, image/jpeg, image/png"/>
+    <input type="text" name="wawaName" value="文件名称"/>
     <button id="b02" type="button">upload</button>
 </form>
 
@@ -23,23 +23,24 @@ index
 <textarea id="resultMsg"></textarea>
 </body>
 <script>
-    function findAdmin(){
+    function findAdmin() {
         $.ajax({
-            type:'GET',
-            url:"http://localhost:8080/mi/admin/?name=mimi&targetPage=2&pageSize=2",
+            type: 'GET',
+            url: "http://localhost:8080/mi/admin/?name=mimi&targetPage=2&pageSize=2",
 //                data: formData,
             async: true,
             cache: false,
-            dataType : "json",
+            dataType: "json",
             contentType: false,
             processData: false,
+//            withCredentials: true,
             success: function (data) {
                 $("#resultMsg").val(data.status)
             },
             error: function (data) {
                 $("#resultMsg").val(data)
             },
-            complete:function(data){
+            complete: function (data) {
 //                $("#resultMsg").val(data)
             }
         });
@@ -52,20 +53,20 @@ index
 //            $("#myDiv").html(htmlobj.responseText);
 
             var formData = {
-                id:"id1",
-                name:"name1",
-                description:"",
-                contentUrl:"",
-                preImageUrl:"",
-                secondHandHouseId:""
+                id: "id1",
+                name: "name1",
+                description: "",
+                contentUrl: "",
+                preImageUrl: "",
+                secondHandHouseId: ""
             };
             $.ajax({
-                type:'GET',
-                url:"http://djq.tunnel.qydev.com/user/dd",
+                type: 'GET',
+                url: "http://djq.tunnel.qydev.com/user/dd",
 //                data: formData,
                 async: true,
                 cache: false,
-                dataType : "json",
+                dataType: "json",
                 contentType: false,
                 processData: false,
                 success: function (data) {
@@ -73,41 +74,41 @@ index
                 },
                 error: function (data) {
                 },
-                complete:function(){
+                complete: function () {
                     alert(getCookie("test"))
                 }
             });
         });
-        function getCookie(name)
-        {
-            var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
-            if(arr=document.cookie.match(reg))
+        function getCookie(name) {
+            var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+            if (arr = document.cookie.match(reg))
                 return unescape(arr[2]);
             else
                 return null;
         }
+
         $("#b02").click(function () {
             var formData = new FormData($("#uploadForm")[0]);
             $.ajax({
-                type:'POST',
-                url:"http://djq.tunnel.qydev.com/upload",
+                type: 'POST',
+                url: "http://djq.tunnel.qydev.com/upload",
                 data: formData,
                 async: true,
                 cache: false,
-                dataType : "json",
+                dataType: "json",
                 contentType: false,
                 processData: false,
                 success: function (data) {
-                    if(data.status){
+                    if (data.status) {
                         alert(data.result)
-                    }else{
+                    } else {
                         alert(data.msg);
                     }
                 },
                 error: function (data) {
                     alert("上传失败");
                 },
-                complete:function(){
+                complete: function () {
                 }
             });
         })
