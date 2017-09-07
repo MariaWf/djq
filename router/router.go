@@ -2,7 +2,6 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"mimi/djq/handler"
 	"io"
 	"os"
@@ -15,36 +14,60 @@ func Begin() {
 	gin.DisableConsoleColor()
 	initLog()
 	router := gin.Default()
+	router.NoRoute(handler.NotFound)
+	ui := router.Group("/ui", handler.ApiGlobal)
+	ui.POST("/login", handler.AdminList)
+
+	mi := router.Group("/mi", handler.ApiGlobal, handler.AdminCheckLogin)
+	miAdmin := mi.Group("/admin")
+	miAdmin.GET("/", handler.PermissionAdminR, handler.AdminList)
+	miAdmin.GET("/:id", handler.PermissionAdminR, handler.AdminGet)
+	miAdmin.POST("/", handler.PermissionAdminC, handler.AdminPost)
+	miAdmin.PATCH("/:id", handler.PermissionAdminU, handler.AdminPatch)
+	miAdmin.DELETE("/:id", handler.PermissionAdminD, handler.AdminDelete)
+
+	si := router.Group("/si", handler.ApiGlobal)
+	si.POST("/login", handler.AdminList)
+
+	open := router.Group("/open", handler.ApiGlobal)
+	open.GET("/shop", handler.AdminList)
+	open.GET("/shop/:id",  handler.AdminGet)
+	open.GET("/advertisement",  handler.AdminGet)
+	open.GET("/shopClassification",  handler.AdminGet)
 
 	// Query string parameters are parsed using the existing underlying request object.
 	// The request responds to a url matching:  /welcome?firstname=Jane&lastname=Doe
-	router.Static("/static", "html/assets")
-	router.GET("/welcome", func(c *gin.Context) {
-		firstname := c.DefaultQuery("firstname", "Guest")
-		lastname := c.Query("lastname") // shortcut for c.Request.URL.Query().Get("lastname")
-
-		c.String(http.StatusOK, "Hello %s %s", firstname, lastname)
-	})
+	//router.Static("/", "html/1.0.0")
+	//router.GET("/welcome", func(c *gin.Context) {
+	//	firstname := c.DefaultQuery("firstname", "Guest")
+	//	lastname := c.Query("lastname") // shortcut for c.Request.URL.Query().Get("lastname")
+	//
+	//	c.String(http.StatusOK, "Hello %s %s", firstname, lastname)
+	//})
 	router.GET("/", handler.Index2)
 	router.GET("/api", handler.Api)
-	router.GET("/user/:id", handler.UserGet)
-	router.GET("/user", handler.UserList)
-	router.POST("/upload", handler.Upload)
-
-	router.GET("/html/ui", handler.Index2)
-	router.GET("/html/mi", handler.Index2)
-	router.GET("/advertisementList4Index", handler.AdvertisementList4Index)
-	router.GET("/shopClassificationList4Index", handler.ShopClassificationList4Index)
-	router.GET("/shop4Index", handler.Shop4IndexList)
-	router.GET("/shop4Index/:id", handler.Shop4Index)
-
-
-	router.StaticFile("/geetest","html/template/geetest.html")
-	router.StaticFile("/login","html/template/login.html")
-	//router.GET("/geetest", handler.GeetestRegister)
-	router.GET("/register", handler.GeetestRegister)
-	router.POST("/validate", handler.GeetestValidate)
-	router.POST("/ajax_validate", handler.GeetestAjaxValidate)
+	//router.GET("/user/:id", handler.UserGet)
+	//router.GET("/user", handler.UserList)
+	//router.POST("/upload", handler.Upload)
+	//
+	//router.GET("/html/ui", handler.Index2)
+	//router.GET("/html/mi", handler.Index2)
+	//router.GET("/advertisementList4Index", handler.AdvertisementList4Index)
+	//router.GET("/shopClassificationList4Index", handler.ShopClassificationList4Index)
+	//router.GET("/shop4Index", handler.Shop4IndexList)
+	//router.GET("/shop4Index/:id", handler.Shop4Index)
+	//
+	//router.StaticFile("/geetest", "html/template/geetest.html")
+	//router.StaticFile("/login", "html/template/login.html")
+	////router.GET("/geetest", handler.GeetestRegister)
+	//router.GET("/register", handler.GeetestRegister)
+	//router.POST("/validate", handler.GeetestValidate)
+	//router.POST("/ajax_validate", handler.GeetestAjaxValidate)
+	//
+	//ui.GET("/", handler.Index2)
+	////mi.GET("/", handler.Index2)
+	//si.GET("/", handler.Index2)
+	//open.GET("/", handler.Index2)
 
 	router.Run(":8080")
 }

@@ -34,7 +34,7 @@ func Shop4IndexList(c *gin.Context) {
 		shop.PreImage = "preImage"
 		shopList = append(shopList, shop)
 	}
-	c.JSON(http.StatusOK, BuildSuccessPageResult(targetPage, pageSize, total, shopList))
+	c.JSON(http.StatusOK, util.BuildSuccessPageResult(targetPage, pageSize, total, shopList))
 }
 
 func Shop4Index(c *gin.Context) {
@@ -64,7 +64,7 @@ func Shop4Index(c *gin.Context) {
 		cashCouponList = append(cashCouponList, cashCoupon)
 	}
 	shop.CashCouponList = cashCouponList
-	c.JSON(http.StatusOK, BuildSuccessResult(shop))
+	c.JSON(http.StatusOK, util.BuildSuccessResult(shop))
 }
 
 

@@ -6,7 +6,20 @@ import (
 	"log"
 	"github.com/gin-gonic/gin"
 	"fmt"
+	"mimi/djq/util"
 )
+
+func NotFound(c *gin.Context) {
+	if c.Request.Header.Get("X-Requested-With") == "XMLHttpRequest" {
+		c.AbortWithStatusJSON(http.StatusNotFound, util.BuildFailResult("未知资源"))
+	}
+}
+
+func ApiGlobal(c *gin.Context) {
+	//if !strings.Contains(c.Request.Host, "djq.51zxiu.cn") && !strings.Contains(c.Request.Host, "djq.tunnel.qydev.com") {
+	//	c.AbortWithStatusJSON(http.StatusForbidden, util.BuildFailResult("禁止访问"))
+	//}
+}
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	values := make(map[string]interface{})
@@ -46,14 +59,14 @@ func Index2(c *gin.Context) {
 
 func Upload(c *gin.Context) {
 	file, _ := c.FormFile("theFile")
-	fmt.Println(file.Filename+"_"+c.PostForm("wawaName"))
+	fmt.Println(file.Filename + "_" + c.PostForm("wawaName"))
 
 	// Upload the file to specific dst.
 	// c.SaveUploadedFile(file, dst)
-	c.SaveUploadedFile(file,"c:/upload/"+file.Filename)
+	c.SaveUploadedFile(file, "c:/upload/" + file.Filename)
 
 	//c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
-	result := BuildSuccessResult(file.Filename)
+	result := util.BuildSuccessResult(file.Filename)
 	c.JSON(http.StatusOK, result)
 }
 

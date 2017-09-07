@@ -2,7 +2,9 @@
 <head>
     <script src="/static/js/test.js"></script>
     <link href="/static/css/test.css" rel="stylesheet">
-    <script src="/static/js/jquery-2.1.1.min.js"></script>
+    <!--<script src="/static/js/jquery-2.1.1.min.js"></script>-->
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
 </head>
 <body>
 index
@@ -14,8 +16,35 @@ index
     <input type="text" name="wawaName" value="文件名称" />
     <button id="b02" type="button">upload</button>
 </form>
+
+<div>
+    <button type="button" onclick="findAdmin()">findAdmin</button>
+</div>
+<textarea id="resultMsg"></textarea>
 </body>
 <script>
+    function findAdmin(){
+        $.ajax({
+            type:'GET',
+            url:"http://localhost:8080/mi/admin/?name=mimi&targetPage=2&pageSize=2",
+//                data: formData,
+            async: true,
+            cache: false,
+            dataType : "json",
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $("#resultMsg").val(data.status)
+            },
+            error: function (data) {
+                $("#resultMsg").val(data)
+            },
+            complete:function(data){
+//                $("#resultMsg").val(data)
+            }
+        });
+    }
+
     $(function () {
         $("#b01").click(function () {
 //            htmlobj = $.ajax({url: "http://api.djq.tunnel.qydev.com/user", async: false});
@@ -32,7 +61,7 @@ index
             };
             $.ajax({
                 type:'GET',
-                url:"http://djq.tunnel.qydev.com/user",
+                url:"http://djq.tunnel.qydev.com/user/dd",
 //                data: formData,
                 async: true,
                 cache: false,
@@ -45,9 +74,18 @@ index
                 error: function (data) {
                 },
                 complete:function(){
+                    alert(getCookie("test"))
                 }
             });
         });
+        function getCookie(name)
+        {
+            var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+            if(arr=document.cookie.match(reg))
+                return unescape(arr[2]);
+            else
+                return null;
+        }
         $("#b02").click(function () {
             var formData = new FormData($("#uploadForm")[0]);
             $.ajax({

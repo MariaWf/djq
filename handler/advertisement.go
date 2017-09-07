@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"net/http"
 	"mimi/djq/model"
+	"mimi/djq/util"
 )
 
 func AdvertisementList4Index(c *gin.Context) {
@@ -17,5 +18,5 @@ func AdvertisementList4Index(c *gin.Context) {
 		advertisement.Link = "link" + strconv.Itoa(i)
 		advertisementList = append(advertisementList, advertisement)
 	}
-	c.JSON(http.StatusOK, BuildSuccessResult(advertisementList))
+	c.JSON(http.StatusOK, util.BuildSuccessResult(advertisementList))
 }

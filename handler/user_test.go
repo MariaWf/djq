@@ -4,13 +4,14 @@ import (
 	"testing"
 	"github.com/gin-gonic/gin/json"
 	"mimi/djq/model"
+	"mimi/djq/util"
 )
 
 func TestUserGet(t *testing.T){
 	user := &model.User{}
 	user.Id = "id1"
 	user.Name = "name1"
-	result := BuildSuccessResult(user)
+	result := util.BuildSuccessResult(user)
 	//result := &ResultVO2{}
 	result.Msg = "msg"
 	result.Status = 1

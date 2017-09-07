@@ -12,6 +12,7 @@ drop table if exists tbl_role;
 create table tbl_role(
 id varchar(64) not null primary key,
 name varchar(32) not null default '',
+permission_list_str varchar(1000) not null default '',
 description varchar(200) not null default '',
 del_flag tinyint(1) default false
 )default charset=utf8;
@@ -31,7 +32,7 @@ name varchar(32) not null default '',
 image varchar(200) not null default '',
 link varchar(200) not null default '',
 priority int(8) not null default 0,
-show tinyint(1) default true,
+hide tinyint(1) default false,
 description varchar(200) not null default '',
 del_flag tinyint(1) default false
 )default charset=utf8;
@@ -86,7 +87,8 @@ create table tbl_cash_coupon(
 id varchar(64) not null primary key,
 name varchar(32) not null default '',
 pre_image varchar(200) not null default '',
-ExpiryDate timestamp DEFAULT CURRENT_TIMESTAMP,
+discount_amount int(8) not null default 0,
+expiryDate timestamp DEFAULT CURRENT_TIMESTAMP,
 expired tinyint(1) default false,
 locked tinyint(1) default false,
 del_flag tinyint(1) default false
@@ -137,7 +139,8 @@ name varchar(32) not null default '',
 address varchar(200) not null default '',
 stock int(8) not null default 0,
 requirement int(8) not null default 0,
-ExpiryDate timestamp DEFAULT CURRENT_TIMESTAMP,
+weight int(8) not null default 1,
+expiryDate timestamp DEFAULT CURRENT_TIMESTAMP,
 expired tinyint(1) default false,
 locked tinyint(1) default false,
 del_flag tinyint(1) default false
@@ -156,12 +159,8 @@ drop table if exists tbl_promotional_partner;
 create table tbl_promotional_partner(
 id varchar(64) not null primary key,
 name varchar(32) not null default '',
-description varchar(200) not null default ''
+description varchar(200) not null default '',
 total_price int(8) not null default 0,
 total_pay int(8) not null default 0,
 del_flag tinyint(1) default false
 )default charset=utf8;
-
-
-
-

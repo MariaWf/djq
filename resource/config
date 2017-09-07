@@ -19,3 +19,6 @@ global_log = c:/logs/djq/global.log
 #极验证码
 geetest_id = be848e06bb2ece0298314b2bbd9cbb40
 geetest_key = 76873c2020baa1261cae50a1070384aa
+
+#mysql
+mysqlDataSourceName = root:123456@tcp(localhost:3306)/djq

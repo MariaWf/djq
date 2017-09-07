@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"net/http"
 	"mimi/djq/model"
+	"mimi/djq/util"
 )
 
 func ShopClassificationList4Index(c *gin.Context) {
@@ -15,6 +16,6 @@ func ShopClassificationList4Index(c *gin.Context) {
 		shopClassification.Name = "name" + strconv.Itoa(i)
 		shopClassificationList = append(shopClassificationList, shopClassification)
 	}
-	c.JSON(http.StatusOK, BuildSuccessResult(shopClassificationList))
+	c.JSON(http.StatusOK, util.BuildSuccessResult(shopClassificationList))
 }
 
