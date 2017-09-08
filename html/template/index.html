@@ -4,6 +4,7 @@
     <link href="/static/css/test.css" rel="stylesheet">
     <!--<script src="/static/js/jquery-2.1.1.min.js"></script>-->
     <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/static/js/jsencrypt.min.js"></script>
 
 </head>
 <body>
@@ -20,9 +21,108 @@ index
 <div>
     <button type="button" onclick="findAdmin()">findAdmin</button>
 </div>
-<textarea id="resultMsg"></textarea>
+<textarea id="resultMsg" style="width:400px;height:100px"></textarea>
+
+<div>
+    <button type="button" onclick="getPublicKey()">获取公匙</button>
+
+    <form enctype="multipart/form-data" method="post" action="http://localhost:8080/mi/login">
+    <input type="text" id="loginName" name="name" value="" placeholder="登录名称"/>
+    <input type="text" id="password" name="password" value="" placeholder="登录密码"/>
+    <button type="button" onclick="login()">登录</button>
+    <button type="button" onclick="logout()">登出</button>
+        <input type="submit" value="submit" />
+    </form>
+</div>
 </body>
 <script>
+    if (getCookie("miSessionId")){
+        $("#resultMsg").val(getCookie("miSessionId"))
+    }
+    function getPublicKey(){
+        obj = {}
+        $.ajax({
+            type: 'GET',
+            url: "http://localhost:8080/getPublicKey",
+            data: obj,
+            dataType: "json",
+            success: function (data) {
+                if (data.status == 1) {
+                    $("#resultMsg").val(data.result)
+                } else {
+                    $("#resultMsg").val(data.msg)
+                }
+            },
+            error: function (data) {
+                $("#resultMsg").val(data.msg)
+            },
+            complete: function (data) {
+//                $("#resultMsg").val(data)
+            }
+        });
+    }
+    function login() {
+        obj = {}
+        obj.name = $("#loginName").val()
+        obj.password = $("#password").val()
+
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey($('#resultMsg').val());
+        obj.password  = encrypt.encrypt(obj.password);
+        $.ajax({
+            type: 'POST',
+            url: "http://localhost:8080/mi/login",
+            data: obj,
+//            data: {name:obj.name,password:obj.password},
+//            async: true,
+//            cache: false,
+            dataType: "json",
+//            contentType: false,
+//            processData: false,
+            success: function (data) {
+                if (data.status == 1) {
+                    $("#resultMsg").val(data.result.name + getCookie("miSessionId"))
+                } else {
+                    $("#resultMsg").val(data.msg)
+                }
+            },
+            error: function (data) {
+                $("#resultMsg").val(data.msg)
+            },
+            complete: function (data) {
+//                $("#resultMsg").val(data)
+            }
+        });
+    }
+    function logout() {
+        obj = {}
+        obj.name = $("#loginName").val()
+        obj.password = $("#password").val()
+        $.ajax({
+            type: 'POST',
+            url: "http://localhost:8080/mi/logout",
+            data: obj,
+            async: true,
+            cache: false,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.status == 1) {
+                    $("#resultMsg").val(getCookie("miSessionId"))
+                } else {
+                    $("#resultMsg").val(data.msg)
+                }
+            },
+            error: function (data) {
+                $("#resultMsg").val(data.msg)
+            },
+            complete: function (data) {
+//                $("#resultMsg").val(data)
+            }
+        });
+
+    }
     function findAdmin() {
         $.ajax({
             type: 'GET',
@@ -79,13 +179,6 @@ index
                 }
             });
         });
-        function getCookie(name) {
-            var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
-            if (arr = document.cookie.match(reg))
-                return unescape(arr[2]);
-            else
-                return null;
-        }
 
         $("#b02").click(function () {
             var formData = new FormData($("#uploadForm")[0]);
@@ -115,5 +208,12 @@ index
 
 
     })
+    function getCookie(name) {
+        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return unescape(arr[2]);
+        else
+            return null;
+    }
 </script>
 </html>

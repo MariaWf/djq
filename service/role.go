@@ -6,6 +6,8 @@ import (
 	"mimi/djq/db/mysql"
 	"mimi/djq/model"
 	"mimi/djq/dao/arg"
+	"mimi/djq/util"
+	"github.com/pkg/errors"
 )
 
 type Role struct {
@@ -112,6 +114,9 @@ func (service *Role) Delete(roleIds ... string) (int64, error) {
 func (service *Role) check(obj *model.Role) error {
 	if obj == nil {
 		return ErrObjectEmpty
+	}
+	if util.MatchLen(obj.Name,2,32){
+		return errors.New("名称长度为2到32")
 	}
 	return nil
 }

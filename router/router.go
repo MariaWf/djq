@@ -19,9 +19,8 @@ func Begin() {
 	ui.POST("/login", handler.AdminList)
 
 	mi := router.Group("/mi", handler.ApiGlobal, handler.AdminCheckLogin)
-	mi.GET("/login",handler.AdminLogin)
-	mi.POST("/login",handler.AdminLogin)
-	mi.POST("/logout",handler.AdminLogout)
+	mi.POST("/login", handler.AdminLogin)
+	mi.POST("/logout", handler.AdminLogout)
 	miAdmin := mi.Group("/admin")
 	miAdmin.GET("/", handler.PermissionAdminR, handler.AdminList)
 	miAdmin.GET("/:id", handler.PermissionAdminR, handler.AdminGet)
@@ -34,9 +33,9 @@ func Begin() {
 
 	open := router.Group("/open", handler.ApiGlobal)
 	open.GET("/shop", handler.AdminList)
-	open.GET("/shop/:id",  handler.AdminGet)
-	open.GET("/advertisement",  handler.AdminGet)
-	open.GET("/shopClassification",  handler.AdminGet)
+	open.GET("/shop/:id", handler.AdminGet)
+	open.GET("/advertisement", handler.AdminGet)
+	open.GET("/shopClassification", handler.AdminGet)
 
 	// Query string parameters are parsed using the existing underlying request object.
 	// The request responds to a url matching:  /welcome?firstname=Jane&lastname=Doe
@@ -47,8 +46,10 @@ func Begin() {
 	//
 	//	c.String(http.StatusOK, "Hello %s %s", firstname, lastname)
 	//})
+	router.Static("/static", "html/assets")
 	router.GET("/", handler.Index2)
 	router.GET("/api", handler.Api)
+	router.GET("/getPublicKey", handler.GetPublicKey)
 	//router.GET("/user/:id", handler.UserGet)
 	//router.GET("/user", handler.UserList)
 	//router.POST("/upload", handler.Upload)
@@ -72,7 +73,7 @@ func Begin() {
 	//si.GET("/", handler.Index2)
 	//open.GET("/", handler.Index2)
 
-	router.Run(":8080")
+	router.Run(":" + config.Get("server_port"))
 }
 
 func initLog() {

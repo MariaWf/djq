@@ -186,8 +186,11 @@ func BuildPassword4DB(str string) string {
 	s1 := str + Salt4Password
 	s2 := []byte(s1)
 	s3 := md5.Sum(s2)
-	s4 :=  hex.EncodeToString(s3[:])
+	s4 := hex.EncodeToString(s3[:])
 	return s4
 	//return hex.EncodeToString(md5.Sum([]byte(str + Salt4Password))[:])
 }
 
+func GetPublicKey() []byte {
+	return publicKey
+}

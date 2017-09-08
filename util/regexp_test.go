@@ -8,7 +8,7 @@ func TestMatchDescription(t *testing.T) {
 	maps["012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567892"] = false
 	for k, v := range maps {
 		if MatchDescription(k) != v {
-			t.Errorf("%v应为%v",k,v)
+			t.Errorf("%v应为%v", k, v)
 		}
 	}
 }
@@ -23,9 +23,15 @@ func TestMatchName(t *testing.T) {
 	maps["fd1dsafdesfd1dsafdesfd1dsafdes21d"] = false
 	for k, v := range maps {
 		if MatchName(k) != v {
-			t.Errorf("%v应为%v",k,v)
+			t.Errorf("%v应为%v", k, v)
+			goto test
 		}
 	}
+	t.Log("test1")
+	return
+
+	test:
+	t.Log("test")
 }
 
 func TestMatchMobile(t *testing.T) {
@@ -37,7 +43,7 @@ func TestMatchMobile(t *testing.T) {
 	maps["22345678901"] = false
 	for k, v := range maps {
 		if MatchMobile(k) != v {
-			t.Errorf("%v应为%v",k,v)
+			t.Errorf("%v应为%v", k, v)
 		}
 	}
 }

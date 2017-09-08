@@ -90,3 +90,14 @@ func (obj *Admin) BindPermissionList() {
 		}
 	}
 }
+
+func (obj *Admin) GetPermissionCodeList() []string {
+	if obj.PermissionList != nil && len(obj.PermissionList) != 0 {
+		list := make([]string, len(obj.PermissionList), len(obj.PermissionList))
+		for i, pn := range obj.PermissionList {
+			list[i] = pn.Code
+		}
+		return list
+	}
+	return nil
+}

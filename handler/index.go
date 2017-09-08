@@ -86,6 +86,11 @@ func Index2(c *gin.Context) {
 	t.Execute(c.Writer, values)
 }
 
+func GetPublicKey(c *gin.Context) {
+	result := util.BuildSuccessResult(string(util.GetPublicKey()))
+	c.JSON(http.StatusOK, result)
+}
+
 func Upload(c *gin.Context) {
 	file, _ := c.FormFile("theFile")
 	fmt.Println(file.Filename + "_" + c.PostForm("wawaName"))

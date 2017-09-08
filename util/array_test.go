@@ -38,12 +38,12 @@ func TestArrSlice(t *testing.T) {
 }
 
 func TestArrInterface(t *testing.T) {
-	list := testReturnIntarfaceArr()
+	list := testReturnInterfaceArr()
 	aa := list.([]*TempObj)
 	t.Log(aa[0].Id)
 }
 
-func testReturnIntarfaceArr() interface{} {
+func testReturnInterfaceArr() interface{} {
 	list := make([]*TempObj, 0, 10)
 	list = append(list, &TempObj{"a"})
 	return list

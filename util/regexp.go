@@ -12,8 +12,12 @@ var (
 	ErrPasswordFormat = errors.New("密码长度为6到32")
 )
 
-func MatchDescription(str ...string) bool {
+func MatchLen(str string, minInclude int, maxInclude int) bool {
+	len := len(str)
+	return len >= minInclude && len <= maxInclude
+}
 
+func MatchDescription(str ...string) bool {
 	var b bool
 	for _, s := range str {
 		b, _ = regexp.MatchString("^[\\s\\S]{0,200}$", s)
