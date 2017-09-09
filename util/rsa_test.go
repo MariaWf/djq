@@ -51,7 +51,7 @@ func TestPasswordEncrypt(t *testing.T) {
 	t.Log(mid)
 }
 
-func BenchmarkGetRoleServiceInstance(b *testing.B) {
+func Benchmark&service.Role{}(b *testing.B) {
 	b.ResetTimer()
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {

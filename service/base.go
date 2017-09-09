@@ -38,6 +38,8 @@ func checkErr(err error) error {
 
 type BaseServiceInterface interface {
 	GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface
+	CheckAdd(model.BaseModelInterface) error
+	CheckUpdate(model.BaseModelInterface) error
 }
 
 func Page(service BaseServiceInterface, argObj arg.BaseArgInterface) (*util.PageVO, error) {
@@ -148,6 +150,10 @@ func Get(service BaseServiceInterface, id string) (interface{}, error) {
 }
 
 func Add(service BaseServiceInterface, obj model.BaseModelInterface) (interface{}, error) {
+	err := service.CheckAdd(obj)
+	if err != nil {
+		return nil, err
+	}
 	conn, err := mysql.Get()
 	if err != nil {
 		return nil, checkErr(err)
@@ -163,6 +169,10 @@ func Add(service BaseServiceInterface, obj model.BaseModelInterface) (interface{
 }
 
 func Update(service BaseServiceInterface, obj model.BaseModelInterface, args ...string) (interface{}, error) {
+	err := service.CheckUpdate(obj)
+	if err != nil {
+		return nil, err
+	}
 	conn, err := mysql.Get()
 	if err != nil {
 		return nil, checkErr(err)

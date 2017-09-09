@@ -72,8 +72,3 @@ func (dao *Role) ListRoleIdsByAdminId(adminId string) ([]string, error) {
 	}
 	return roleIds, nil
 }
-
-//func (dao *Role) ListByAdminId(id string) ([]*model.Role,error) {
-//	sql := "select id,name,description from tbl_role t1 left join "
-//	return &model.Role{}
-//}

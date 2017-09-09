@@ -35,13 +35,13 @@ func (service *Role) Get(id string) (*model.Role, error) {
 }
 
 func (service *Role) Add(obj *model.Role) (*model.Role, error) {
+	err := service.CheckAdd(obj)
+	if err != nil {
+		return nil, err
+	}
 	conn, err := mysql.Get()
 	if err != nil {
 		return nil, checkErr(err)
-	}
-	err = service.checkAdd(obj)
-	if err != nil {
-		return nil, err
 	}
 	rollback := false
 	defer mysql.Close(conn, &rollback)
@@ -56,6 +56,10 @@ func (service *Role) Add(obj *model.Role) (*model.Role, error) {
 }
 
 func (service *Role) Update(obj *model.Role) (*model.Role, error) {
+	err := service.CheckUpdate(obj)
+	if err != nil {
+		return nil, err
+	}
 	conn, err := mysql.Get()
 	if err != nil {
 		return nil, checkErr(err)
@@ -108,13 +112,13 @@ func (service *Role) check(obj *model.Role) error {
 	return nil
 }
 
-func (service *Role) checkUpdate(obj *model.Role) error {
-	if obj != nil && obj.Id == "" {
+func (service *Role) CheckUpdate(obj model.BaseModelInterface) error {
+	if obj != nil && obj.GetId() == "" {
 		return ErrIdEmpty
 	}
-	return service.check(obj)
+	return service.check(obj.(*model.Role))
 }
 
-func (service *Role) checkAdd(obj *model.Role) error {
-	return service.check(obj)
+func (service *Role) CheckAdd(obj model.BaseModelInterface) error {
+	return service.check(obj.(*model.Role))
 }

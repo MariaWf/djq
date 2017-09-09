@@ -37,6 +37,14 @@ func Begin() {
 	miRole.PATCH("/:id", handler.PermissionRoleU, handler.RolePatch)
 	miRole.DELETE("/:id", handler.PermissionRoleD, handler.RoleDelete)
 
+	miAdvertisement := mi.Group("/advertisement")
+	miAdvertisement.GET("/", handler.PermissionAdvertisementR, handler.AdvertisementList)
+	miAdvertisement.GET("/:id", handler.PermissionAdvertisementR, handler.AdvertisementGet)
+	miAdvertisement.POST("/", handler.PermissionAdvertisementC, handler.AdvertisementPost)
+	miAdvertisement.PATCH("/:id", handler.PermissionAdvertisementU, handler.AdvertisementPatch)
+	miAdvertisement.DELETE("/:id", handler.PermissionAdvertisementD, handler.AdvertisementDelete)
+
+
 	miPermission := mi.Group("/permission")
 	miPermission.GET("/", handler.PermissionRoleR, handler.PermissionList)
 

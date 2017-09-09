@@ -114,8 +114,6 @@ func AdminList(c *gin.Context) {
 }
 
 func AdminGet(c *gin.Context) {
-	argObj := &arg.Admin{}
-	argObj.SetIdEqual(c.Param("id"))
 	serviceObj := &service.Admin{}
 	obj, err := serviceObj.Get(c.Param("id"))
 	if err != nil {
@@ -158,9 +156,9 @@ func AdminPost(c *gin.Context) {
 }
 
 func AdminPatch(c *gin.Context) {
-	admin := &model.Admin{}
+	obj := &model.Admin{}
 	roleIds := c.PostForm("roleIds")
-	err := c.Bind(admin)
+	err := c.Bind(obj)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
@@ -178,7 +176,7 @@ func AdminPatch(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	if id == admin.GetId() {
+	if id == obj.GetId() {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("禁止修改当前登录管理员信息"))
 		return
 	}
@@ -189,15 +187,15 @@ func AdminPatch(c *gin.Context) {
 	if roleIds != "" {
 		roleIdList := strings.Split(roleIds, ",")
 		if roleIdList != nil && len(roleIdList) != 0 {
-			admin.RoleList = make([]*model.Role, len(roleIdList), len(roleIdList))
+			obj.RoleList = make([]*model.Role, len(roleIdList), len(roleIdList))
 			for i, roleId := range roleIdList {
-				admin.RoleList[i] = &model.Role{Id: roleId}
+				obj.RoleList[i] = &model.Role{Id: roleId}
 			}
 		}
 	}
 
 	serviceObj := &service.Admin{}
-	obj, err := serviceObj.Update(admin)
+	obj, err = serviceObj.Update(obj)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
@@ -221,18 +219,37 @@ func AdminPatch(c *gin.Context) {
 }
 
 func AdminDelete(c *gin.Context) {
-	//args := &arg.Admin{}
-	//err := c.Bind(args)
-	//if err != nil {
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//	return
-	//}
-	//conn, _ := mysql.Get()
-	//defer mysql.Close(conn)
-	//adminDao := &dao.AdminDao{conn}
-	//count, err := adminDao.Delete(args)
-	//if err != nil {
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//}
-	//c.JSON(http.StatusOK, util.BuildSuccessResult(count))
+	sn, err := session.GetMi(c.Writer, c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	id, err := sn.Get("id")
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	ids := strings.Split(c.PostForm("ids"), constant.Split4Id)
+	for _, v := range ids {
+		if v == id {
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("禁止删除当前登录管理员信息"))
+			return
+		}
+		if v == constant.AdminId {
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("禁止删除超级管理员信息"))
+			return
+		}
+	}
+
+	serviceObj := &service.Admin{}
+	count, err := serviceObj.Delete(ids...)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(count)
+	c.JSON(http.StatusOK, result)
 }

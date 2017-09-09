@@ -114,22 +114,22 @@ func (service *Admin) Get(id string) (*model.Admin, error) {
 }
 
 func (service *Admin) Add(obj *model.Admin) (*model.Admin, error) {
-	conn, err := mysql.Get()
-	if err != nil {
-		return nil, checkErr(err)
-	}
-
 	sourcePassword, err := util.DecryptPassword(obj.Password)
 	if err != nil {
 		return nil, checkErr(err)
 	}
 	obj.Password = sourcePassword
 
-	err = service.checkAdd(obj)
+	err = service.CheckAdd(obj)
 	if err != nil {
 		return nil, err
 	}
 	obj.Password = util.BuildPassword4DB(obj.Password)
+
+	conn, err := mysql.Get()
+	if err != nil {
+		return nil, checkErr(err)
+	}
 
 	rollback := false
 	defer mysql.Close(conn, &rollback)
@@ -234,23 +234,23 @@ func (service *Admin) refreshRelationshipWithRole(conn *sql.Tx, obj *model.Admin
 }
 
 func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
-	conn, err := mysql.Get()
-	if err != nil {
-		return nil, checkErr(err)
-	}
-
 	sourcePassword, err := util.DecryptPassword(obj.Password)
 	if err != nil {
 		return nil, checkErr(err)
 	}
 	obj.Password = sourcePassword
 
-	err = service.checkUpdate(obj)
+	err = service.CheckUpdate(obj)
 	if err != nil {
 		return nil, err
 	}
 	if obj.Password != "" {
 		obj.Password = util.BuildPassword4DB(obj.Password)
+	}
+
+	conn, err := mysql.Get()
+	if err != nil {
+		return nil, checkErr(err)
 	}
 
 	rollback := false
@@ -281,10 +281,6 @@ func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
 		return nil, checkErr(err)
 	}
 	return obj, checkErr(err)
-}
-
-func (service *Admin) Count() {
-
 }
 
 func (service *Admin) Delete(ids ...string) (int64, error) {
@@ -330,16 +326,16 @@ func (service *Admin) check(obj *model.Admin) error {
 	return nil
 }
 
-func (service *Admin) checkUpdate(obj *model.Admin) error {
-	if obj != nil && obj.Id == "" {
+func (service *Admin) CheckUpdate(obj model.BaseModelInterface) error {
+	if obj != nil && obj.GetId() == "" {
 		return ErrIdEmpty
 	}
-	return service.check(obj)
+	return service.check(obj.(*model.Admin))
 }
 
-func (service *Admin) checkAdd(obj *model.Admin) error {
-	if obj != nil && obj.Password == "" {
+func (service *Admin) CheckAdd(obj model.BaseModelInterface) error {
+	if obj != nil && obj.(*model.Admin).Password == "" {
 		return util.ErrPasswordFormat
 	}
-	return service.check(obj)
+	return service.check(obj.(*model.Admin))
 }

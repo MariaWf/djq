@@ -57,13 +57,32 @@ func PermissionAdminD(c *gin.Context) {
 }
 
 func PermissionRoleC(c *gin.Context) {
+	checkPermission(c, "role_c")
 }
 
 func PermissionRoleR(c *gin.Context) {
+	checkPermission(c, "role_r")
 }
 
 func PermissionRoleU(c *gin.Context) {
+	checkPermission(c, "role_u")
 }
 
 func PermissionRoleD(c *gin.Context) {
+	checkPermission(c, "role_d")
+}
+func PermissionAdvertisementC(c *gin.Context) {
+	checkPermission(c, "advertisement_c")
+}
+
+func PermissionAdvertisementR(c *gin.Context) {
+	checkPermission(c, "advertisement_r")
+}
+
+func PermissionAdvertisementU(c *gin.Context) {
+	checkPermission(c, "advertisement_u")
+}
+
+func PermissionAdvertisementD(c *gin.Context) {
+	checkPermission(c, "advertisement_d")
 }
