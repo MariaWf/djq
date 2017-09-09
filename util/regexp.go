@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
 	"regexp"
 	"strings"
@@ -24,7 +23,6 @@ func MatchPriority(priority int) error {
 
 func MatchLen(str string, minInclude int, maxInclude int) bool {
 	len := strings.Count(str, "") - 1
-	fmt.Println(str, len)
 	return minInclude <= len && len <= maxInclude
 }
 

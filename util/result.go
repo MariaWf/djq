@@ -1,12 +1,14 @@
 package util
 
-import "errors"
+import (
+	"errors"
+)
 
 const (
 	ResultStatusNeedPermission = 3
-	ResultStatusNeedLogin      = 2
-	ResultStatusSuccess        = 1
-	ResultStatusFail           = 0
+	ResultStatusNeedLogin = 2
+	ResultStatusSuccess = 1
+	ResultStatusFail = 0
 )
 
 var ErrNeedMiLogin = errors.New("请先登录再进行下一步操作")
@@ -48,12 +50,6 @@ func BuildNeedPermissionResult() *ResultVO {
 
 func BuildSuccessPageResult(targetPage int, pageSize int, total int, datas interface{}) *ResultVO {
 	result := &ResultVO{ResultStatusSuccess, "", nil}
-	//pageMap := make(map[string]interface{})
-	//pageMap["targetPage"] = targetPage
-	//pageMap["pageSize"] = pageSize
-	//pageMap["total"] = total
-	//pageMap["totalPage"] = totalPage
-	//pageMap["datas"] = datas
 	result.Result = BuildPageVO(targetPage, pageSize, total, datas)
 	return result
 }
@@ -63,10 +59,10 @@ func BuildPageVO(targetPage int, pageSize int, total int, datas interface{}) *Pa
 		targetPage = BeginPage
 	}
 	if pageSize < 1 {
-		pageSize = DefaultPageSize
+		pageSize = MaxPageSize
 	}
 	totalPage := total / pageSize
-	if total%pageSize > 0 {
+	if total % pageSize > 0 {
 		totalPage++
 	}
 	return &PageVO{targetPage, pageSize, total, totalPage, datas}

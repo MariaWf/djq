@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"github.com/satori/go.uuid"
 	"strconv"
 	"strings"
@@ -43,7 +42,6 @@ func (on *orderNumber) next() string {
 	defer func() {
 		if err := recover(); err != nil {
 			on.mutex.Unlock()
-			fmt.Println(err)
 			panic(err)
 		}
 		on.mutex.Unlock()

@@ -285,7 +285,9 @@ index
             var formData = new FormData($("#uploadForm")[0]);
             $.ajax({
                 type: 'POST',
-                url: "http://djq.tunnel.qydev.com/upload",
+//                url: "http://djq.tunnel.qydev.com/upload",
+//                url: "/upload",
+                url: "/mi/advertisement/action/uploadImage",
                 data: formData,
                 async: true,
                 cache: false,

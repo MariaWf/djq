@@ -4,6 +4,8 @@ const (
 	BeginPage        = 1
 	DefaultPageSize  = 10
 	DefaultBeginPage = BeginPage
+
+	MaxPageSize = 9999
 )
 
 type PageResult struct {

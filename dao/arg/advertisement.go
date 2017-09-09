@@ -5,17 +5,19 @@ import (
 )
 
 type Advertisement struct {
-	IdEqual        string
-	IncludeDeleted bool
-	NameLike       string
-	NameEqual      string
-	OrderBy        string
-	IdsIn          []string
+	IdEqual           string
+	IncludeDeleted    bool
+	NameLike          string
+	NameEqual         string
+	OrderBy           string
+	IdsIn             []string
 
-	PageSize   int
-	TargetPage int
+	NotIncludeHide    bool
 
-	ShowColumnNames []string
+	PageSize          int
+	TargetPage        int
+
+	ShowColumnNames   []string
 
 	UpdateObject      interface{}
 	UpdateColumnNames []string
@@ -129,7 +131,7 @@ func (arg *Advertisement) getColumnNameValues() ([]string, []interface{}) {
 	s := make([]string, 0, len(arg.UpdateColumnNames))
 	params := make([]interface{}, 0, 9)
 	for _, v := range arg.UpdateColumnNames {
-		ColumnNamesAdvertisement = []string{"id", "name", "image", "link", "priority","hide","description"}
+		ColumnNamesAdvertisement = []string{"id", "name", "image", "link", "priority", "hide", "description"}
 		switch v {
 		case "name":
 			s = append(s, "name = ?")
@@ -162,7 +164,7 @@ func (arg *Advertisement) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " name like ?"
-		params = append(params, "%"+arg.NameLike+"%")
+		params = append(params, "%" + arg.NameLike + "%")
 	}
 	if arg.NameEqual != "" {
 		if sql != "" {
@@ -170,6 +172,13 @@ func (arg *Advertisement) getCountConditions() (string, []interface{}) {
 		}
 		sql += " name = ?"
 		params = append(params, arg.NameEqual)
+	}
+	if arg.NotIncludeHide {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " hide = ?"
+		params = append(params, false)
 	}
 	if len(params) != 0 {
 		sql = " where" + sql

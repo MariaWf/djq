@@ -43,7 +43,7 @@ func Begin() {
 	miAdvertisement.POST("/", handler.PermissionAdvertisementC, handler.AdvertisementPost)
 	miAdvertisement.PATCH("/:id", handler.PermissionAdvertisementU, handler.AdvertisementPatch)
 	miAdvertisement.DELETE("/:id", handler.PermissionAdvertisementD, handler.AdvertisementDelete)
-
+	miAdvertisement.POST("/action/uploadImage", handler.PermissionAdvertisementU, handler.AdvertisementUploadImage)
 
 	miPermission := mi.Group("/permission")
 	miPermission.GET("/", handler.PermissionRoleR, handler.PermissionList)
@@ -58,8 +58,9 @@ func Begin() {
 
 	open.GET("/shop", handler.AdminList)
 	open.GET("/shop/:id", handler.AdminGet)
-	open.GET("/advertisement", handler.AdminGet)
 	open.GET("/shopClassification", handler.AdminGet)
+
+	open.GET("/advertisement", handler.AdvertisementList4Open)
 
 	// Query string parameters are parsed using the existing underlying request object.
 	// The request responds to a url matching:  /welcome?firstname=Jane&lastname=Doe
@@ -71,6 +72,7 @@ func Begin() {
 	//	c.String(http.StatusOK, "Hello %s %s", firstname, lastname)
 	//})
 	router.Static("/static", "html/assets")
+	router.Static("/upload", config.Get("uploadPath"))
 	router.GET("/", handler.Index2)
 	router.GET("/api", handler.Api)
 	//router.GET("/getPublicKey", handler.ApiGlobal,handler.GetPublicKey)
@@ -85,12 +87,12 @@ func Begin() {
 	//router.GET("/shop4Index", handler.Shop4IndexList)
 	//router.GET("/shop4Index/:id", handler.Shop4Index)
 	//
-	router.StaticFile("/geetest", "html/template/geetest.html")
-	//router.StaticFile("/login", "html/template/login.html")
-	//router.GET("/geetest", handler.GeetestRegister)
-	router.GET("/register", handler.GeetestRegister)
-	router.POST("/validate", handler.GeetestValidate)
-	router.POST("/ajax_validate", handler.GeetestAjaxValidate)
+	//router.StaticFile("/geetest", "html/template/geetest.html")
+	////router.StaticFile("/login", "html/template/login.html")
+	////router.GET("/geetest", handler.GeetestRegister)
+	//router.GET("/register", handler.GeetestRegister)
+	//router.POST("/validate", handler.GeetestValidate)
+	//router.POST("/ajax_validate", handler.GeetestAjaxValidate)
 	//
 	//ui.GET("/", handler.Index2)
 	////mi.GET("/", handler.Index2)

@@ -94,7 +94,7 @@ func AdminCheckLogin(c *gin.Context) {
 			return
 		}
 		if id == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, util.BuildNeedLoginResult())
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildNeedLoginResult())
 		}
 	}
 }
