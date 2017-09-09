@@ -2,16 +2,16 @@ package service
 
 import (
 	"database/sql"
-	"mimi/djq/dao"
-	"mimi/djq/model"
-	"mimi/djq/db/mysql"
-	"mimi/djq/util"
-	"mimi/djq/dao/arg"
 	"github.com/pkg/errors"
+	"mimi/djq/dao"
+	"mimi/djq/dao/arg"
+	"mimi/djq/db/mysql"
+	"mimi/djq/model"
+	"mimi/djq/util"
+	"log"
 )
 
 type Admin struct {
-
 }
 
 func (service *Admin) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
@@ -27,7 +27,8 @@ func (service *Admin) CheckLogin(obj *model.Admin) (*model.Admin, error) {
 	var err error
 	obj.Password, err = util.DecryptPassword(obj.Password)
 	if err != nil {
-		return nil, errors.Wrap(err, "未能识别登录密码")
+		log.Println(errors.Wrap(err, "未能识别登录密码"))
+		return nil, errors.New("未能识别登录密码")
 	}
 	obj.Password = util.BuildPassword4DB(obj.Password)
 	argObj := &arg.Admin{}
@@ -48,7 +49,7 @@ func (service *Admin) CheckLogin(obj *model.Admin) (*model.Admin, error) {
 	}
 	if list == nil || len(list) == 0 {
 		rollback = true
-		return nil, errors.New("登录失败，账号或密码错误")
+		return nil, errors.New("登录名或登录密码不正确")
 	}
 	newObj := list[0].(*model.Admin)
 	if newObj.Locked {
@@ -286,7 +287,7 @@ func (service *Admin) Count() {
 
 }
 
-func (service *Admin) Delete(ids ... string) (int64, error) {
+func (service *Admin) Delete(ids ...string) (int64, error) {
 	if ids == nil || len(ids) == 0 {
 		return 0, nil
 	}

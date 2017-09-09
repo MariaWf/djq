@@ -2,18 +2,23 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"mimi/djq/util"
-	"mimi/djq/dao/arg"
 	"log"
-	"mimi/djq/service"
-	"mimi/djq/model"
-	"strings"
-	"mimi/djq/session"
 	"mimi/djq/constant"
+	"mimi/djq/dao/arg"
+	"mimi/djq/model"
+	"mimi/djq/service"
+	"mimi/djq/session"
+	"mimi/djq/util"
+	"net/http"
+	"strings"
 )
 
 func AdminLogin(c *gin.Context) {
+	if !util.GeetestCheck(c) {
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrParamException.Error()))
+		return
+	}
+
 	obj := &model.Admin{}
 	err := c.Bind(obj)
 
@@ -36,18 +41,18 @@ func AdminLogin(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	if err = sn.Set("id", obj.Id); err != nil {
+	if err = sn.Set(session.SessionNameMiAdminId, obj.Id); err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	if err = sn.Set("name", obj.Name); err != nil {
+	if err = sn.Set(session.SessionNameMiAdminName, obj.Name); err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	if codeList := obj.GetPermissionCodeList(); codeList != nil&&len(codeList) != 0 {
-		if err = sn.Set("permissionCode", strings.Join(codeList, ",")); err != nil {
+	if codeList := obj.GetPermissionCodeList(); codeList != nil && len(codeList) != 0 {
+		if err = sn.Set(session.SessionNameMiPermission, strings.Join(codeList, constant.Split4Permission)); err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 			return
@@ -79,13 +84,13 @@ func AdminCheckLogin(c *gin.Context) {
 		sn, err := session.GetMi(c.Writer, c.Request)
 		if err != nil {
 			log.Println(err)
-			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 			return
 		}
-		id, err := sn.Get("id")
+		id, err := sn.Get(session.SessionNameMiAdminId)
 		if err != nil {
 			log.Println(err)
-			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 			return
 		}
 		if id == "" {
@@ -136,7 +141,7 @@ func AdminPost(c *gin.Context) {
 		if roleIdList != nil && len(roleIdList) != 0 {
 			admin.RoleList = make([]*model.Role, len(roleIdList), len(roleIdList))
 			for i, roleId := range roleIdList {
-				admin.RoleList[i] = &model.Role{Id:roleId}
+				admin.RoleList[i] = &model.Role{Id: roleId}
 			}
 		}
 	}
@@ -186,7 +191,7 @@ func AdminPatch(c *gin.Context) {
 		if roleIdList != nil && len(roleIdList) != 0 {
 			admin.RoleList = make([]*model.Role, len(roleIdList), len(roleIdList))
 			for i, roleId := range roleIdList {
-				admin.RoleList[i] = &model.Role{Id:roleId}
+				admin.RoleList[i] = &model.Role{Id: roleId}
 			}
 		}
 	}

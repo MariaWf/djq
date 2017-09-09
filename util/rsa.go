@@ -1,14 +1,14 @@
 package util
 
 import (
-	"crypto/x509"
+	"crypto/md5"
+	"crypto/rand"
 	"crypto/rsa"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/hex"
 	"encoding/pem"
 	"errors"
-	"crypto/rand"
-	"encoding/base64"
-	"crypto/md5"
-	"encoding/hex"
 )
 
 // 公钥和私钥可以从文件中读取
@@ -133,7 +133,6 @@ AgMBAAE=
 const (
 	Salt4Password = "djq.51zxiu.cn%!"
 )
-
 
 // 加密
 func RsaEncrypt(origData []byte) ([]byte, error) {

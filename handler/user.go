@@ -1,13 +1,13 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
-	"mimi/djq/model"
-	"strconv"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
+	"mimi/djq/model"
 	"mimi/djq/util"
+	"net/http"
+	"strconv"
 )
 
 func UserList(c *gin.Context) {
@@ -26,14 +26,14 @@ func UserGet(c *gin.Context) {
 	user.Id = c.Param("id")
 	user.Name = "name1"
 	result := util.BuildSuccessResult(user)
-	str,err:=c.Cookie("test")
-	if err!=nil{
+	str, err := c.Cookie("test")
+	if err != nil {
 		fmt.Println(err)
-	}else{
+	} else {
 		fmt.Println(str)
 	}
-	if str ==""{
-		cookie := http.Cookie{Name: "test", Value: "mimi", Path:"/"}
+	if str == "" {
+		cookie := http.Cookie{Name: "test", Value: "mimi", Path: "/"}
 		http.SetCookie(c.Writer, &cookie)
 	}
 	//fmt.Println(user)

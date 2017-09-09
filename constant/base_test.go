@@ -1,9 +1,9 @@
 package constant
 
 import (
-	"testing"
-	"mimi/djq/config"
 	"fmt"
+	"mimi/djq/config"
+	"testing"
 )
 
 func BenchmarkConfig(b *testing.B) {
@@ -18,4 +18,8 @@ func BenchmarkConfig(b *testing.B) {
 			fmt.Println("err")
 		}
 	}
+}
+
+func TestApiType(t *testing.T){
+	t.Log(ApiTypeMi,ApiTypeUi,ApiTypeSi,ApiTypeOpen)
 }

@@ -2,12 +2,12 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"strconv"
-	"net/http"
-	"mimi/djq/model"
 	"math/rand"
-	"time"
+	"mimi/djq/model"
 	"mimi/djq/util"
+	"net/http"
+	"strconv"
+	"time"
 )
 
 func Shop4IndexList(c *gin.Context) {
@@ -30,7 +30,7 @@ func Shop4IndexList(c *gin.Context) {
 		shop.Id = "id" + strconv.Itoa(i)
 		shop.Name = "name" + strconv.Itoa(i)
 		shop.TotalCashCouponNumber = rand.Intn(100000)
-		shop.TotalCashCouponPrice = shop.TotalCashCouponNumber + rand.Intn(10000) * rand.Intn(5)
+		shop.TotalCashCouponPrice = shop.TotalCashCouponNumber + rand.Intn(10000)*rand.Intn(5)
 		shop.PreImage = "preImage"
 		shopList = append(shopList, shop)
 	}
@@ -43,7 +43,7 @@ func Shop4Index(c *gin.Context) {
 	shop.Id = id
 	shop.Name = "name"
 	shop.TotalCashCouponNumber = rand.Intn(100000)
-	shop.TotalCashCouponPrice = shop.TotalCashCouponNumber + rand.Intn(10000) * rand.Intn(5)
+	shop.TotalCashCouponPrice = shop.TotalCashCouponNumber + rand.Intn(10000)*rand.Intn(5)
 	shop.PreImage = "preImage"
 	shopIntroductionImageList := make([]*model.ShopIntroductionImage, 0, 5)
 	for i := 0; i < 5; i++ {
@@ -66,5 +66,3 @@ func Shop4Index(c *gin.Context) {
 	shop.CashCouponList = cashCouponList
 	c.JSON(http.StatusOK, util.BuildSuccessResult(shop))
 }
-
-

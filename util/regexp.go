@@ -1,20 +1,23 @@
 package util
 
 import (
-	"regexp"
+	"fmt"
 	"github.com/pkg/errors"
+	"regexp"
+	"strings"
 )
 
 var (
-	RegexpChinese = "\u4e00-\u9fa5"
-	ErrNameFormat = errors.New("名称为英文或数字或下划线，不能以数字开头长度为4到32")
-	ErrMobileFormat = errors.New("手机号码为11为数字")
+	RegexpChinese     = "\u4e00-\u9fa5"
+	ErrNameFormat     = errors.New("名称为英文或数字或下划线，不能以数字开头长度为4到32")
+	ErrMobileFormat   = errors.New("手机号码为11为数字")
 	ErrPasswordFormat = errors.New("密码长度为6到32")
 )
 
 func MatchLen(str string, minInclude int, maxInclude int) bool {
-	len := len(str)
-	return len >= minInclude && len <= maxInclude
+	len := strings.Count(str, "") - 1
+	fmt.Println(str, len)
+	return minInclude <= len && len <= maxInclude
 }
 
 func MatchDescription(str ...string) bool {

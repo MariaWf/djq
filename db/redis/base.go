@@ -3,8 +3,8 @@ package redis
 import (
 	"fmt"
 	"github.com/go-redis/redis"
-	"sync"
 	"mimi/djq/config"
+	"sync"
 )
 
 var client *redis.Client
@@ -15,7 +15,7 @@ func Get() *redis.Client {
 		client = redis.NewClient(&redis.Options{
 			Addr:     config.Get("redis_address"),
 			Password: config.Get("redis_password"), // no password set
-			DB:       0, // use default DB
+			DB:       0,                            // use default DB
 		})
 	})
 
@@ -37,7 +37,7 @@ func getClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "", // no password set
-		DB:       0, // use default DB
+		DB:       0,  // use default DB
 	})
 	return client
 }
@@ -46,7 +46,7 @@ func ExampleNewClient() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "", // no password set
-		DB:       0, // use default DB
+		DB:       0,  // use default DB
 	})
 
 	pong, err := client.Ping().Result()

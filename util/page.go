@@ -1,8 +1,8 @@
 package util
 
 const (
-	BeginPage = 1
-	DefaultPageSize = 10
+	BeginPage        = 1
+	DefaultPageSize  = 10
 	DefaultBeginPage = BeginPage
 )
 

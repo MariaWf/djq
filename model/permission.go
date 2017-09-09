@@ -1,7 +1,7 @@
 package model
 
 type Permission struct {
-	Code        string  `json:"code" desc:"编码"`
+	Code        string `json:"code" desc:"编码"`
 	Name        string `json:"name" desc:"名称"`
 	Description string `json:"description" desc:"描述"`
 }
@@ -23,4 +23,3 @@ func GetPermissionList() []*Permission {
 		&Permission{"advertisement_u", "更新广告信息", "更新广告信息"},
 		&Permission{"advertisement_d", "删除广告信息", "删除广告信息"}}
 }
-

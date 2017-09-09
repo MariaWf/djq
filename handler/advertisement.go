@@ -2,10 +2,10 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"strconv"
-	"net/http"
 	"mimi/djq/model"
 	"mimi/djq/util"
+	"net/http"
+	"strconv"
 )
 
 func AdvertisementList4Index(c *gin.Context) {
@@ -14,7 +14,7 @@ func AdvertisementList4Index(c *gin.Context) {
 		advertisement := &model.Advertisement{}
 		advertisement.Id = "id" + strconv.Itoa(i)
 		advertisement.Name = "name" + strconv.Itoa(i)
-		advertisement.PreImage = "preImage" + strconv.Itoa(i)
+		advertisement.Image = "Image" + strconv.Itoa(i)
 		advertisement.Link = "link" + strconv.Itoa(i)
 		advertisementList = append(advertisementList, advertisement)
 	}

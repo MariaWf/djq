@@ -1,13 +1,13 @@
 package handler
 
 import (
-	"testing"
 	"github.com/gin-gonic/gin/json"
 	"mimi/djq/model"
 	"mimi/djq/util"
+	"testing"
 )
 
-func TestUserGet(t *testing.T){
+func TestUserGet(t *testing.T) {
 	user := &model.User{}
 	user.Id = "id1"
 	user.Name = "name1"
@@ -24,6 +24,6 @@ func TestUserGet(t *testing.T){
 	t.Log(string(jsonBytes2[:]))
 }
 
-func TestUserList(t *testing.T){
+func TestUserList(t *testing.T) {
 	t.Log("wawa")
 }

@@ -2,10 +2,10 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"strconv"
-	"net/http"
 	"mimi/djq/model"
 	"mimi/djq/util"
+	"net/http"
+	"strconv"
 )
 
 func ShopClassificationList4Index(c *gin.Context) {
@@ -18,4 +18,3 @@ func ShopClassificationList4Index(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, util.BuildSuccessResult(shopClassificationList))
 }
-

@@ -1,11 +1,11 @@
 package service
 
 import (
-	"testing"
-	"mimi/djq/model"
-	"strconv"
 	"math/rand"
 	"mimi/djq/dao/arg"
+	"mimi/djq/model"
+	"strconv"
+	"testing"
 )
 
 func TestRole_Update(t *testing.T) {

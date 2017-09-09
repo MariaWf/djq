@@ -1,9 +1,9 @@
 package arg
 
 import (
-	"strings"
 	"errors"
 	"mimi/djq/util"
+	"strings"
 )
 
 var ErrUpdateObjectEmpty = errors.New("dao: updateObject is empty")

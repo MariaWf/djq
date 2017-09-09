@@ -1,10 +1,10 @@
 package dao
 
 import (
-	"mimi/djq/dao/arg"
 	"database/sql"
-	"mimi/djq/model"
 	"github.com/pkg/errors"
+	"mimi/djq/dao/arg"
+	"mimi/djq/model"
 	"mimi/djq/util"
 )
 
@@ -36,19 +36,19 @@ func (dao *Role) DeleteRelationshipWithAdmin(roleIds ...string) (int64, error) {
 	sql += ");"
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
-		return 0, errors.Wrap(err, "conn:" + sql)
+		return 0, errors.Wrap(err, "conn:"+sql)
 	}
 	defer stmt.Close()
 	result, err := stmt.Exec(util.StringArrConvert2InterfaceArr(roleIds)...)
 	if err != nil {
-		return 0, errors.Wrap(err, "stmt:" + sql)
+		return 0, errors.Wrap(err, "stmt:"+sql)
 	}
 	return result.RowsAffected()
 }
 
 func (dao *Role) ListRoleIdsByAdminId(adminId string) ([]string, error) {
-	if adminId == ""{
-		return nil,ErrIdEmpty
+	if adminId == "" {
+		return nil, ErrIdEmpty
 	}
 	sql := "select distinct role_id from tr_admin_role where admin_id = ? and del_flag = false;"
 	stmt, err := dao.GetConn().Prepare(sql)
@@ -61,7 +61,7 @@ func (dao *Role) ListRoleIdsByAdminId(adminId string) ([]string, error) {
 		return nil, errors.Wrap(err, "stmt:"+sql)
 	}
 	defer rows.Close()
-	roleIds := make([]string,0,10)
+	roleIds := make([]string, 0, 10)
 	for rows.Next() {
 		var roleId string
 		err = rows.Scan(&roleId)
@@ -77,4 +77,3 @@ func (dao *Role) ListRoleIdsByAdminId(adminId string) ([]string, error) {
 //	sql := "select id,name,description from tbl_role t1 left join "
 //	return &model.Role{}
 //}
-

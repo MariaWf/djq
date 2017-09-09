@@ -13,12 +13,12 @@ import "mimi/djq/util"
 //del_flag tinyint(1) default false
 
 type Present struct {
-	Id          string `json:"id" db:"id" desc:"id"`
-	Name        string `json:"name" db:"name" desc:"名称"`
-	Address     string `json:"address" db:"address" desc:"地址"`
-	Stock       int `json:"stock" db:"stock" desc:"库存"`
-	Requirement int `json:"requirement" db:"requirement" desc:"需求"`
+	Id          string        `json:"id" db:"id" desc:"id"`
+	Name        string        `json:"name" db:"name" desc:"名称"`
+	Address     string        `json:"address" db:"address" desc:"地址"`
+	Stock       int           `json:"stock" db:"stock" desc:"库存"`
+	Requirement int           `json:"requirement" db:"requirement" desc:"需求"`
 	ExpiryDate  util.JSONTime `json:"expiryDate" db:"expiryDate" desc:"有效时间"`
-	Expired     bool `json:"expired" db:"expired" desc:"已过期"`
-	Locked      bool `json:"locked" db:"locked" desc:"锁定"`
+	Expired     bool          `json:"expired" db:"expired" desc:"已过期"`
+	Locked      bool          `json:"locked" db:"locked" desc:"锁定"`
 }

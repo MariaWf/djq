@@ -1,15 +1,14 @@
 package service
 
 import (
-	"testing"
-	"mimi/djq/model"
-	"strconv"
-	"mimi/djq/util"
-	"math/rand"
 	"github.com/pkg/errors"
+	"math/rand"
 	"mimi/djq/dao/arg"
+	"mimi/djq/model"
+	"mimi/djq/util"
+	"strconv"
+	"testing"
 )
-
 
 func TestAdmin_Update(t *testing.T) {
 	list, err := listAllAdmin()
@@ -21,7 +20,7 @@ func TestAdmin_Update(t *testing.T) {
 		obj.Name = "mimi"
 		obj.Locked = true
 		obj.Mobile = "11111111111"
-		_, err := Update(service, obj, "name","locked")
+		_, err := Update(service, obj, "name", "locked")
 		if err != nil {
 			t.Error(err)
 		} else {

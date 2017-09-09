@@ -2,9 +2,9 @@ package dao
 
 import (
 	"database/sql"
-	"mimi/djq/model"
-	"mimi/djq/dao/arg"
 	"github.com/pkg/errors"
+	"mimi/djq/dao/arg"
+	"mimi/djq/model"
 	"mimi/djq/util"
 )
 
@@ -12,11 +12,11 @@ type UserDao struct {
 	Conn *sql.Tx
 }
 
-func (u *UserDao)SetConn(conn *sql.Tx) {
+func (u *UserDao) SetConn(conn *sql.Tx) {
 	u.Conn = conn
 }
 
-func (u *UserDao)Find(arg *arg.User) ([]*model.User, error) {
+func (u *UserDao) Find(arg *arg.User) ([]*model.User, error) {
 	users := make([]*model.User, 0, arg.PageSize)
 	sql, params, columnNames := arg.BuildFindSql()
 	stmt, err := u.Conn.Prepare(sql)
@@ -40,7 +40,7 @@ func (u *UserDao)Find(arg *arg.User) ([]*model.User, error) {
 	return users, nil
 }
 
-func (u *UserDao)Count(arg *arg.User) (int, error) {
+func (u *UserDao) Count(arg *arg.User) (int, error) {
 	sql, params := arg.BuildCountSql()
 	stmt, err := u.Conn.Prepare(sql)
 	if err != nil {
@@ -63,7 +63,7 @@ func (u *UserDao)Count(arg *arg.User) (int, error) {
 	return 0, errors.Wrap(ErrUnknown, "dao:user:count")
 }
 
-func (u *UserDao)Get(id string) (*model.User, error) {
+func (u *UserDao) Get(id string) (*model.User, error) {
 	if id == "" {
 		return nil, ErrIdEmpty
 	}
@@ -93,7 +93,7 @@ func (u *UserDao)Get(id string) (*model.User, error) {
 	return nil, ErrObjectNotFound
 }
 
-func (u *UserDao)Add(user *model.User) (*model.User, error) {
+func (u *UserDao) Add(user *model.User) (*model.User, error) {
 	if user == nil {
 		return nil, ErrObjectEmpty
 	}
@@ -115,7 +115,7 @@ func (u *UserDao)Add(user *model.User) (*model.User, error) {
 	return user, nil
 }
 
-func (u *UserDao)Update(user *model.User, args ... string) (*model.User, error) {
+func (u *UserDao) Update(user *model.User, args ...string) (*model.User, error) {
 	if user == nil {
 		return nil, ErrObjectEmpty
 	}
@@ -139,7 +139,7 @@ func (u *UserDao)Update(user *model.User, args ... string) (*model.User, error) 
 	return user, nil
 }
 
-func (u *UserDao)BatchUpdate(arg *arg.User) (int64, error) {
+func (u *UserDao) BatchUpdate(arg *arg.User) (int64, error) {
 	sql, params := arg.BuildUpdateSql()
 	stmt, err := u.Conn.Prepare(sql)
 	if err != nil {
@@ -153,7 +153,7 @@ func (u *UserDao)BatchUpdate(arg *arg.User) (int64, error) {
 	return result.RowsAffected()
 }
 
-func (u *UserDao)Delete(arg *arg.User) (int64, error) {
+func (u *UserDao) Delete(arg *arg.User) (int64, error) {
 	sql, params := arg.BuildDeleteSql()
 	stmt, err := u.Conn.Prepare(sql)
 	if err != nil {

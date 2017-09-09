@@ -1,28 +1,28 @@
 package arg
 
 import (
-	"strings"
-	"mimi/djq/util"
 	"mimi/djq/model"
+	"mimi/djq/util"
+	"strings"
 )
 
 type User struct {
-	NameLike          string
-	NameEqual         string
-	MobileLike        string
-	MobileEqual       string
-	NickNameLike      string
-	NickNameEqual     string
-	IdEqual           string
+	NameLike      string
+	NameEqual     string
+	MobileLike    string
+	MobileEqual   string
+	NickNameLike  string
+	NickNameEqual string
+	IdEqual       string
 
-	LoginNameLike     string
-	LoginNameEqual    string
-	PasswordEqual     string
+	LoginNameLike  string
+	LoginNameEqual string
+	PasswordEqual  string
 
-	PageSize          int
-	TargetPage        int
+	PageSize   int
+	TargetPage int
 
-	ShowColumnNames   []string
+	ShowColumnNames []string
 
 	UpdateObject      *model.User
 	UpdateColumnNames []string
@@ -96,11 +96,16 @@ func (u *User) getShowColumnNames() []string {
 	s := make([]string, 0, len(u.ShowColumnNames))
 	for _, v := range u.ShowColumnNames {
 		switch v {
-		case "id":s = append(s, "id")
-		case "name":s = append(s, "name")
-		case "nickName":s = append(s, "nick_name")
-		case "mobile":s = append(s, "mobile")
-		case "password":s = append(s, "password")
+		case "id":
+			s = append(s, "id")
+		case "name":
+			s = append(s, "name")
+		case "nickName":
+			s = append(s, "nick_name")
+		case "mobile":
+			s = append(s, "mobile")
+		case "password":
+			s = append(s, "password")
 		}
 	}
 	if len(s) == 0 {
@@ -117,13 +122,17 @@ func (u *User) getColumnNameValues() ([]string, []interface{}) {
 	params := make([]interface{}, 0, 9)
 	for _, v := range u.UpdateColumnNames {
 		switch v {
-		case "name":s = append(s, "name = ?")
+		case "name":
+			s = append(s, "name = ?")
 			params = append(params, u.UpdateObject.Name)
-		case "nickName":s = append(s, "nick_name = ?")
+		case "nickName":
+			s = append(s, "nick_name = ?")
 			params = append(params, u.UpdateObject.NickName)
-		case "mobile":s = append(s, "mobile = ?")
+		case "mobile":
+			s = append(s, "mobile = ?")
 			params = append(params, u.UpdateObject.Mobile)
-		case "password":s = append(s, "password = ?")
+		case "password":
+			s = append(s, "password = ?")
 			params = append(params, u.UpdateObject.Password)
 		}
 	}
@@ -157,7 +166,7 @@ func (u *User) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " name like ?"
-		params = append(params, "%" + u.NameLike + "%")
+		params = append(params, "%"+u.NameLike+"%")
 	}
 	if u.NameEqual != "" {
 		if sql != "" {
@@ -171,7 +180,7 @@ func (u *User) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " nick_name like ?"
-		params = append(params, "%" + u.NickNameLike + "%")
+		params = append(params, "%"+u.NickNameLike+"%")
 	}
 	if u.NickNameEqual != "" {
 		if sql != "" {
@@ -185,7 +194,7 @@ func (u *User) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " mobile like ?"
-		params = append(params, "%" + u.MobileLike + "%")
+		params = append(params, "%"+u.MobileLike+"%")
 	}
 	if u.MobileEqual != "" {
 		if sql != "" {

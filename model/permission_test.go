@@ -1,14 +1,14 @@
 package model
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 func TestGetPermissionList(t *testing.T) {
-	list :=GetPermissionList();
+	list := GetPermissionList()
 	fmt.Println(list)
-	for _,pm := range list{
+	for _, pm := range list {
 		fmt.Println(pm.Code)
 	}
 }

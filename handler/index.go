@@ -1,14 +1,15 @@
 package handler
 
 import (
-	"net/http"
-	"html/template"
-	"log"
-	"github.com/gin-gonic/gin"
 	"fmt"
-	"mimi/djq/util"
+	"github.com/gin-gonic/gin"
+	"html/template"
 	"mimi/djq/config"
+	"mimi/djq/util"
+	"net/http"
 	"strings"
+	"mimi/djq/session"
+	"log"
 )
 
 func NotFound(c *gin.Context) {
@@ -28,7 +29,7 @@ func ApiGlobal(c *gin.Context) {
 				c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 				c.Writer.Header().Set("Access-Control-Allow-Method", "POST,GET")
 				c.Writer.Header().Set("Access-Control-Allow-Headers", "X-Requested-With")
-				break;
+				break
 			}
 		}
 	}
@@ -45,22 +46,22 @@ func ApiGlobal(c *gin.Context) {
 	//}
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	values := make(map[string]interface{})
-	if authentication, session, err := CheckLogin(w, r); err != nil {
-		log.Println(err)
-	} else {
-		values["authentication"] = authentication
-		if loginName, err := session.Get("loginName"); err != nil {
-			log.Println(err)
-		} else {
-			values["loginName"] = loginName
-		}
-	}
-	t, _ := template.ParseFiles("html/template/index.html", "html/template/head.html")
-	t.ExecuteTemplate(w, "head", values)
-	//t.Execute(w, values)
-}
+//func Index(w http.ResponseWriter, r *http.Request) {
+//	values := make(map[string]interface{})
+//	if authentication, session, err := CheckLogin(w, r); err != nil {
+//		log.Println(err)
+//	} else {
+//		values["authentication"] = authentication
+//		if loginName, err := session.Get("loginName"); err != nil {
+//			log.Println(err)
+//		} else {
+//			values["loginName"] = loginName
+//		}
+//	}
+//	t, _ := template.ParseFiles("html/template/index.html", "html/template/head.html")
+//	t.ExecuteTemplate(w, "head", values)
+//	//t.Execute(w, values)
+//}
 
 func Index2(c *gin.Context) {
 	values := make(map[string]interface{})
@@ -89,6 +90,22 @@ func Index2(c *gin.Context) {
 func GetPublicKey(c *gin.Context) {
 	result := util.BuildSuccessResult(string(util.GetPublicKey()))
 	c.JSON(http.StatusOK, result)
+}
+
+func GeetestInit(c *gin.Context) {
+	sn, err := session.GetOpen(c.Writer, c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("验证码初始化异常"))
+		return
+	}
+	geetestId := config.Get("geetest_id")
+	geetestKey := config.Get("geetest_key")
+	var userID = sn.Id
+	gt := util.GeetestLib(geetestKey, geetestId)
+	gt.PreProcess(userID)
+	responseMap := gt.GetResponseMap()
+	c.JSON(http.StatusOK, responseMap)
 }
 
 func Upload(c *gin.Context) {

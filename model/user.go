@@ -41,11 +41,16 @@ func (u *User) ConvertFromMap(m map[string]interface{}) {
 
 func (u *User) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id":return &u.Id;
-	case "name":return &u.Name
-	case "nick_name":return &u.NickName
-	case "mobile":return &u.Mobile
-	case "password":return &u.Password
+	case "id":
+		return &u.Id
+	case "name":
+		return &u.Name
+	case "nick_name":
+		return &u.NickName
+	case "mobile":
+		return &u.Mobile
+	case "password":
+		return &u.Password
 	}
 	panic(errors.New("属性不存在"))
 }
@@ -60,11 +65,16 @@ func (u *User) GetPointers4DB(names []string) []interface{} {
 
 func (u *User) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id":return u.Id;
-	case "name":return u.Name
-	case "nick_name":return u.NickName
-	case "mobile":return u.Mobile
-	case "password":return u.Password
+	case "id":
+		return u.Id
+	case "name":
+		return u.Name
+	case "nick_name":
+		return u.NickName
+	case "mobile":
+		return u.Mobile
+	case "password":
+		return u.Password
 	}
 	panic(errors.New("属性不存在"))
 }

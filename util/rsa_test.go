@@ -1,8 +1,8 @@
 package util
 
 import (
-	"testing"
 	"encoding/base64"
+	"testing"
 )
 
 func TestRsaEncrypt(t *testing.T) {

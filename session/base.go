@@ -1,12 +1,18 @@
 package session
 
 import (
-	"net/http"
-	"mimi/djq/db/redis"
-	"time"
 	"github.com/pkg/errors"
+	"mimi/djq/db/redis"
 	"mimi/djq/util"
+	"net/http"
 	"strconv"
+	"time"
+)
+
+const (
+	SessionNameMiAdminId = "miAdminId"
+	SessionNameMiPermission = "miPermission"
+	SessionNameMiAdminName = "miAdminName"
 )
 
 func GetMi(w http.ResponseWriter, r *http.Request) (*Session, error) {
@@ -21,18 +27,23 @@ func GetSi(w http.ResponseWriter, r *http.Request) (*Session, error) {
 	return Get(w, r, "mi", 0, time.Hour * 24)
 }
 
-func Get(w http.ResponseWriter, r *http.Request, sessionType string, cookieMaxAge int, redisExpires  time.Duration) (*Session, error) {
+func GetOpen(w http.ResponseWriter, r *http.Request) (*Session, error) {
+	return Get(w, r, "ui", 0, time.Hour * 1)
+}
+
+func Get(w http.ResponseWriter, r *http.Request, sessionType string, cookieMaxAge int, redisExpires time.Duration) (*Session, error) {
 	cookieName := sessionType + "SessionId"
 	session := &Session{}
 	if cookie, err := r.Cookie(cookieName); err != nil && err != http.ErrNoCookie {
 		return nil, errors.Wrap(err, "获取cookie失败")
 	} else if cookie == nil || cookie.Value == "" {
 		session.Id = util.BuildUUID()
-		cookie := http.Cookie{Name: cookieName, Value: session.Id, Path:"/", MaxAge:cookieMaxAge}
-		http.SetCookie(w, &cookie)
 	} else {
 		session.Id = cookie.Value
 	}
+	cookie := http.Cookie{Name: cookieName, Value: session.Id, Path: "/", MaxAge: cookieMaxAge}
+	http.SetCookie(w, &cookie)
+
 	session.CookieMaxAge = cookieMaxAge
 	session.RedisExpires = redisExpires
 	session.w = w
@@ -58,6 +69,9 @@ func (sn *Session) Get(key string) (string, error) {
 		return "", err
 	} else if !exist {
 		return "", nil
+	}
+	if error := conn.Expire(sn.getKey(), sn.RedisExpires).Err(); error != nil {
+		return "", error
 	}
 	return conn.HGet(sn.getKey(), key).Result()
 }
@@ -86,20 +100,19 @@ func (sn *Session) Set(key string, value interface{}) error {
 
 }
 
-func (sn *Session) Del() (error) {
+func (sn *Session) Del() error {
 	conn := redis.Get()
 	if err := conn.Del(sn.getKey()).Err(); err != nil {
 		return err
 	}
-	cookie := http.Cookie{Name: sn.cookieName, Value: sn.Id, Path:"/", MaxAge:0}
+	cookie := http.Cookie{Name: sn.cookieName, Value: sn.Id, Path: "/", MaxAge: 0}
 	http.SetCookie(sn.w, &cookie)
 	return nil
 }
 
-func (sn *Session) getKey() (string) {
+func (sn *Session) getKey() string {
 	return sn.sessionType + ":" + sn.Id
 }
-
 
 //import (
 //	"time"

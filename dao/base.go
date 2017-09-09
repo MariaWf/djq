@@ -1,11 +1,11 @@
 package dao
 
 import (
-	"mimi/djq/util"
 	"database/sql"
+	"github.com/pkg/errors"
 	"mimi/djq/dao/arg"
 	"mimi/djq/model"
-	"github.com/pkg/errors"
+	"mimi/djq/util"
 )
 
 var ErrIdEmpty = errors.New("dao: id is empty")
@@ -26,7 +26,7 @@ type BaseDaoInterface interface {
 	GetConn() *sql.Tx
 }
 
-func Find(dao BaseDaoInterface,argObj arg.BaseArgInterface) ([]interface{}, error) {
+func Find(dao BaseDaoInterface, argObj arg.BaseArgInterface) ([]interface{}, error) {
 	objList := make([]interface{}, 0, argObj.GetPageSize())
 	sql, params, columnNames := arg.BuildFindSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
@@ -50,7 +50,7 @@ func Find(dao BaseDaoInterface,argObj arg.BaseArgInterface) ([]interface{}, erro
 	return objList, nil
 }
 
-func Count(dao BaseDaoInterface,argObj arg.BaseArgInterface) (int, error) {
+func Count(dao BaseDaoInterface, argObj arg.BaseArgInterface) (int, error) {
 	sql, params := arg.BuildCountSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
@@ -73,7 +73,7 @@ func Count(dao BaseDaoInterface,argObj arg.BaseArgInterface) (int, error) {
 	return 0, errors.Wrap(ErrUnknown, "dao:model:count:"+sql)
 }
 
-func Get(dao BaseDaoInterface,id string) (interface{}, error) {
+func Get(dao BaseDaoInterface, id string) (interface{}, error) {
 	if id == "" {
 		return nil, ErrIdEmpty
 	}
@@ -103,7 +103,7 @@ func Get(dao BaseDaoInterface,id string) (interface{}, error) {
 	return nil, ErrObjectNotFound
 }
 
-func Add(dao BaseDaoInterface,obj  model.BaseModelInterface) (interface{}, error) {
+func Add(dao BaseDaoInterface, obj model.BaseModelInterface) (interface{}, error) {
 	if obj == nil {
 		return nil, ErrObjectEmpty
 	}
@@ -126,7 +126,7 @@ func Add(dao BaseDaoInterface,obj  model.BaseModelInterface) (interface{}, error
 
 }
 
-func Update(dao BaseDaoInterface,obj model.BaseModelInterface, args ... string) (interface{}, error) {
+func Update(dao BaseDaoInterface, obj model.BaseModelInterface, args ...string) (interface{}, error) {
 	if obj == nil {
 		return nil, ErrObjectEmpty
 	}
@@ -150,7 +150,7 @@ func Update(dao BaseDaoInterface,obj model.BaseModelInterface, args ... string) 
 	return obj, nil
 }
 
-func BatchUpdate(dao BaseDaoInterface,argObj arg.BaseArgInterface) (int64, error) {
+func BatchUpdate(dao BaseDaoInterface, argObj arg.BaseArgInterface) (int64, error) {
 	sql, params := arg.BuildUpdateSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
@@ -164,7 +164,7 @@ func BatchUpdate(dao BaseDaoInterface,argObj arg.BaseArgInterface) (int64, error
 	return result.RowsAffected()
 }
 
-func Delete(dao BaseDaoInterface,argObj arg.BaseArgInterface) (int64, error) {
+func Delete(dao BaseDaoInterface, argObj arg.BaseArgInterface) (int64, error) {
 	sql, params := arg.BuildDeleteSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
@@ -179,7 +179,7 @@ func Delete(dao BaseDaoInterface,argObj arg.BaseArgInterface) (int64, error) {
 
 }
 
-func LogicalDelete(dao BaseDaoInterface,argObj arg.BaseArgInterface) (int64, error) {
+func LogicalDelete(dao BaseDaoInterface, argObj arg.BaseArgInterface) (int64, error) {
 	sql, params := arg.BuildLogicalDeleteSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {

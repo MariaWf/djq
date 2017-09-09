@@ -2,10 +2,10 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"mimi/djq/handler"
 	"io"
-	"os"
 	"mimi/djq/config"
+	"mimi/djq/handler"
+	"os"
 	"path/filepath"
 )
 
@@ -19,8 +19,10 @@ func Begin() {
 	ui.POST("/login", handler.AdminList)
 
 	mi := router.Group("/mi", handler.ApiGlobal, handler.AdminCheckLogin)
+
 	mi.POST("/login", handler.AdminLogin)
 	mi.POST("/logout", handler.AdminLogout)
+
 	miAdmin := mi.Group("/admin")
 	miAdmin.GET("/", handler.PermissionAdminR, handler.AdminList)
 	miAdmin.GET("/:id", handler.PermissionAdminR, handler.AdminGet)
@@ -28,10 +30,24 @@ func Begin() {
 	miAdmin.PATCH("/:id", handler.PermissionAdminU, handler.AdminPatch)
 	miAdmin.DELETE("/:id", handler.PermissionAdminD, handler.AdminDelete)
 
+	miRole := mi.Group("/role")
+	miRole.GET("/", handler.PermissionRoleR, handler.RoleList)
+	miRole.GET("/:id", handler.PermissionRoleR, handler.RoleGet)
+	miRole.POST("/", handler.PermissionRoleC, handler.RolePost)
+	miRole.PATCH("/:id", handler.PermissionRoleU, handler.RolePatch)
+	miRole.DELETE("/:id", handler.PermissionRoleD, handler.RoleDelete)
+
+	miPermission := mi.Group("/permission")
+	miPermission.GET("/", handler.PermissionRoleR, handler.PermissionList)
+
 	si := router.Group("/si", handler.ApiGlobal)
 	si.POST("/login", handler.AdminList)
 
 	open := router.Group("/open", handler.ApiGlobal)
+
+	open.POST("/geetest", handler.GeetestInit)
+	open.GET("/getPublicKey", handler.GetPublicKey)
+
 	open.GET("/shop", handler.AdminList)
 	open.GET("/shop/:id", handler.AdminGet)
 	open.GET("/advertisement", handler.AdminGet)
@@ -49,7 +65,7 @@ func Begin() {
 	router.Static("/static", "html/assets")
 	router.GET("/", handler.Index2)
 	router.GET("/api", handler.Api)
-	router.GET("/getPublicKey", handler.GetPublicKey)
+	//router.GET("/getPublicKey", handler.ApiGlobal,handler.GetPublicKey)
 	//router.GET("/user/:id", handler.UserGet)
 	//router.GET("/user", handler.UserList)
 	//router.POST("/upload", handler.Upload)
@@ -61,12 +77,12 @@ func Begin() {
 	//router.GET("/shop4Index", handler.Shop4IndexList)
 	//router.GET("/shop4Index/:id", handler.Shop4Index)
 	//
-	//router.StaticFile("/geetest", "html/template/geetest.html")
+	router.StaticFile("/geetest", "html/template/geetest.html")
 	//router.StaticFile("/login", "html/template/login.html")
-	////router.GET("/geetest", handler.GeetestRegister)
-	//router.GET("/register", handler.GeetestRegister)
-	//router.POST("/validate", handler.GeetestValidate)
-	//router.POST("/ajax_validate", handler.GeetestAjaxValidate)
+	//router.GET("/geetest", handler.GeetestRegister)
+	router.GET("/register", handler.GeetestRegister)
+	router.POST("/validate", handler.GeetestValidate)
+	router.POST("/ajax_validate", handler.GeetestAjaxValidate)
 	//
 	//ui.GET("/", handler.Index2)
 	////mi.GET("/", handler.Index2)

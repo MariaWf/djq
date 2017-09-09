@@ -1,9 +1,9 @@
 package handler
 
 import (
+	"github.com/pkg/errors"
 	"mimi/djq/service"
 	"sync"
-	"github.com/pkg/errors"
 )
 
 var ErrParamException = errors.New("参数异常")

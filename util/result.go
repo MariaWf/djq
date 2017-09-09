@@ -1,14 +1,20 @@
 package util
 
+import "errors"
+
 const (
-	ResultStatusNeedLogin = 2
-	ResultStatusSuccess = 1
-	ResultStatusFail = 0
+	ResultStatusNeedPermission = 3
+	ResultStatusNeedLogin      = 2
+	ResultStatusSuccess        = 1
+	ResultStatusFail           = 0
 )
 
+var ErrNeedMiLogin = errors.New("请先登录再进行下一步操作")
+var ErrNeedMiPermission = errors.New("没有足够权限进行下一步操作")
+
 type ResultVO struct {
-	Status int `json:"status"`
-	Msg    string `json:"msg"`
+	Status int         `json:"status"`
+	Msg    string      `json:"msg"`
 	Result interface{} `json:"result"`
 }
 
@@ -31,7 +37,12 @@ func BuildFailResult(msg string) *ResultVO {
 }
 
 func BuildNeedLoginResult() *ResultVO {
-	result := &ResultVO{ResultStatusNeedLogin, "请登录再进行下一步操作", nil}
+	result := &ResultVO{ResultStatusNeedLogin, ErrNeedMiLogin.Error(), nil}
+	return result
+}
+
+func BuildNeedPermissionResult() *ResultVO {
+	result := &ResultVO{ResultStatusNeedPermission, ErrNeedMiPermission.Error(), nil}
 	return result
 }
 
@@ -55,7 +66,7 @@ func BuildPageVO(targetPage int, pageSize int, total int, datas interface{}) *Pa
 		pageSize = DefaultPageSize
 	}
 	totalPage := total / pageSize
-	if total % pageSize > 0 {
+	if total%pageSize > 0 {
 		totalPage++
 	}
 	return &PageVO{targetPage, pageSize, total, totalPage, datas}

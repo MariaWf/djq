@@ -3,7 +3,11 @@
     <script src="/static/js/test.js"></script>
     <link href="/static/css/test.css" rel="stylesheet">
     <!--<script src="/static/js/jquery-2.1.1.min.js"></script>-->
-    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <!--<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>-->
+    <!-- 为使用方便，直接使用jquery.js库 -->
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+    <!-- 引入封装了failback的接口--initGeetest -->
+    <script src="http://static.geetest.com/static/tools/gt.js"></script>
     <script src="/static/js/jsencrypt.min.js"></script>
 
 </head>
@@ -21,7 +25,7 @@ index
 <div>
     <button type="button" onclick="findAdmin()">findAdmin</button>
 </div>
-<textarea id="resultMsg" style="width:400px;height:100px"></textarea>
+<textarea id="resultMsg" style="width:600px;height:400px"></textarea>
 
 <div>
     <button type="button" onclick="getPublicKey()">获取公匙</button>
@@ -30,8 +34,10 @@ index
     <input type="text" id="loginName" name="name" value="" placeholder="登录名称"/>
     <input type="text" id="password" name="password" value="" placeholder="登录密码"/>
     <button type="button" onclick="login()">登录</button>
+    <button type="button" id="popup-submit">滑动验证登录</button>
     <button type="button" onclick="logout()">登出</button>
         <input type="submit" value="submit" />
+        <div id="popup-captcha"></div>
     </form>
 </div>
 </body>
@@ -39,11 +45,106 @@ index
     if (getCookie("miSessionId")){
         $("#resultMsg").val(getCookie("miSessionId"))
     }
+    getPublicKey()
+
+    var gt_server_status;
+    var user_id;
+    var handlerPopup = function (captchaObj) {
+        $("#popup-submit").click(function () {
+            var validate = captchaObj.getValidate();
+            if (!validate) {
+                alert('请先完成验证！');
+                return;
+            }
+//            $.ajax({
+//                url: "/ajax_validate", // 进行二次验证
+//                type: "post",
+//                dataType: "json",
+//                data: {
+//                    gt_server_status: gt_server_status,
+//                    user_id: user_id,
+//                    // 二次验证所需的三个值
+//                    geetest_challenge: validate.geetest_challenge,
+//                    geetest_validate: validate.geetest_validate,
+//                    geetest_seccode: validate.geetest_seccode
+//                },
+//                success: function (data) {
+//                    if (data && (data.status === "success")) {
+//                        $(document.body).html('<h1>登录成功</h1>');
+//                    } else {
+//                        $(document.body).html('<h1>登录失败</h1>');
+//                    }
+//                }
+//            });
+
+            var encrypt = new JSEncrypt();
+            encrypt.setPublicKey($('#resultMsg').val());
+            $.ajax({
+                type: 'POST',
+                url: "/mi/login",
+                data: {
+                    name: $("#loginName").val(),
+                    password: encrypt.encrypt($("#password").val()),
+                    gt_server_status: gt_server_status,
+                    user_id: user_id,
+                    // 二次验证所需的三个值
+                    geetest_challenge: validate.geetest_challenge,
+                    geetest_validate: validate.geetest_validate,
+                    geetest_seccode: validate.geetest_seccode
+                },
+//            data: {name:obj.name,password:obj.password},
+//            async: true,
+//            cache: false,
+                dataType: "json",
+//            contentType: false,
+//            processData: false,
+                success: function (data) {
+                    if (data.status == 1) {
+                        $("#resultMsg").val(data.result.name + getCookie("miSessionId"))
+                    } else {
+                        $("#resultMsg").val(data.msg)
+                    }
+                },
+                error: function (data) {
+                    $("#resultMsg").val(data.msg)
+                },
+                complete: function (data) {
+                    captchaObj.reset();
+//                $("#resultMsg").val(data)
+                }
+            });
+        });
+        // 弹出式需要绑定触发验证码弹出按钮
+//        captchaObj.bindOn("#popup-submit");
+        // 将验证码加到id为captcha的元素里
+        captchaObj.appendTo("#popup-captcha");
+        // 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
+    };
+    $.ajax({
+        // 获取id，challenge，success（是否启用failback）
+        url: "/open/geetest?t=" + (new Date()).getTime(), // 加随机数防止缓存
+        type: "POST",
+        dataType: "json",
+        success: function (data) {
+            gt_server_status = data.success;
+            user_id = data.user_id;
+            // 使用initGeetest接口
+            // 参数1：配置参数
+            // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+            initGeetest({
+                gt: data.gt,
+                challenge: data.challenge,
+                product: "popup", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                offline: !data.success // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+            }, handlerPopup);
+        }
+    });
+
     function getPublicKey(){
         obj = {}
         $.ajax({
             type: 'GET',
-            url: "http://localhost:8080/getPublicKey",
+            url: "/open/getPublicKey",
             data: obj,
             dataType: "json",
             success: function (data) {
@@ -71,7 +172,7 @@ index
         obj.password  = encrypt.encrypt(obj.password);
         $.ajax({
             type: 'POST',
-            url: "http://localhost:8080/mi/login",
+            url: "/mi/login",
             data: obj,
 //            data: {name:obj.name,password:obj.password},
 //            async: true,

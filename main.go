@@ -1,17 +1,18 @@
 package main
 
 import (
-	"mimi/djq/router"
-	"os"
+	"fmt"
 	"log"
 	"mimi/djq/config"
-	"path/filepath"
-	"time"
-	"mimi/djq/service"
+	"mimi/djq/constant"
 	"mimi/djq/dao/arg"
 	"mimi/djq/model"
+	"mimi/djq/router"
+	"mimi/djq/service"
 	"mimi/djq/util"
-	"mimi/djq/constant"
+	"os"
+	"path/filepath"
+	"time"
 )
 
 func main() {
@@ -47,6 +48,7 @@ func initRole() string {
 	if roleList == nil || len(roleList) == 0 {
 		role := &model.Role{}
 		role.PermissionList = model.GetPermissionList()
+		fmt.Println(config.Get("adminRole"))
 		role.Name = config.Get("adminRole")
 		role.Description = "超级管理员不能删除，不能修改"
 		role, err := serviceRole.Add(role)
@@ -70,7 +72,7 @@ func initAdmin() string {
 		obj.Password = config.Get("adminPassword")
 		obj.Password, err = util.EncryptPassword(obj.Password)
 		checkErr(err)
-		obj.RoleList = []*model.Role{{Id:roleId}}
+		obj.RoleList = []*model.Role{{Id: roleId}}
 		obj, err := serviceAdmin.Add(obj)
 		checkErr(err)
 		return obj.Id
@@ -89,7 +91,7 @@ func initLog() {
 		path := filepath.Dir(globalLogUrl)
 		os.MkdirAll(path, 0777)
 	}
-	logFile, err := os.OpenFile(globalLogUrl, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	logFile, err := os.OpenFile(globalLogUrl, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
 	}

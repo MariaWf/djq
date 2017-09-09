@@ -1,34 +1,33 @@
 package handler
 
 import (
-	"net/http"
-	"html/template"
-	"github.com/gin-gonic/gin"
-	"mimi/gozk/config"
-	"mimi/djq/util"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"mimi/djq/util"
+	"mimi/djq/config"
+	"net/http"
 )
 
-func Register(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		if authentication, _, _ := CheckLogin(w, r); authentication {
-			http.Redirect(w, r, "/", http.StatusFound)
-			return
-		}
-		t, _ := template.ParseFiles("html/template/register.html")
-		t.Execute(w, nil)
-	} else {
-		values := make(map[string]interface{})
-		if err := RegisterAction(r); err == nil {
-			http.Redirect(w, r, "/", http.StatusFound)
-			return
-		} else {
-			values["error"] = err.Error()
-		}
-		t, _ := template.ParseFiles("html/template/register.html")
-		t.Execute(w, values)
-	}
-}
+//func Register(w http.ResponseWriter, r *http.Request) {
+//	if r.Method == "GET" {
+//		if authentication, _, _ := CheckLogin(w, r); authentication {
+//			http.Redirect(w, r, "/", http.StatusFound)
+//			return
+//		}
+//		t, _ := template.ParseFiles("html/template/register.html")
+//		t.Execute(w, nil)
+//	} else {
+//		values := make(map[string]interface{})
+//		if err := RegisterAction(r); err == nil {
+//			http.Redirect(w, r, "/", http.StatusFound)
+//			return
+//		} else {
+//			values["error"] = err.Error()
+//		}
+//		t, _ := template.ParseFiles("html/template/register.html")
+//		t.Execute(w, values)
+//	}
+//}
 
 func RegisterAction(r *http.Request) error {
 	return nil
@@ -38,6 +37,7 @@ func GeetestRegister(c *gin.Context) {
 	geetestId := config.Get("geetest_id")
 	geetestKey := config.Get("geetest_key")
 	var userID = "test"
+	//var userID = "testmimiwawa"
 	gt := util.GeetestLib(geetestKey, geetestId)
 	gt.PreProcess(userID)
 	responseMap := gt.GetResponseMap()
@@ -57,9 +57,12 @@ func GeetestValidate(c *gin.Context) {
 	seccode := c.GetString(util.FN_SECCODE)
 	status := c.GetInt(util.GT_STATUS_SESSION_KEY)
 	userID := c.GetString("user_id")
+	userID = "test2"
 	if status == 0 {
+		fmt.Println("local")
 		result = gt.FailbackValidate(challenge, validate, seccode)
 	} else {
+		fmt.Println("web")
 		result = gt.SuccessValidate(challenge, validate, seccode, userID)
 	}
 	if result {
@@ -73,22 +76,23 @@ func GeetestValidate(c *gin.Context) {
 }
 
 func GeetestAjaxValidate(c *gin.Context) {
-	geetestId := config.Get("geetest_id")
-	geetestKey := config.Get("geetest_key")
-	var result bool
+	//geetestId := config.Get("geetest_id")
+	//geetestKey := config.Get("geetest_key")
+	//var result bool
 	var jsondata = make(map[string]string)
-	gt := util.GeetestLib(geetestKey, geetestId)
-
-	challenge := c.PostForm(util.FN_CHALLENGE)
-	validate := c.PostForm(util.FN_VALIDATE)
-	seccode := c.PostForm(util.FN_SECCODE)
-	status := c.PostForm(util.GT_STATUS_SESSION_KEY)
-	userID := c.PostForm("user_id")
-	if status == "0" {
-		result = gt.FailbackValidate(challenge, validate, seccode)
-	} else {
-		result = gt.SuccessValidate(challenge, validate, seccode, userID)
-	}
+	//gt := util.GeetestLib(geetestKey, geetestId)
+	//
+	//challenge := c.PostForm(util.FN_CHALLENGE)
+	//validate := c.PostForm(util.FN_VALIDATE)
+	//seccode := c.PostForm(util.FN_SECCODE)
+	//status := c.PostForm(util.GT_STATUS_SESSION_KEY)
+	//userID := c.PostForm("user_id")
+	//if status == "0" {
+	//	result = gt.FailbackValidate(challenge, validate, seccode)
+	//} else {
+	//	result = gt.SuccessValidate(challenge, validate, seccode, userID)
+	//}
+	result := util.GeetestCheck(c)
 	if result {
 		jsondata["status"] = "success"
 	} else {

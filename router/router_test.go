@@ -1,14 +1,14 @@
 package router
 
 import (
-	"net/http"
-	"net/http/httptest"
-	"testing"
 	"fmt"
 	"io/ioutil"
-	"strings"
-	"net/url"
 	"mimi/djq/util"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"strings"
+	"testing"
 )
 
 func performRequest(r http.Handler, method, path string) *httptest.ResponseRecorder {
@@ -34,12 +34,12 @@ func TestAdminList(t *testing.T) {
 }
 
 func TestAdminAdd(t *testing.T) {
-	password,_ := util.EncryptPassword("123123")
-	roleIds :="d3490d47eaee4e7c85077baa9542908b"
+	password, _ := util.EncryptPassword("123123")
+	roleIds := "d3490d47eaee4e7c85077baa9542908b"
 	fmt.Println(password)
 	fmt.Println(util.DecryptPassword(password))
 	resp, err := http.PostForm("http://localhost:8080/mi/admin/?name=mimi",
-		url.Values{"mobile": {"12222222222"}, "name": {"mimiLogin1"},"password":{password},"locked":{"false"},"roleIds":{roleIds}})
+		url.Values{"mobile": {"12222222222"}, "name": {"mimiLogin1"}, "password": {password}, "locked": {"false"}, "roleIds": {roleIds}})
 
 	if err != nil {
 		// handle error
@@ -54,10 +54,10 @@ func TestAdminAdd(t *testing.T) {
 	fmt.Println(string(body))
 }
 func TestAdminLogin(t *testing.T) {
-	password,_ := util.EncryptPassword("123123")
+	password, _ := util.EncryptPassword("123123")
 	fmt.Println(util.BuildPassword4DB("123123"))
 	resp, err := http.PostForm("http://localhost:8080/mi/login",
-		url.Values{ "name": {"mimiLogin1"},"password":{password}})
+		url.Values{"name": {"mimiLogin1"}, "password": {password}})
 
 	if err != nil {
 		// handle error
@@ -102,12 +102,12 @@ func httpPost() {
 	fmt.Println(string(body))
 }
 func httpPostForm() {
-	password,_ := util.EncryptPassword("s,3214.")
-	roleIds :="d3490d47eaee4e7c85077baa9542908b,,"
+	password, _ := util.EncryptPassword("s,3214.")
+	roleIds := "d3490d47eaee4e7c85077baa9542908b,,"
 	fmt.Println(password)
 	fmt.Println(util.DecryptPassword(password))
 	resp, err := http.PostForm("http://djq.tunnel.qydev.com/mi/admin/?name=mimi",
-		url.Values{"mobile": {"12222222222"}, "name": {"mimiWithRoles4"},"password":{password},"locked":{"true"},"roleIds":{roleIds}})
+		url.Values{"mobile": {"12222222222"}, "name": {"mimiWithRoles4"}, "password": {password}, "locked": {"true"}, "roleIds": {roleIds}})
 
 	if err != nil {
 		// handle error

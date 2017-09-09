@@ -1,13 +1,13 @@
 package dao
 
 import (
-	"testing"
 	"fmt"
 	"net/http"
 	"os"
+	"testing"
 )
 
-type interface1 interface{
+type interface1 interface {
 	Method1()
 	Method2()
 }
@@ -21,28 +21,27 @@ type struct1 struct {
 	struct2
 }
 
-func (obj *struct1) Method1(){
+func (obj *struct1) Method1() {
 	fmt.Println("Method1")
 }
 
-func (obj *struct1) Method2(){
+func (obj *struct1) Method2() {
 	fmt.Println("Method2")
 }
 
-func outp(obj interface1){
+func outp(obj interface1) {
 	obj.Method1()
 }
-
 
 func TestAdminDao_Find(t *testing.T) {
 	//obj := &struct1{}
 	//outp(obj)
 
 	//url1 := "http://www.51zxiu.cn"
-	url2 :="http://www.51zxiu.cn/decoration"
+	url2 := "http://www.51zxiu.cn/decoration"
 	//url3 := "http://www.h0758.net/decoration"
-	rep,err := http.Get(url2)
-	if err!=nil{
+	rep, err := http.Get(url2)
+	if err != nil {
 		t.Error(err)
 	}
 	//log.Println()

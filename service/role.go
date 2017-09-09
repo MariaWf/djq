@@ -2,25 +2,20 @@ package service
 
 import (
 	"database/sql"
+	"github.com/pkg/errors"
 	"mimi/djq/dao"
+	"mimi/djq/dao/arg"
 	"mimi/djq/db/mysql"
 	"mimi/djq/model"
-	"mimi/djq/dao/arg"
 	"mimi/djq/util"
-	"github.com/pkg/errors"
 )
 
 type Role struct {
-
 }
 
 func (service *Role) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
 	return &dao.Role{conn}
 }
-
-//func (service *Role) Find() {
-//
-//}
 
 func (service *Role) Get(id string) (*model.Role, error) {
 	conn, err := mysql.Get()
@@ -55,8 +50,9 @@ func (service *Role) Add(obj *model.Role) (*model.Role, error) {
 	_, err = dao.Add(daoObj, obj)
 	if err != nil {
 		rollback = true
+		return obj, checkErr(err)
 	}
-	return obj, checkErr(err)
+	return obj, nil
 }
 
 func (service *Role) Update(obj *model.Role) (*model.Role, error) {
@@ -71,21 +67,12 @@ func (service *Role) Update(obj *model.Role) (*model.Role, error) {
 	_, err = dao.Update(daoObj, obj, "name", "description", "permissionListStr")
 	if err != nil {
 		rollback = true
+		return obj, checkErr(err)
 	}
-	return obj, checkErr(err)
+	return obj, nil
 }
 
-//func (service *Role) Count(argObj *arg.Role) (int,error) {
-//	conn, err := mysql.Get()
-//	if err != nil {
-//		return nil, errors.Wrap(err, "db")
-//	}
-//	defer mysql.Close(conn)
-//	daoObj := service.GetDaoInstance(conn)
-//	return dao.Count(daoObj,argObj)
-//}
-//
-func (service *Role) Delete(roleIds ... string) (int64, error) {
+func (service *Role) Delete(roleIds ...string) (int64, error) {
 	if roleIds == nil || len(roleIds) == 0 {
 		return 0, ErrIdEmpty
 	}
@@ -108,14 +95,14 @@ func (service *Role) Delete(roleIds ... string) (int64, error) {
 		rollback = true
 		return 0, checkErr(err)
 	}
-	return count, checkErr(err)
+	return count, nil
 }
 
 func (service *Role) check(obj *model.Role) error {
 	if obj == nil {
 		return ErrObjectEmpty
 	}
-	if util.MatchLen(obj.Name,2,32){
+	if !util.MatchLen(obj.Name, 2, 32) {
 		return errors.New("名称长度为2到32")
 	}
 	return nil
@@ -131,4 +118,3 @@ func (service *Role) checkUpdate(obj *model.Role) error {
 func (service *Role) checkAdd(obj *model.Role) error {
 	return service.check(obj)
 }
-

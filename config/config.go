@@ -11,7 +11,7 @@ import (
 var myConfig *Config
 var once sync.Once
 
-func Get(key string) string{
+func Get(key string) string {
 	v, found := GetInstance().Mymap[key]
 	if !found {
 		return ""
@@ -29,9 +29,8 @@ func GetInstance() *Config {
 }
 
 type Config struct {
-	Mymap  map[string]string
+	Mymap map[string]string
 }
-
 
 func (c *Config) InitConfig(path string) {
 	c.Mymap = make(map[string]string)

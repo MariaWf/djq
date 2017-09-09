@@ -1,6 +1,8 @@
 package util
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestMatchDescription(t *testing.T) {
 	maps := make(map[string]bool)
@@ -30,7 +32,7 @@ func TestMatchName(t *testing.T) {
 	t.Log("test1")
 	return
 
-	test:
+test:
 	t.Log("test")
 }
 
@@ -45,5 +47,14 @@ func TestMatchMobile(t *testing.T) {
 		if MatchMobile(k) != v {
 			t.Errorf("%v应为%v", k, v)
 		}
+	}
+}
+
+func TestMatchLen(t *testing.T) {
+	if !MatchLen("大是大非", 4, 4) {
+		t.Error("大是大非", 4, 4)
+	}
+	if !MatchLen("大是大非abc", 7, 7) {
+		t.Error("大是大非abc", 7, 7)
 	}
 }

@@ -1,14 +1,14 @@
 package service
 
 import (
-	"mimi/djq/dao"
-	"mimi/djq/db/mysql"
-	"github.com/pkg/errors"
 	"database/sql"
+	"github.com/pkg/errors"
+	"log"
+	"mimi/djq/dao"
 	"mimi/djq/dao/arg"
+	"mimi/djq/db/mysql"
 	"mimi/djq/model"
 	"mimi/djq/util"
-	"log"
 )
 
 var ErrIdEmpty = errors.New("ID为空")
@@ -32,9 +32,8 @@ func checkErr(err error) error {
 	if err == dao.ErrObjectNotFound {
 		return ErrObjectNotFound
 	}
-
-	return errors.Wrap(err,"操作失败，请稍后重试")
-	//return ErrUnknown
+	log.Println(err)
+	return errors.New("操作失败，请稍后重试")
 }
 
 type BaseServiceInterface interface {
@@ -62,35 +61,35 @@ func Page(service BaseServiceInterface, argObj arg.BaseArgInterface) (*util.Page
 	return util.BuildPageVO(argObj.GetTargetPage(), argObj.GetPageSize(), total, list), nil
 }
 
-func ResultList(service BaseServiceInterface, argObj arg.BaseArgInterface) (*util.ResultVO) {
+func ResultList(service BaseServiceInterface, argObj arg.BaseArgInterface) *util.ResultVO {
 	return Result(Page(service, argObj))
 }
 
-func ResultGet(service BaseServiceInterface, id string) (*util.ResultVO) {
+func ResultGet(service BaseServiceInterface, id string) *util.ResultVO {
 	return Result(Get(service, id))
 }
 
-func ResultGount(service BaseServiceInterface, argObj arg.BaseArgInterface) (*util.ResultVO) {
+func ResultGount(service BaseServiceInterface, argObj arg.BaseArgInterface) *util.ResultVO {
 	return Result(Count(service, argObj))
 }
 
-func ResultAdd(service BaseServiceInterface, aobj model.BaseModelInterface) (*util.ResultVO) {
+func ResultAdd(service BaseServiceInterface, aobj model.BaseModelInterface) *util.ResultVO {
 	return Result(Add(service, aobj))
 }
 
-func ResultUpdate(service BaseServiceInterface, obj model.BaseModelInterface, args ... string) (*util.ResultVO) {
+func ResultUpdate(service BaseServiceInterface, obj model.BaseModelInterface, args ...string) *util.ResultVO {
 	return Result(Update(service, obj, args...))
 }
 
-func ResultBatchUpdate(service BaseServiceInterface, argObj arg.BaseArgInterface) (*util.ResultVO) {
+func ResultBatchUpdate(service BaseServiceInterface, argObj arg.BaseArgInterface) *util.ResultVO {
 	return Result(BatchUpdate(service, argObj))
 }
 
-func ResultDelete(service BaseServiceInterface, id string) (*util.ResultVO) {
+func ResultDelete(service BaseServiceInterface, id string) *util.ResultVO {
 	return Result(Delete(service, id))
 }
 
-func ResultBatchDelete(service BaseServiceInterface, argObj arg.BaseArgInterface) (*util.ResultVO) {
+func ResultBatchDelete(service BaseServiceInterface, argObj arg.BaseArgInterface) *util.ResultVO {
 	return Result(BatchDelete(service, argObj))
 }
 
@@ -163,7 +162,7 @@ func Add(service BaseServiceInterface, obj model.BaseModelInterface) (interface{
 	return newObj, checkErr(err)
 }
 
-func Update(service BaseServiceInterface, obj model.BaseModelInterface, args ... string) (interface{}, error) {
+func Update(service BaseServiceInterface, obj model.BaseModelInterface, args ...string) (interface{}, error) {
 	conn, err := mysql.Get()
 	if err != nil {
 		return nil, checkErr(err)

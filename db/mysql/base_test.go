@@ -1,10 +1,10 @@
 package mysql
 
 import (
-	"testing"
 	"database/sql"
 	"fmt"
 	"github.com/pkg/errors"
+	"testing"
 )
 
 func TestClose(t *testing.T) {
@@ -22,7 +22,7 @@ func test1() error {
 		return err
 	}
 	rollback := false
-	defer tempClose(conn,&rollback)
+	defer tempClose(conn, &rollback)
 	row, err := conn.Query("select * from tbl_role")
 	if err != nil {
 		return err
@@ -36,22 +36,20 @@ func test1() error {
 	return errors.New("test")
 }
 
-func tempClose(tx *sql.Tx,rollback *bool) {
+func tempClose(tx *sql.Tx, rollback *bool) {
 	if err := recover(); err != nil {
 		tx.Rollback()
 		fmt.Println("1")
 		panic(err)
-	}else if *rollback{
+	} else if *rollback {
 		tx.Rollback()
 		fmt.Println("2")
-	}else{
+	} else {
 		tx.Commit()
 		fmt.Println("3")
 		//panic(errors.New("test3"))
 	}
 }
-
-
 
 func BenchmarkBuildPassword4DB(b *testing.B) {
 	b.StopTimer()

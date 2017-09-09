@@ -1,13 +1,13 @@
 package dao
 
 import (
-	"testing"
-	"mimi/djq/model"
-	"strconv"
-	"mimi/djq/db/mysql"
-	"mimi/djq/dao/arg"
 	"fmt"
 	"math/rand"
+	"mimi/djq/dao/arg"
+	"mimi/djq/db/mysql"
+	"mimi/djq/model"
+	"strconv"
+	"testing"
 )
 
 func TestRole_Find(t *testing.T) {
@@ -122,7 +122,7 @@ func TestRole_Update(t *testing.T) {
 	argObj := &arg.Role{}
 	argObj.NameLike = "3"
 	argObj.UpdateColumnNames = []string{"name", "description"}
-	argObj.UpdateObject = &model.Role{Name:"updateName", Description:"updateDesc"}
+	argObj.UpdateObject = &model.Role{Name: "updateName", Description: "updateDesc"}
 	count, err := BatchUpdate(dao, argObj)
 	if err != nil {
 		t.Error(err)
@@ -190,7 +190,7 @@ func TestRoleUpdate(t *testing.T) {
 	}
 	argObj.SetIdsIn(ids)
 	argObj.UpdateColumnNames = []string{"name", "description"}
-	argObj.UpdateObject = &model.Role{Name:"updateName", Description:"updateDesc"}
+	argObj.UpdateObject = &model.Role{Name: "updateName", Description: "updateDesc"}
 	count, err := BatchUpdate(dao, argObj)
 	if err != nil {
 		t.Error(err)

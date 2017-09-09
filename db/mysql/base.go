@@ -2,10 +2,10 @@ package mysql
 
 import (
 	"database/sql"
-	"sync"
 	_ "github.com/go-sql-driver/mysql"
-	"mimi/djq/config"
 	"log"
+	"mimi/djq/config"
+	"sync"
 )
 
 var db *sql.DB
@@ -45,7 +45,7 @@ func Close(tx *sql.Tx, rollback *bool) {
 }
 
 func GetStatus() sql.DBStats {
-	return db.Stats();
+	return db.Stats()
 }
 
 func checkErr(err error) {

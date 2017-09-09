@@ -5,17 +5,17 @@ import (
 )
 
 type Role struct {
-	IdEqual           string
-	IncludeDeleted    bool
-	NameLike          string
-	NameEqual         string
-	OrderBy           string
-	IdsIn             []string
+	IdEqual        string
+	IncludeDeleted bool
+	NameLike       string
+	NameEqual      string
+	OrderBy        string
+	IdsIn          []string
 
-	PageSize          int
-	TargetPage        int
+	PageSize   int
+	TargetPage int
 
-	ShowColumnNames   []string
+	ShowColumnNames []string
 
 	UpdateObject      interface{}
 	UpdateColumnNames []string
@@ -100,10 +100,14 @@ func (arg *Role) getShowColumnNames() []string {
 	s := make([]string, 0, len(arg.ShowColumnNames))
 	for _, v := range arg.ShowColumnNames {
 		switch v {
-		case "id":s = append(s, "id")
-		case "name":s = append(s, "name")
-		case "description":s = append(s, "description")
-		case "permissionListStr":s = append(s, "permission_list_str")
+		case "id":
+			s = append(s, "id")
+		case "name":
+			s = append(s, "name")
+		case "description":
+			s = append(s, "description")
+		case "permissionListStr":
+			s = append(s, "permission_list_str")
 		}
 	}
 	if len(s) == 0 {
@@ -120,11 +124,14 @@ func (arg *Role) getColumnNameValues() ([]string, []interface{}) {
 	params := make([]interface{}, 0, 9)
 	for _, v := range arg.UpdateColumnNames {
 		switch v {
-		case "name":s = append(s, "name = ?")
+		case "name":
+			s = append(s, "name = ?")
 			params = append(params, arg.UpdateObject.(*model.Role).Name)
-		case "description":s = append(s, "description = ?")
+		case "description":
+			s = append(s, "description = ?")
 			params = append(params, arg.UpdateObject.(*model.Role).Description)
-		case "permissionListStr":s = append(s, "permission_list_str = ?")
+		case "permissionListStr":
+			s = append(s, "permission_list_str = ?")
 			params = append(params, arg.UpdateObject.(*model.Role).PermissionListStr)
 		}
 	}
@@ -139,7 +146,7 @@ func (arg *Role) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " name like ?"
-		params = append(params, "%" + arg.NameLike + "%")
+		params = append(params, "%"+arg.NameLike+"%")
 	}
 	if arg.NameEqual != "" {
 		if sql != "" {

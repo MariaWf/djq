@@ -10,12 +10,11 @@ import (
 //description varchar(200) not null default '',
 //del_flag tinyint(1) default false
 
-
 type Role struct {
-	Id                string `json:"id" db:"id" desc:"id"`
-	Name              string `json:"name" db:"name" desc:"名称"`
-	Description       string `json:"description" db:"description" desc:"描述"`
-	PermissionListStr string `json:"permissionListStr" db:"permission_list_str" desc:"权限列表字符串"`
+	Id                string        `form:"id" json:"id" db:"id" desc:"id"`
+	Name              string        `form:"name" json:"name" db:"name" desc:"名称"`
+	Description       string        `form:"description" json:"description" db:"description" desc:"描述"`
+	PermissionListStr string        `form:"permissionListStr" json:"permissionListStr" db:"permission_list_str" desc:"权限列表字符串"`
 	PermissionList    []*Permission `json:"permissionList" desc:"权限列表"`
 }
 
@@ -29,20 +28,28 @@ func (obj *Role) SetId(id string) {
 
 func (obj *Role) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id":return &obj.Id;
-	case "name":return &obj.Name
-	case "description":return &obj.Description
-	case "permission_list_str":return &obj.PermissionListStr
+	case "id":
+		return &obj.Id
+	case "name":
+		return &obj.Name
+	case "description":
+		return &obj.Description
+	case "permission_list_str":
+		return &obj.PermissionListStr
 	}
 	panic(errors.New("对象role属性[" + name + "]不存在"))
 }
 
 func (obj *Role) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id":return obj.Id;
-	case "name":return obj.Name
-	case "description":return obj.Description
-	case "permission_list_str":return obj.PermissionListStr
+	case "id":
+		return obj.Id
+	case "name":
+		return obj.Name
+	case "description":
+		return obj.Description
+	case "permission_list_str":
+		return obj.PermissionListStr
 	}
 	panic(errors.New("对象role属性[" + name + "]不存在"))
 }

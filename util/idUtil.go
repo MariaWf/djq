@@ -1,12 +1,12 @@
 package util
 
 import (
-	"strings"
+	"fmt"
 	"github.com/satori/go.uuid"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
-	"strconv"
-	"fmt"
 )
 
 type orderNumber struct {
@@ -49,7 +49,7 @@ func (on *orderNumber) next() string {
 		on.mutex.Unlock()
 	}()
 	now := time.Now()
-	if now.Sub(on.Time) > time.Second * 1 {
+	if now.Sub(on.Time) > time.Second*1 {
 		on.Time = now
 		on.Count = 0
 	} else if on.Count == 99 {
@@ -78,14 +78,14 @@ func BuildUUID() string {
 }
 
 func BuildPresentOrderNumber() string {
-	if lastPresentOrderNumber.Type == ""{
+	if lastPresentOrderNumber.Type == "" {
 		lastPresentOrderNumber.Type = "P"
 	}
 	return lastPresentOrderNumber.next()
 }
 
 func BuildCashCouponOrderNumber() string {
-	if lastCashCouponOrderNumber.Type == ""{
+	if lastCashCouponOrderNumber.Type == "" {
 		lastCashCouponOrderNumber.Type = "C"
 	}
 	return lastCashCouponOrderNumber.next()
