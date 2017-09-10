@@ -18,18 +18,6 @@ import (
 )
 
 func AdvertisementList4Open(c *gin.Context) {
-	//advertisementList := make([]*model.Advertisement, 0, 5)
-	//for i := 0; i < 5; i++ {
-	//	advertisement := &model.Advertisement{}
-	//	advertisement.Id = "id" + strconv.Itoa(i)
-	//	advertisement.Name = "name" + strconv.Itoa(i)
-	//	advertisement.Image = "Image" + strconv.Itoa(i)
-	//	advertisement.Link = "link" + strconv.Itoa(i)
-	//	advertisementList = append(advertisementList, advertisement)
-	//}
-	//c.JSON(http.StatusOK, util.BuildSuccessResult(advertisementList))
-
-
 	argObj := &arg.Advertisement{}
 	argObj.NotIncludeHide = true
 	argObj.OrderBy = "priority desc"

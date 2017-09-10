@@ -2,15 +2,10 @@ package model
 
 import "github.com/pkg/errors"
 
-//id varchar(64) not null primary key,
-//name varchar(32) not null default '',
-//image varchar(200) not null default '',
-//link varchar(200) not null default '',
-//priority int(8) not null default 0,
-//hide tinyint(1) default false,
-//description varchar(200) not null default '',
-//del_flag tinyint(1) default false
-//)default charset = utf8;
+const tableNameAdvertisement = "tbl_advertisement"
+
+var ColumnNamesAdvertisement = []string{"id", "name", "image", "link", "priority", "hide", "description"}
+var MapNamesAdvertisement = []string{"id", "name", "image", "link", "priority", "hide", "description"}
 
 type Advertisement struct {
 	Id          string `form:"id" json:"id" db:"id" desc:"id"`
@@ -30,42 +25,53 @@ func (obj *Advertisement) SetId(id string) {
 	obj.Id = id
 }
 
+func (obj *Advertisement) GetTableName() string {
+	return tableNameAdvertisement
+}
+
+func (obj *Advertisement) GetDBNames() []string {
+	return ColumnNamesAdvertisement
+}
+
+func (obj *Advertisement) GetMapNames() []string {
+	return MapNamesAdvertisement
+}
+
 func (obj *Advertisement) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id":
-		return &obj.Id
-	case "name":
-		return &obj.Name
-	case "image":
-		return &obj.Image
-	case "link":
-		return &obj.Link
-	case "priority":
-		return &obj.Priority
-	case "hide":
-		return &obj.Hide
-	case "description":
-		return &obj.Description
+	case "id": return &obj.Id
+	case "name": return &obj.Name
+	case "image": return &obj.Image
+	case "link": return &obj.Link
+	case "priority": return &obj.Priority
+	case "hide": return &obj.Hide
+	case "description": return &obj.Description
 	}
 	panic(errors.New("对象advertisement属性[" + name + "]不存在"))
 }
 
 func (obj *Advertisement) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id":
-		return obj.Id
-	case "name":
-		return obj.Name
-	case "image":
-		return obj.Image
-	case "link":
-		return obj.Link
-	case "priority":
-		return obj.Priority
-	case "hide":
-		return obj.Hide
-	case "description":
-		return obj.Description
+	case "id": return obj.Id
+	case "name": return obj.Name
+	case "image": return obj.Image
+	case "link": return obj.Link
+	case "priority": return obj.Priority
+	case "hide": return obj.Hide
+	case "description": return obj.Description
+	}
+	panic(errors.New("对象advertisement属性[" + name + "]不存在"))
+}
+
+func (obj *Advertisement) GetValue4Map(name string) interface{} {
+	switch name {
+	case "id": return obj.Id
+	case "name": return obj.Name
+	case "image": return obj.Image
+	case "link": return obj.Link
+	case "priority": return obj.Priority
+	case "hide": return obj.Hide
+	case "description": return obj.Description
 	}
 	panic(errors.New("对象advertisement属性[" + name + "]不存在"))
 }

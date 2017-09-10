@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"regexp"
 	"strings"
+	"strconv"
 )
 
 var (
@@ -19,6 +20,13 @@ func MatchPriority(priority int) error {
 		return nil
 	}
 	return ErrPriorityFormat
+}
+
+func MatchLenWithErr(str string, minInclude int, maxInclude int, name string) error {
+	if !MatchLen(str, minInclude, maxInclude) {
+		return errors.New(name + "长度为" + strconv.Itoa(minInclude) + "到" + strconv.Itoa(maxInclude))
+	}
+	return nil
 }
 
 func MatchLen(str string, minInclude int, maxInclude int) bool {

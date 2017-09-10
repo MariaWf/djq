@@ -71,6 +71,28 @@ func TestAdmin_Delete(t *testing.T) {
 	}
 }
 
+func TestAdmin_Get(t *testing.T) {
+	service := &Admin{}
+	obj, _ := service.Get("0023090151d6401d8074bf67d0a15f74")
+	t.Log(len(obj.RoleList))
+}
+func BenchmarkAdmin_Get(b *testing.B) {
+	serviceObj := &Role{}
+	argObj := &arg.Role{}
+	list, _ := Find(serviceObj, argObj)
+	obj := &model.Admin{}
+	size := len(list)
+	b.Log(size)
+	b.ResetTimer()
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		obj.SetRoleListFromInterfaceArr(list)
+		if len(obj.RoleList) != size {
+			b.Error(len(obj.RoleList), size)
+		}
+	}
+}
+
 func randomAddAdmin(total int) ([]*model.Admin, error) {
 	objList := make([]*model.Admin, 0, total)
 	service := &Admin{}

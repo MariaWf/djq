@@ -40,10 +40,15 @@ del_flag tinyint(1) default false
 drop table if exists tbl_shop;
 create table tbl_shop(
 id varchar(64) not null primary key,
-mobile varchar(32) not null default '',
-present_chance int(8) not null default 0,
-shared tinyint(1) default false,
-locked tinyint(1) default false,
+name varchar(32) not null default '',
+logo varchar(200) not null default '',
+pre_image varchar(200) not null default '',
+total_cash_coupon_number int(8) not null default 0,
+total_cash_coupon_price int(8) not null default 0,
+Introduction varchar(200) not null default '',
+Address varchar(200) not null default '',
+priority int(8) not null default 0,
+hide tinyint(1) default false,
 del_flag tinyint(1) default false
 )default charset=utf8;
 
@@ -63,6 +68,8 @@ create table tbl_shop_classification(
 id varchar(64) not null primary key,
 name varchar(32) not null default '',
 description varchar(200) not null default '',
+hide tinyint(1) default false,
+priority int(8) not null default 0,
 del_flag tinyint(1) default false
 )default charset=utf8;
 

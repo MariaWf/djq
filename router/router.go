@@ -45,6 +45,21 @@ func Begin() {
 	miAdvertisement.DELETE("/:id", handler.PermissionAdvertisementD, handler.AdvertisementDelete)
 	miAdvertisement.POST("/action/uploadImage", handler.PermissionAdvertisementU, handler.AdvertisementUploadImage)
 
+	miShop := mi.Group("/shop")
+	miShop.GET("/", handler.PermissionShopR, handler.ShopList)
+	miShop.GET("/:id", handler.PermissionShopR, handler.ShopGet)
+	miShop.POST("/", handler.PermissionShopC, handler.ShopPost)
+	miShop.PATCH("/:id", handler.PermissionShopU, handler.ShopPatch)
+	miShop.DELETE("/:id", handler.PermissionShopD, handler.ShopDelete)
+	miShop.POST("/action/uploadImage", handler.PermissionShopU, handler.ShopUploadImage)
+
+	miShopClassification := mi.Group("/shopClassification")
+	miShopClassification.GET("/", handler.PermissionShopClassificationR, handler.ShopClassificationList)
+	miShopClassification.GET("/:id", handler.PermissionShopClassificationR, handler.ShopClassificationGet)
+	miShopClassification.POST("/", handler.PermissionShopClassificationC, handler.ShopClassificationPost)
+	miShopClassification.PATCH("/:id", handler.PermissionShopClassificationU, handler.ShopClassificationPatch)
+	miShopClassification.DELETE("/:id", handler.PermissionShopClassificationD, handler.ShopClassificationDelete)
+
 	miPermission := mi.Group("/permission")
 	miPermission.GET("/", handler.PermissionRoleR, handler.PermissionList)
 

@@ -71,6 +71,7 @@ func PermissionRoleU(c *gin.Context) {
 func PermissionRoleD(c *gin.Context) {
 	checkPermission(c, "role_d")
 }
+
 func PermissionAdvertisementC(c *gin.Context) {
 	checkPermission(c, "advertisement_c")
 }
@@ -86,3 +87,37 @@ func PermissionAdvertisementU(c *gin.Context) {
 func PermissionAdvertisementD(c *gin.Context) {
 	checkPermission(c, "advertisement_d")
 }
+
+func PermissionShopC(c *gin.Context) {
+	checkPermission(c, "shop_c")
+}
+
+func PermissionShopR(c *gin.Context) {
+	checkPermission(c, "shop_r")
+}
+
+func PermissionShopU(c *gin.Context) {
+	checkPermission(c, "shop_u")
+}
+
+func PermissionShopD(c *gin.Context) {
+	checkPermission(c, "shop_d")
+}
+
+func PermissionShopClassificationC(c *gin.Context) {
+	checkPermission(c, "shopClassification_c")
+}
+
+func PermissionShopClassificationR(c *gin.Context) {
+	checkPermission(c, "shopClassification_r")
+}
+
+func PermissionShopClassificationU(c *gin.Context) {
+	checkPermission(c, "shopClassification_u")
+}
+
+func PermissionShopClassificationD(c *gin.Context) {
+	checkPermission(c, "shopClassification_d")
+}
+
+

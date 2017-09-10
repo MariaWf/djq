@@ -3,11 +3,11 @@ package model
 import "errors"
 
 type Admin struct {
-	Id       string `form:"id" json:"id" db:"id" desc:"id"`
-	Name     string `form:"name" json:"name" db:"name" desc:"名称"`
-	Mobile   string `form:"mobile" json:"mobile" db:"mobile" desc:"手机"`
-	Password string `form:"password" json:"password" db:"password" desc:"密码"`
-	Locked   bool   `form:"locked" json:"locked" db:"locked" desc:"锁定"`
+	Id             string `form:"id" json:"id" db:"id" desc:"id"`
+	Name           string `form:"name" json:"name" db:"name" desc:"名称"`
+	Mobile         string `form:"mobile" json:"mobile" db:"mobile" desc:"手机"`
+	Password       string `form:"password" json:"password" db:"password" desc:"密码"`
+	Locked         bool   `form:"locked" json:"locked" db:"locked" desc:"锁定"`
 
 	RoleList       []*Role       `json:"roleList" desc:"角色列表"`
 	PermissionList []*Permission `json:"permissionList" desc:"权限列表"`
@@ -22,11 +22,13 @@ func (obj *Admin) SetId(id string) {
 }
 
 func (obj *Admin) SetRoleListFromInterfaceArr(list []interface{}) {
-	obj.RoleList = make([]*Role, 0, 10)
 	if list != nil && len(list) != 0 {
-		for _, role := range list {
-			obj.RoleList = append(obj.RoleList, role.(*Role))
+		obj.RoleList = make([]*Role, len(list), len(list))
+		for i, role := range list {
+			obj.RoleList[i] = role.(*Role)
 		}
+	} else {
+		obj.RoleList = make([]*Role, 0, 1)
 	}
 }
 

@@ -157,7 +157,6 @@ func AdminPost(c *gin.Context) {
 
 func AdminPatch(c *gin.Context) {
 	obj := &model.Admin{}
-	roleIds := c.PostForm("roleIds")
 	err := c.Bind(obj)
 	if err != nil {
 		log.Println(err)
@@ -184,6 +183,7 @@ func AdminPatch(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("禁止修改超级管理员信息"))
 		return
 	}
+	roleIds := c.PostForm("roleIds")
 	if roleIds != "" {
 		roleIdList := strings.Split(roleIds, ",")
 		if roleIdList != nil && len(roleIdList) != 0 {
@@ -203,19 +203,6 @@ func AdminPatch(c *gin.Context) {
 	}
 	result := util.BuildSuccessResult(obj.Id)
 	c.JSON(http.StatusOK, result)
-	//admin := &model.Admin{}
-	//err := c.Bind(admin)
-	//if err != nil {
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//}
-	//conn, _ := mysql.Get()
-	//defer mysql.Close(conn)
-	//adminDao := &dao.AdminDao{conn}
-	//admin, err = adminDao.Update(admin)
-	//if err != nil {
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//}
-	//c.JSON(http.StatusOK, util.BuildSuccessResult(admin))
 }
 
 func AdminDelete(c *gin.Context) {

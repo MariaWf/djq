@@ -25,13 +25,17 @@ const (
 	tableNameRole = "tbl_role"
 	tableNameUser = "tbl_user"
 	tableNameAdvertisement = "tbl_advertisement"
+	tableNameShop = "tbl_shop"
+	tableNameShopClassification = "tbl_shop_classification"
 )
 
 var (
 	ColumnNamesAdmin = []string{"id", "name", "mobile", "password", "locked"}
 	ColumnNamesRole = []string{"id", "name", "description", "permission_list_str"}
 	ColumnNamesUser = []string{"id", "name", "nick_name", "mobile", "password"}
-	ColumnNamesAdvertisement = []string{"id", "name", "image", "link", "priority","hide","description"}
+	ColumnNamesAdvertisement = []string{"id", "name", "image", "link", "priority", "hide", "description"}
+	ColumnNamesShop = []string{"id", "name", "logo", "pre_image", "total_cash_coupon_number", "total_cash_coupon_price", "introduction", "address", "priority", "hide"}
+	ColumnNamesShopClassification = []string{"id", "name", "hide", "priority", "description"}
 )
 
 func bindColumnNames(sql, columnNames string) string {
