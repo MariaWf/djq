@@ -40,13 +40,16 @@ func Begin() {
 	miRole.PATCH("/:id", handler.PermissionRoleU, handler.RolePatch)
 	miRole.DELETE("/:id", handler.PermissionRoleD, handler.RoleDelete)
 
+	miPermission := mi.Group("/permission")
+	miPermission.GET("/", handler.PermissionRoleR, handler.PermissionList)
+
 	miAdvertisement := mi.Group("/advertisement")
 	miAdvertisement.GET("/", handler.PermissionAdvertisementR, handler.AdvertisementList)
 	miAdvertisement.GET("/:id", handler.PermissionAdvertisementR, handler.AdvertisementGet)
 	miAdvertisement.POST("/", handler.PermissionAdvertisementC, handler.AdvertisementPost)
 	miAdvertisement.PATCH("/:id", handler.PermissionAdvertisementU, handler.AdvertisementPatch)
 	miAdvertisement.DELETE("/:id", handler.PermissionAdvertisementD, handler.AdvertisementDelete)
-	miAdvertisement.POST("/action/uploadImage", handler.PermissionAdvertisementU, handler.AdvertisementUploadImage)
+	mi.POST("/advertisementAction/uploadImage", handler.PermissionAdvertisementU, handler.AdvertisementUploadImage)
 
 	miShop := mi.Group("/shop")
 	miShop.GET("/", handler.PermissionShopR, handler.ShopList)
@@ -54,7 +57,8 @@ func Begin() {
 	miShop.POST("/", handler.PermissionShopC, handler.ShopPost)
 	miShop.PATCH("/:id", handler.PermissionShopU, handler.ShopPatch)
 	miShop.DELETE("/:id", handler.PermissionShopD, handler.ShopDelete)
-	miShop.POST("/action/uploadImage", handler.PermissionShopU, handler.ShopUploadImage)
+	mi.POST("/shopAction/uploadPreImage", handler.PermissionShopU, handler.ShopUploadPreImage)
+	mi.POST("/shopAction/uploadLogo", handler.PermissionShopU, handler.ShopUploadLogo)
 
 	miShopClassification := mi.Group("/shopClassification")
 	miShopClassification.GET("/", handler.PermissionShopClassificationR, handler.ShopClassificationList)
@@ -77,8 +81,13 @@ func Begin() {
 	miShopIntroductionImage.PATCH("/:id", handler.PermissionShopU, handler.ShopIntroductionImagePatch)
 	miShopIntroductionImage.DELETE("/:id", handler.PermissionShopD, handler.ShopIntroductionImageDelete)
 
-	miPermission := mi.Group("/permission")
-	miPermission.GET("/", handler.PermissionRoleR, handler.PermissionList)
+	miCashCoupon := mi.Group("/cashCoupon")
+	miCashCoupon.GET("/", handler.PermissionShopR, handler.CashCouponList)
+	miCashCoupon.GET("/:id", handler.PermissionShopR, handler.CashCouponGet)
+	miCashCoupon.POST("/", handler.PermissionShopC, handler.CashCouponPost)
+	miCashCoupon.PATCH("/:id", handler.PermissionShopU, handler.CashCouponPatch)
+	miCashCoupon.DELETE("/:id", handler.PermissionShopD, handler.CashCouponDelete)
+	mi.POST("/cashCouponAction/uploadImage", handler.PermissionShopU, handler.CashCouponUploadImage)
 
 	si := router.Group("/si", handler.ApiGlobal, handler.ShopAccountCheckLogin)
 	si.POST("/login", handler.ShopAccountLogin)

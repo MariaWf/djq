@@ -36,6 +36,34 @@ func ShopGet4Open(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
 		return
 	}
+	serviceShopIntroductionImage := &service.ShopIntroductionImage{}
+	argShopIntroductionImage := &arg.ShopIntroductionImage{}
+	argShopIntroductionImage.ShopIdEqual = obj.Id
+	argShopIntroductionImage.NotIncludeHide = true
+	argShopIntroductionImage.OrderBy = "priority desc"
+	argShopIntroductionImage.DisplayNames = []string{"contentUrl"}
+	shopIntroductionImageList, err := service.Find(serviceShopIntroductionImage, argShopIntroductionImage)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	obj.SetShopIntroductionImageListFromInterfaceArr(shopIntroductionImageList)
+
+	serviceCashCoupon := &service.CashCoupon{}
+	argCashCoupon := &arg.CashCoupon{}
+	argCashCoupon.ShopIdEqual = obj.Id
+	argCashCoupon.NotIncludeHide = true
+	argCashCoupon.BeforeExpiryDate = true
+	argCashCoupon.OrderBy = "priority desc"
+	argCashCoupon.DisplayNames = []string{"id", "name", "preImage","expiryDate"}
+	cashCouponList, err := service.Find(serviceCashCoupon, argCashCoupon)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	obj.SetCashCouponListFromInterfaceArr(cashCouponList)
 	result := util.BuildSuccessResult(obj)
 	c.JSON(http.StatusOK, result)
 }
@@ -139,6 +167,10 @@ func ShopDelete(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func ShopUploadImage(c *gin.Context) {
-	commonUploadImage(c, "shop")
+func ShopUploadPreImage(c *gin.Context) {
+	commonUploadImage(c, "shop/preImage")
+}
+
+func ShopUploadLogo(c *gin.Context) {
+	commonUploadImage(c, "shop/logo")
 }

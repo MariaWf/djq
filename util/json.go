@@ -13,3 +13,7 @@ func (t JSONTime) MarshalJSON() ([]byte, error) {
 	stamp := fmt.Sprintf("\"%s\"", time.Time(t).Format("2006-01-01"))
 	return []byte(stamp), nil
 }
+
+func StringTime4DB(source time.Time) string{
+	return source.Format("2006-01-02 15:04:05")
+}

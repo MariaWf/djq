@@ -107,3 +107,25 @@ func (obj *Shop) SetShopClassificationListFromInterfaceArr(list []interface{}) {
 		obj.ShopClassificationList = make([]*ShopClassification, 0, 1)
 	}
 }
+
+func (obj *Shop) SetShopIntroductionImageListFromInterfaceArr(list []interface{}) {
+	if list != nil && len(list) != 0 {
+		obj.ShopIntroductionImageList = make([]*ShopIntroductionImage, len(list), len(list))
+		for i, shopIntroductionImage := range list {
+			obj.ShopIntroductionImageList[i] = shopIntroductionImage.(*ShopIntroductionImage)
+		}
+	} else {
+		obj.ShopIntroductionImageList = make([]*ShopIntroductionImage, 0, 1)
+	}
+}
+
+func (obj *Shop) SetCashCouponListFromInterfaceArr(list []interface{}) {
+	if list != nil && len(list) != 0 {
+		obj.CashCouponList = make([]*CashCoupon, len(list), len(list))
+		for i, cashCoupon := range list {
+			obj.CashCouponList[i] = cashCoupon.(*CashCoupon)
+		}
+	} else {
+		obj.CashCouponList = make([]*CashCoupon, 0, 1)
+	}
+}

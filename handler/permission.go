@@ -120,4 +120,20 @@ func PermissionShopClassificationD(c *gin.Context) {
 	checkPermission(c, "shopClassification_d")
 }
 
+//func PermissionCashCouponC(c *gin.Context) {
+//	checkPermission(c, "cashCoupon_c")
+//}
+//
+//func PermissionCashCouponR(c *gin.Context) {
+//	checkPermission(c, "cashCoupon_r")
+//}
+//
+//func PermissionCashCouponU(c *gin.Context) {
+//	checkPermission(c, "cashCoupon_u")
+//}
+//
+//func PermissionCashCouponD(c *gin.Context) {
+//	checkPermission(c, "cashCoupon_d")
+//}
+
 

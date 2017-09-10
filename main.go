@@ -56,6 +56,15 @@ func initData() {
 	constant.AdminId = initAdmin()
 }
 
+func initTestData() {
+	initTestRole()
+	initTestAdmin()
+	initTestAdvertisement()
+	initTestShopClassification()
+	initTestShop()
+	//tempInitTestShop()
+}
+
 func initRole() string {
 	serviceRole := &service.Role{}
 	argRole := &arg.Role{}
@@ -103,15 +112,6 @@ func initAdmin() string {
 		return obj.Id
 	}
 	return objList[0].(*model.Admin).Id
-}
-
-func initTestData() {
-	initTestRole()
-	initTestAdmin()
-	initTestAdvertisement()
-	initTestShopClassification()
-	initTestShop()
-	//tempInitTestShop()
 }
 
 func initTestRole() {
@@ -236,6 +236,7 @@ func initTestShop() {
 			checkErr(err)
 			initTestShopAccount(obj.Id)
 			initTestShopIntroductionImage(obj.Id)
+			initTestCashCoupon(obj.Id)
 		}
 	}
 }
@@ -245,8 +246,9 @@ func tempInitTestShop() {
 	list, err := service.Find(serviceShop, argShop)
 	checkErr(err)
 	for _, obj := range list {
-		initTestShopAccount(obj.(*model.Shop).Id)
-		initTestShopIntroductionImage(obj.(*model.Shop).Id)
+		//initTestShopAccount(obj.(*model.Shop).Id)
+		//initTestShopIntroductionImage(obj.(*model.Shop).Id)
+		initTestCashCoupon(obj.(*model.Shop).Id)
 	}
 }
 
@@ -280,6 +282,30 @@ func initTestShopIntroductionImage(shopId string) {
 		obj.Hide = rand.Intn(2) < 1
 		obj.ContentUrl = "https://www.baidu.com/img/bd_logo1.png"
 		_, err := service.Add(serviceShopIntroductionImage, obj)
+		checkErr(err)
+	}
+}
+
+func initTestCashCoupon(shopId string) {
+	serviceCashCoupon := &service.CashCoupon{}
+	total := rand.Intn(10)
+	for i := 0; i < total; i++ {
+		obj := &model.CashCoupon{}
+		obj.ShopId = shopId
+		obj.Name = "name" + strconv.Itoa(i)
+		obj.PreImage = "https://www.baidu.com/img/bd_logo1.png"
+		obj.DiscountAmount = rand.Intn(500)
+		t := time.Now()
+		if rand.Intn(2) < 1 {
+			t = t.Add(time.Hour * time.Duration(rand.Int63n(1000)))
+		} else {
+			obj.Expired = true
+			t = t.Add(-time.Hour * time.Duration(rand.Int63n(1000)))
+		}
+		obj.ExpiryDate = util.StringTime4DB(t)
+		obj.Hide = rand.Intn(2) < 1
+		obj.Priority = rand.Intn(1000)
+		_, err := service.Add(serviceCashCoupon, obj)
 		checkErr(err)
 	}
 }

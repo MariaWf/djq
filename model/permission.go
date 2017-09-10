@@ -31,5 +31,10 @@ func GetPermissionList() []*Permission {
 		{"shopClassification_c", "添加商家分类信息", "添加商家分类信息"},
 		{"shopClassification_r", "查看商家分类信息", "查看商家分类信息"},
 		{"shopClassification_u", "更新商家分类信息", "更新商家分类信息"},
-		{"shopClassification_d", "删除商家分类信息", "删除商家分类信息"}}
+		{"shopClassification_d", "删除商家分类信息", "删除商家分类信息"},
+
+		{"cashCoupon_c", "添加代金券信息", "添加代金券信息"},
+		{"cashCoupon_r", "查看代金券信息", "查看代金券信息"},
+		{"cashCoupon_u", "更新代金券信息", "更新代金券信息"},
+		{"cashCoupon_d", "删除代金券信息", "删除代金券信息"}}
 }

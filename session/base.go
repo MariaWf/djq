@@ -30,7 +30,7 @@ func GetUi(w http.ResponseWriter, r *http.Request) (*Session, error) {
 }
 
 func GetSi(w http.ResponseWriter, r *http.Request) (*Session, error) {
-	return Get(w, r, "si", 0, time.Hour * 24)
+	return Get(w, r, "si", 0, time.Hour * 18)
 }
 
 func GetOpen(w http.ResponseWriter, r *http.Request) (*Session, error) {

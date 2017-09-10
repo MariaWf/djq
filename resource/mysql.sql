@@ -96,12 +96,14 @@ del_flag tinyint(1) default false
 drop table if exists tbl_cash_coupon;
 create table tbl_cash_coupon(
 id varchar(64) not null primary key,
+shop_id varchar(64) not null default '',
 name varchar(32) not null default '',
 pre_image varchar(200) not null default '',
 discount_amount int(8) not null default 0,
-expiryDate timestamp DEFAULT CURRENT_TIMESTAMP,
+expiry_date timestamp DEFAULT CURRENT_TIMESTAMP,
 expired tinyint(1) default false,
-locked tinyint(1) default false,
+hide tinyint(1) default false,
+priority int(8) not null default 0,
 del_flag tinyint(1) default false
 )default charset=utf8;
 
