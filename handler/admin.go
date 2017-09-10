@@ -45,17 +45,23 @@ func AdminLogin(c *gin.Context) {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
+	} else {
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameMiAdminId, Value: obj.Id, Path: "/", MaxAge: sn.CookieMaxAge})
 	}
 	if err = sn.Set(session.SessionNameMiAdminName, obj.Name); err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
+	} else {
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameMiAdminName, Value: obj.Name, Path: "/", MaxAge: sn.CookieMaxAge})
 	}
 	if codeList := obj.GetPermissionCodeList(); codeList != nil && len(codeList) != 0 {
 		if err = sn.Set(session.SessionNameMiPermission, strings.Join(codeList, constant.Split4Permission)); err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 			return
+		} else {
+			http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameMiPermission, Value: strings.Join(codeList, constant.Split4Permission), Path: "/", MaxAge: sn.CookieMaxAge})
 		}
 	}
 
@@ -75,6 +81,9 @@ func AdminLogout(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
+	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameMiAdminId, Value: "", Path: "/", MaxAge: -1})
+	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameMiAdminName, Value: "", Path: "/", MaxAge: -1})
+	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameMiPermission, Value: "", Path: "/", MaxAge: -1})
 	result := util.BuildSuccessResult(nil)
 	c.JSON(http.StatusOK, result)
 }
@@ -121,19 +130,45 @@ func AdminGet(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
+	obj.Password = ""
+	result := util.BuildSuccessResult(obj)
+	c.JSON(http.StatusOK, result)
+}
+
+func AdminGetSelf(c *gin.Context) {
+	serviceObj := &service.Admin{}
+	sn, err := session.GetSi(c.Writer, c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	id, err := sn.Get(session.SessionNameSiShopAccountId)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	obj, err := service.Get(serviceObj, id)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	obj.(*model.Admin).Password = ""
 	result := util.BuildSuccessResult(obj)
 	c.JSON(http.StatusOK, result)
 }
 
 func AdminPost(c *gin.Context) {
 	admin := &model.Admin{}
-	roleIds := c.PostForm("roleIds")
 	err := c.Bind(admin)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
 		return
 	}
+	roleIds := c.PostForm("roleIds")
 	if roleIds != "" {
 		roleIdList := strings.Split(roleIds, ",")
 		if roleIdList != nil && len(roleIdList) != 0 {
@@ -146,6 +181,42 @@ func AdminPost(c *gin.Context) {
 
 	serviceObj := &service.Admin{}
 	obj, err := serviceObj.Add(admin)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(obj.Id)
+	c.JSON(http.StatusOK, result)
+}
+
+func AdminPatchSelf(c *gin.Context) {
+	obj := &model.Admin{}
+	err := c.Bind(obj)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+		return
+	}
+	sn, err := session.GetMi(c.Writer, c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	id, err := sn.Get(session.SessionNameMiAdminId)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	if id != obj.GetId() {
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("只能修改当前登录管理员信息"))
+		return
+	}
+
+	serviceObj := &service.Admin{}
+	_, err = service.Update(serviceObj, obj, "mobile", "password")
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
@@ -169,7 +240,7 @@ func AdminPatch(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	id, err := sn.Get("id")
+	id, err := sn.Get(session.SessionNameMiAdminId)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))

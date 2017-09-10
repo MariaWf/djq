@@ -70,10 +70,10 @@ func initRole() string {
 		role, err := serviceRole.Add(role)
 		checkErr(err)
 		return role.Id
-	}else{
+	} else {
 		role := roleList[0].(*model.Role)
 		role.BindStr2PermissionList()
-		if len(role.PermissionList) != len(model.GetPermissionList()){
+		if len(role.PermissionList) != len(model.GetPermissionList()) {
 			role.PermissionList = model.GetPermissionList()
 			role, err := serviceRole.Update(role)
 			checkErr(err)
@@ -111,6 +111,7 @@ func initTestData() {
 	initTestAdvertisement()
 	initTestShopClassification()
 	initTestShop()
+	//tempInitTestShop()
 }
 
 func initTestRole() {
@@ -184,6 +185,7 @@ func initTestAdvertisement() {
 		}
 	}
 }
+
 func initTestShopClassification() {
 	serviceShopClassification := &service.ShopClassification{}
 	argShopClassification := &arg.ShopClassification{}
@@ -227,11 +229,57 @@ func initTestShop() {
 			obj.TotalCashCouponNumber = rand.Intn(1000)
 			obj.TotalCashCouponPrice = rand.Intn(1000) * obj.TotalCashCouponNumber
 			obj.Introduction = "introduction" + strconv.Itoa(i)
-			obj.Address = "address"+strconv.Itoa(i)
+			obj.Address = "address" + strconv.Itoa(i)
 			obj.Priority = rand.Intn(1000)
 			obj.Hide = rand.Intn(2) < 1
 			obj, err := serviceShop.Add(obj)
 			checkErr(err)
+			initTestShopAccount(obj.Id)
+			initTestShopIntroductionImage(obj.Id)
 		}
+	}
+}
+func tempInitTestShop() {
+	serviceShop := &service.Shop{}
+	argShop := &arg.Shop{}
+	list, err := service.Find(serviceShop, argShop)
+	checkErr(err)
+	for _, obj := range list {
+		initTestShopAccount(obj.(*model.Shop).Id)
+		initTestShopIntroductionImage(obj.(*model.Shop).Id)
+	}
+}
+
+func initTestShopAccount(shopId string) {
+	serviceShopAccount := &service.ShopAccount{}
+	total := rand.Intn(5)
+	var err error
+	for i := 0; i < total; i++ {
+		obj := &model.ShopAccount{}
+		obj.ShopId = shopId
+		obj.Name = "name" + strconv.Itoa(i)
+		obj.Password = "123123"
+		obj.Password, err = util.EncryptPassword(obj.Password)
+		checkErr(err)
+		obj.MoneyChance = rand.Intn(20)
+		obj.TotalMoney = rand.Intn(1000)
+		obj.Locked = rand.Intn(2) < 1
+		obj.Description = "description" + strconv.Itoa(i)
+		_, err := service.Add(serviceShopAccount, obj)
+		checkErr(err)
+	}
+}
+
+func initTestShopIntroductionImage(shopId string) {
+	serviceShopIntroductionImage := &service.ShopIntroductionImage{}
+	total := rand.Intn(10)
+	for i := 0; i < total; i++ {
+		obj := &model.ShopIntroductionImage{}
+		obj.ShopId = shopId
+		obj.Priority = rand.Intn(1000)
+		obj.Hide = rand.Intn(2) < 1
+		obj.ContentUrl = "https://www.baidu.com/img/bd_logo1.png"
+		_, err := service.Add(serviceShopIntroductionImage, obj)
+		checkErr(err)
 	}
 }

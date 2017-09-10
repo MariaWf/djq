@@ -19,17 +19,17 @@ func (service *Advertisement) check(obj *model.Advertisement) error {
 	if obj == nil {
 		return ErrObjectEmpty
 	}
-	if !util.MatchLen(obj.Name, 2, 32) {
-		return errors.New("名称长度为2到32")
-	}
 	if obj.Image == "" {
 		return errors.New("图片不能为空")
 	}
-	if !util.MatchLen(obj.Image, 0, 200) {
-		return errors.New("图片路径最大长度为200")
+	if err := util.MatchLenWithErr(obj.Name, 2, 32, "名称"); err != nil {
+		return err
 	}
-	if !util.MatchLen(obj.Link, 0, 200) {
-		return errors.New("链接路径最大长度为200")
+	if err := util.MatchLenWithErr(obj.Image, 0, 200, "图片路径"); err != nil {
+		return err
+	}
+	if err := util.MatchLenWithErr(obj.Link, 0, 200, "链接"); err != nil {
+		return err
 	}
 	if err := util.MatchPriority(obj.Priority); err != nil {
 		return err

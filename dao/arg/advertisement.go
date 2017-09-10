@@ -5,22 +5,22 @@ import (
 )
 
 type Advertisement struct {
-	IdEqual           string
-	IncludeDeleted    bool
-	NameLike          string
-	NameEqual         string
-	OrderBy           string
-	IdsIn             []string
+	IdEqual        string
+	IncludeDeleted bool
+	NameLike       string
+	NameEqual      string
+	OrderBy        string
+	IdsIn          []string
 
-	NotIncludeHide    bool
+	NotIncludeHide bool
 
-	PageSize          int
-	TargetPage        int
+	PageSize       int `form:"pageSize" json:"pageSize"`
+	TargetPage     int `form:"targetPage" json:"targetPage"`
 
-	DisplayNames      []string
+	DisplayNames   []string
 
-	UpdateObject      interface{}
-	UpdateNames []string
+	UpdateObject   interface{}
+	UpdateNames    []string
 }
 
 func (arg *Advertisement) GetDisplayNames() []string {

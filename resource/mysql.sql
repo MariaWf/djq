@@ -3,7 +3,7 @@ create table tbl_admin(
 id varchar(64) not null primary key,
 name varchar(32) not null default '',
 mobile varchar(32) not null default '',
-password varchar(128) not null default '',
+password varchar(64) not null default '',
 locked tinyint(1) default false,
 del_flag tinyint(1) default false
 )default charset=utf8;
@@ -55,7 +55,9 @@ del_flag tinyint(1) default false
 drop table if exists tbl_shop_account;
 create table tbl_shop_account(
 id varchar(64) not null primary key,
+shop_id varchar(64) not null default '',
 name varchar(32) not null default '',
+password varchar(64) not null default '',
 description varchar(200) not null default '',
 money_chance int(8) not null default 0,
 total_money int(8) not null default 0,
@@ -84,8 +86,10 @@ del_flag tinyint(1) default false
 drop table if exists tbl_shop_introduction_image;
 create table tbl_shop_introduction_image(
 id varchar(64) not null primary key,
+shop_id varchar(64) not null default '',
 priority int(8) not null default 0,
 content_url varchar(200) not null default '',
+hide tinyint(1) default false,
 del_flag tinyint(1) default false
 )default charset=utf8;
 

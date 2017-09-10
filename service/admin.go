@@ -171,6 +171,60 @@ func (service *Admin) Add(obj *model.Admin) (*model.Admin, error) {
 	return obj, nil
 }
 
+func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
+	sourcePassword, err := util.DecryptPassword(obj.Password)
+	if err != nil {
+		return nil, checkErr(err)
+	}
+	obj.Password = sourcePassword
+
+	err = service.CheckUpdate(obj)
+	if err != nil {
+		return nil, err
+	}
+	if obj.Password != "" {
+		obj.Password = util.BuildPassword4DB(obj.Password)
+	}
+
+	conn, err := mysql.Get()
+	if err != nil {
+		return nil, checkErr(err)
+	}
+
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+	daoObj := service.GetDaoInstance(conn)
+
+	argObj := &arg.Admin{}
+	argObj.NameEqual = obj.Name
+	list, err := dao.Find(daoObj, argObj)
+	if err != nil {
+		rollback = true
+		return nil, checkErr(err)
+	}
+	if len(list) > 1 || (len(list) > 0 && list[0].(*model.Admin).GetId() == obj.GetId()) {
+		rollback = true
+		return nil, errors.New("用户名已存在")
+	}
+
+	if obj.Password != "" {
+		_, err = dao.Update(daoObj, obj, "name", "mobile", "Locked")
+	}else{
+		_, err = dao.Update(daoObj, obj, "name", "mobile", "password", "Locked")
+	}
+	if err != nil {
+		rollback = true
+		return nil, checkErr(err)
+	}
+	err = service.refreshRelationshipWithRole(conn, obj)
+	obj.Password = ""
+	if err != nil {
+		rollback = true
+		return nil, checkErr(err)
+	}
+	return obj, checkErr(err)
+}
+
 func (service *Admin) refreshRelationshipWithRole(conn *sql.Tx, obj *model.Admin) error {
 	daoObj := service.GetDaoInstance(conn).(*dao.Admin)
 
@@ -231,56 +285,6 @@ func (service *Admin) refreshRelationshipWithRole(conn *sql.Tx, obj *model.Admin
 	}
 
 	return nil
-}
-
-func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
-	sourcePassword, err := util.DecryptPassword(obj.Password)
-	if err != nil {
-		return nil, checkErr(err)
-	}
-	obj.Password = sourcePassword
-
-	err = service.CheckUpdate(obj)
-	if err != nil {
-		return nil, err
-	}
-	if obj.Password != "" {
-		obj.Password = util.BuildPassword4DB(obj.Password)
-	}
-
-	conn, err := mysql.Get()
-	if err != nil {
-		return nil, checkErr(err)
-	}
-
-	rollback := false
-	defer mysql.Close(conn, &rollback)
-	daoObj := service.GetDaoInstance(conn)
-
-	argObj := &arg.Admin{}
-	argObj.NameEqual = obj.Name
-	list, err := dao.Find(daoObj, argObj)
-	if err != nil {
-		rollback = true
-		return nil, checkErr(err)
-	}
-	if len(list) > 1 || (len(list) > 0 && list[0].(*model.Admin).GetId() == obj.GetId()) {
-		rollback = true
-		return nil, errors.New("用户名已存在")
-	}
-
-	_, err = dao.Update(daoObj, obj, "name", "mobile", "password", "Locked")
-	if err != nil {
-		rollback = true
-		return nil, checkErr(err)
-	}
-	err = service.refreshRelationshipWithRole(conn, obj)
-	obj.Password = ""
-	if err != nil {
-		rollback = true
-		return nil, checkErr(err)
-	}
-	return obj, checkErr(err)
 }
 
 func (service *Admin) Delete(ids ...string) (int64, error) {

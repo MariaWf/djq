@@ -102,8 +102,6 @@ func (sn *Session) Set(key string, value string) error {
 	if error := conn.Expire(sn.getKey(), sn.RedisExpires).Err(); error != nil {
 		return error
 	}
-	cookie := http.Cookie{Name: key, Value: value, Path: "/", MaxAge: sn.CookieMaxAge}
-	http.SetCookie(sn.w, &cookie)
 	return nil
 }
 

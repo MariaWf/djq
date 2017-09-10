@@ -30,6 +30,9 @@ func Begin() {
 	miAdmin.PATCH("/:id", handler.PermissionAdminU, handler.AdminPatch)
 	miAdmin.DELETE("/:id", handler.PermissionAdminD, handler.AdminDelete)
 
+	mi.GET("/adminAction/self",  handler.AdminGetSelf)
+	mi.PATCH("/adminAction/self",  handler.AdminPatchSelf)
+
 	miRole := mi.Group("/role")
 	miRole.GET("/", handler.PermissionRoleR, handler.RoleList)
 	miRole.GET("/:id", handler.PermissionRoleR, handler.RoleGet)
@@ -60,11 +63,28 @@ func Begin() {
 	miShopClassification.PATCH("/:id", handler.PermissionShopClassificationU, handler.ShopClassificationPatch)
 	miShopClassification.DELETE("/:id", handler.PermissionShopClassificationD, handler.ShopClassificationDelete)
 
+	miShopAccount := mi.Group("/shopAccount")
+	miShopAccount.GET("/", handler.PermissionShopR, handler.ShopAccountList)
+	miShopAccount.GET("/:id", handler.PermissionShopR, handler.ShopAccountGet)
+	miShopAccount.POST("/", handler.PermissionShopC, handler.ShopAccountPost)
+	miShopAccount.PATCH("/:id", handler.PermissionShopU, handler.ShopAccountPatch)
+	miShopAccount.DELETE("/:id", handler.PermissionShopD, handler.ShopAccountDelete)
+
+	miShopIntroductionImage := mi.Group("/shopIntroductionImage")
+	miShopIntroductionImage.GET("/", handler.PermissionShopR, handler.ShopIntroductionImageList)
+	miShopIntroductionImage.GET("/:id", handler.PermissionShopR, handler.ShopIntroductionImageGet)
+	miShopIntroductionImage.POST("/", handler.PermissionShopC, handler.ShopIntroductionImagePost)
+	miShopIntroductionImage.PATCH("/:id", handler.PermissionShopU, handler.ShopIntroductionImagePatch)
+	miShopIntroductionImage.DELETE("/:id", handler.PermissionShopD, handler.ShopIntroductionImageDelete)
+
 	miPermission := mi.Group("/permission")
 	miPermission.GET("/", handler.PermissionRoleR, handler.PermissionList)
 
-	si := router.Group("/si", handler.ApiGlobal)
-	si.POST("/login", handler.AdminList)
+	si := router.Group("/si", handler.ApiGlobal, handler.ShopAccountCheckLogin)
+	si.POST("/login", handler.ShopAccountLogin)
+	si.POST("/logout", handler.ShopAccountLogout)
+
+	si.GET("/shopAccountAction/self", handler.ShopAccountGetSelf)
 
 	open := router.Group("/open", handler.ApiGlobal)
 
