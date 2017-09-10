@@ -2,77 +2,42 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"math/rand"
 	"mimi/djq/model"
 	"mimi/djq/util"
 	"net/http"
-	"strconv"
-	"time"
-	"path/filepath"
-	"os"
 	"strings"
 	"log"
-	"mimi/djq/config"
 	"mimi/djq/constant"
 	"mimi/djq/service"
 	"mimi/djq/dao/arg"
 )
 
 func ShopList4Open(c *gin.Context) {
-	targetPageStr := c.DefaultQuery("targetPage", strconv.Itoa(util.BeginPage))
-	targetPage, err := strconv.Atoi(targetPageStr)
+	argObj := &arg.Shop{}
+	err := c.Bind(argObj)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+		return
 	}
-	pageSize := 5
-	total := 123
-
-	shopList := make([]*model.Shop, 0, pageSize)
-	start := util.ComputePageStart(targetPage, pageSize)
-	end := start + pageSize
-	if end > total {
-		end = total
-	}
-	for i := start; i < end; i++ {
-		shop := &model.Shop{}
-		shop.Id = "id" + strconv.Itoa(i)
-		shop.Name = "name" + strconv.Itoa(i)
-		shop.TotalCashCouponNumber = rand.Intn(100000)
-		shop.TotalCashCouponPrice = shop.TotalCashCouponNumber + rand.Intn(10000) * rand.Intn(5)
-		shop.PreImage = "preImage"
-		shopList = append(shopList, shop)
-	}
-	c.JSON(http.StatusOK, util.BuildSuccessPageResult(targetPage, pageSize, total, shopList))
+	argObj.OrderBy = "priority desc"
+	argObj.NotIncludeHide = true
+	serviceObj := &service.Shop{}
+	argObj.DisplayNames = []string{"id", "name", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "priority"}
+	result := service.ResultList(serviceObj, argObj)
+	c.JSON(http.StatusOK, result)
 }
 
 func ShopGet4Open(c *gin.Context) {
-	id := c.Param("id")
-	shop := &model.Shop{}
-	shop.Id = id
-	shop.Name = "name"
-	shop.TotalCashCouponNumber = rand.Intn(100000)
-	shop.TotalCashCouponPrice = shop.TotalCashCouponNumber + rand.Intn(10000) * rand.Intn(5)
-	shop.PreImage = "preImage"
-	shopIntroductionImageList := make([]*model.ShopIntroductionImage, 0, 5)
-	for i := 0; i < 5; i++ {
-		shopIntroductionImage := &model.ShopIntroductionImage{}
-		shopIntroductionImage.Id = "id" + strconv.Itoa(i)
-		shopIntroductionImage.ContentUrl = "contentUrl" + strconv.Itoa(i)
-		shopIntroductionImageList = append(shopIntroductionImageList, shopIntroductionImage)
+	serviceObj := &service.Shop{}
+	obj, err := serviceObj.Get(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
 	}
-	shop.ShopIntroductionImageList = shopIntroductionImageList
-
-	cashCouponList := make([]*model.CashCoupon, 0, 5)
-	for i := 0; i < 5; i++ {
-		cashCoupon := &model.CashCoupon{}
-		cashCoupon.Id = "id" + strconv.Itoa(i)
-		cashCoupon.ExpiryDate = util.JSONTime(time.Now())
-		cashCoupon.Name = "name" + strconv.Itoa(i)
-		cashCoupon.PreImage = "preImage"
-		cashCouponList = append(cashCouponList, cashCoupon)
-	}
-	shop.CashCouponList = cashCouponList
-	c.JSON(http.StatusOK, util.BuildSuccessResult(shop))
+	result := util.BuildSuccessResult(obj)
+	c.JSON(http.StatusOK, result)
 }
 
 func ShopList(c *gin.Context) {
@@ -86,7 +51,7 @@ func ShopList(c *gin.Context) {
 	argObj.OrderBy = "priority desc"
 
 	serviceObj := &service.Shop{}
-	argObj.ShowColumnNames = []string{"id", "name", "logo", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "introduction", "address", "priority", "hide"}
+	argObj.DisplayNames = []string{"id", "name", "logo", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "introduction", "address", "priority", "hide"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }

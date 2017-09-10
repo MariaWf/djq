@@ -4,6 +4,7 @@ import (
 	"errors"
 	"mimi/djq/util"
 	"strings"
+	"mimi/djq/model"
 )
 
 var ErrUpdateObjectEmpty = errors.New("dao: updateObject is empty")
@@ -59,10 +60,10 @@ func bindConditions(sql, conditions string) string {
 }
 
 type BaseArgInterface interface {
-	getBaseSql(sql string) string
-	getAllColumnNames() []string
-	getShowColumnNames() []string
-	getColumnNameValues() ([]string, []interface{})
+	//getBaseSql(sql string) string
+	//getAllColumnNames() []string
+	//getShowColumnNames() []string
+	//getColumnNameValues() ([]string, []interface{})
 	getCountConditions() (string, []interface{})
 	GetTargetPage() int
 	SetTargetPage(int)
@@ -76,15 +77,21 @@ type BaseArgInterface interface {
 	SetIncludeDeleted(includeDeleted bool)
 	GetUpdateObject() interface{}
 	SetUpdateObject(updateObject interface{})
-	GetUpdateColumnNames() []string
-	SetUpdateColumnNames(updateColumnNames []string)
+	GetUpdateNames() []string
+	SetUpdateNames(updateNames []string)
 	GetOrderBy() string
+	GetModelInstance() model.BaseModelInterface
+	GetDisplayNames() []string
+}
+
+func getBaseSql(arg BaseArgInterface, sql string) string {
+	return bindTableName(sql, arg.GetModelInstance().GetTableName())
 }
 
 func BuildFindSql(arg BaseArgInterface) (string, []interface{}, []string) {
-	sql := arg.getBaseSql(SelectSql)
+	sql := getBaseSql(arg, SelectSql)
 
-	columnNames := arg.getShowColumnNames()
+	columnNames := getShowColumnNames(arg)
 	sql = bindColumnNames(sql, strings.Join(columnNames, ","))
 
 	conditionStr, params := getFindConditions(arg)
@@ -94,7 +101,7 @@ func BuildFindSql(arg BaseArgInterface) (string, []interface{}, []string) {
 }
 
 func BuildCountSql(arg BaseArgInterface) (string, []interface{}) {
-	sql := arg.getBaseSql(CountSql)
+	sql := getBaseSql(arg, CountSql)
 
 	conditionStr, params := getCountConditions(arg)
 	sql = bindConditions(sql, conditionStr)
@@ -103,9 +110,9 @@ func BuildCountSql(arg BaseArgInterface) (string, []interface{}) {
 }
 
 func BuildInsertSql(arg BaseArgInterface) (string, []string) {
-	sql := arg.getBaseSql(InsertSql)
+	sql := getBaseSql(arg, InsertSql)
 
-	columnNames := arg.getAllColumnNames()
+	columnNames := getAllColumnNames(arg)
 	sql = bindColumnNames(sql, strings.Join(columnNames, ","))
 
 	columnValues := getColumnValuePlaceHolder(columnNames)
@@ -118,9 +125,9 @@ func BuildUpdateSql(arg BaseArgInterface) (string, []interface{}) {
 	if arg.GetUpdateObject() == nil {
 		panic(ErrUpdateObjectEmpty)
 	}
-	sql := arg.getBaseSql(UpdateSql)
+	sql := getBaseSql(arg, UpdateSql)
 
-	columnNameValues, paramValues := arg.getColumnNameValues()
+	columnNameValues, paramValues := getColumnNameValues(arg)
 	sql = bindColumnNameValues(sql, strings.Join(columnNameValues, ","))
 
 	conditionStr, paramConditions := getCountConditions(arg)
@@ -130,7 +137,7 @@ func BuildUpdateSql(arg BaseArgInterface) (string, []interface{}) {
 }
 
 func BuildDeleteSql(arg BaseArgInterface) (string, []interface{}) {
-	sql := arg.getBaseSql(DeleteSql)
+	sql := getBaseSql(arg, DeleteSql)
 
 	conditionStr, params := getCountConditions(arg)
 	sql = bindConditions(sql, conditionStr)
@@ -139,7 +146,7 @@ func BuildDeleteSql(arg BaseArgInterface) (string, []interface{}) {
 }
 
 func BuildLogicalDeleteSql(arg BaseArgInterface) (string, []interface{}) {
-	sql := arg.getBaseSql(UpdateSql)
+	sql := getBaseSql(arg, UpdateSql)
 
 	sql = bindColumnNameValues(sql, " del_flag = true")
 
@@ -147,6 +154,9 @@ func BuildLogicalDeleteSql(arg BaseArgInterface) (string, []interface{}) {
 	sql = bindConditions(sql, conditionStr)
 
 	return sql, paramConditions
+}
+func getAllColumnNames(arg BaseArgInterface) []string {
+	return arg.GetModelInstance().GetDBNames()
 }
 
 func getColumnValuePlaceHolder(columnNames []string) []string {
@@ -156,6 +166,37 @@ func getColumnValuePlaceHolder(columnNames []string) []string {
 		placeholder = append(placeholder, "?")
 	}
 	return placeholder
+}
+
+func getShowColumnNames(arg BaseArgInterface) []string {
+	if arg.GetDisplayNames() == nil || len(arg.GetDisplayNames()) == 0 {
+		return getAllColumnNames(arg)
+	}
+	size := len(arg.GetDisplayNames())
+	s := make([]string, size, size)
+	modelObj := arg.GetModelInstance()
+	for i, v := range arg.GetDisplayNames() {
+		s[i] = modelObj.GetDBFromMapName(v)
+	}
+	if len(s) == 0 {
+		return getAllColumnNames(arg)
+	}
+	return s
+}
+
+func getColumnNameValues(arg BaseArgInterface) ([]string, []interface{}) {
+	if arg.GetUpdateNames() == nil || len(arg.GetUpdateNames()) == 0 {
+		arg.SetUpdateNames(arg.GetModelInstance().GetMapNames())
+	}
+	size := len(arg.GetUpdateNames())
+	s := make([]string, size, size)
+	params := make([]interface{}, size, size)
+	modelObj := arg.GetModelInstance()
+	for i, v := range arg.GetUpdateNames() {
+		s[i] = modelObj.GetDBFromMapName(v) + " = ? "
+		params[i] = arg.GetUpdateObject().(model.BaseModelInterface).GetValue4Map(v)
+	}
+	return s, params
 }
 
 func getFindConditions(arg BaseArgInterface) (string, []interface{}) {

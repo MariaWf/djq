@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"mimi/djq/db/mysql"
+	"mimi/djq/dao/arg"
 )
 
 type interface1 interface {
@@ -72,4 +74,29 @@ func TestAdminDao_Find(t *testing.T) {
 	//for _, admin := range list {
 	//	t.Log(admin.Name)
 	//}
+}
+
+func TestAdmin_Get(t *testing.T) {
+	conn, _ := mysql.Get()
+	daoObj := &Admin{conn}
+	//argObj := &arg.Admin{}
+	obj, err := Get(daoObj, "0d0d13560cf44986933d40fb5b1928b0")
+	if err != nil {
+		t.Error(err)
+	} else {
+		t.Log(obj)
+	}
+}
+
+func TestAdmin_List(t *testing.T) {
+	conn, _ := mysql.Get()
+	daoObj := &Admin{conn}
+	argObj := &arg.Admin{}
+	argObj.DisplayNames = []string{"name", "locked"}
+	list, err := Find(daoObj, argObj)
+	if err != nil {
+		t.Error(err)
+	} else {
+		t.Log(list[0])
+	}
 }

@@ -71,9 +71,9 @@ func Begin() {
 	open.POST("/geetest", handler.GeetestInit)
 	open.GET("/getPublicKey", handler.GetPublicKey)
 
-	open.GET("/shop", handler.AdminList)
-	open.GET("/shop/:id", handler.AdminGet)
-	open.GET("/shopClassification", handler.AdminGet)
+	open.GET("/shop", handler.ShopList4Open)
+	open.GET("/shop/:id", handler.ShopGet4Open)
+	open.GET("/shopClassification", handler.ShopClassificationList4Open)
 
 	open.GET("/advertisement", handler.AdvertisementList4Open)
 

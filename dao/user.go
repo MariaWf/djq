@@ -125,7 +125,7 @@ func (u *UserDao) Update(user *model.User, args ...string) (*model.User, error) 
 	arg := &arg.User{}
 	arg.IdEqual = user.Id
 	arg.UpdateObject = user
-	arg.UpdateColumnNames = args
+	arg.UpdateNames = args
 	sql, params := arg.BuildUpdateSql()
 	stmt, err := u.Conn.Prepare(sql)
 	if err != nil {

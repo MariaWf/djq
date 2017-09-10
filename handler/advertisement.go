@@ -22,7 +22,7 @@ func AdvertisementList4Open(c *gin.Context) {
 	argObj.NotIncludeHide = true
 	argObj.OrderBy = "priority desc"
 	serviceObj := &service.Advertisement{}
-	argObj.ShowColumnNames = []string{"image", "link"}
+	argObj.DisplayNames = []string{"image", "link"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }
@@ -38,7 +38,7 @@ func AdvertisementList(c *gin.Context) {
 	argObj.OrderBy = "priority desc"
 
 	serviceObj := &service.Advertisement{}
-	argObj.ShowColumnNames = []string{"id", "name", "image", "link", "priority", "hide", "description"}
+	argObj.DisplayNames = []string{"id", "name", "image", "link", "priority", "hide", "description"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }

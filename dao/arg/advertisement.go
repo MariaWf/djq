@@ -17,10 +17,18 @@ type Advertisement struct {
 	PageSize          int
 	TargetPage        int
 
-	ShowColumnNames   []string
+	DisplayNames      []string
 
 	UpdateObject      interface{}
-	UpdateColumnNames []string
+	UpdateNames []string
+}
+
+func (arg *Advertisement) GetDisplayNames() []string {
+	return arg.DisplayNames
+}
+
+func (arg *Advertisement) GetModelInstance() model.BaseModelInterface {
+	return &model.Advertisement{}
 }
 
 func (arg *Advertisement) GetIdsIn() []string {
@@ -31,12 +39,12 @@ func (arg *Advertisement) SetIdsIn(idsIn []string) {
 	arg.IdsIn = idsIn
 }
 
-func (arg *Advertisement) GetUpdateColumnNames() []string {
-	return arg.UpdateColumnNames
+func (arg *Advertisement) GetUpdateNames() []string {
+	return arg.UpdateNames
 }
 
-func (arg *Advertisement) SetUpdateColumnNames(updateColumnNames []string) {
-	arg.UpdateColumnNames = updateColumnNames
+func (arg *Advertisement) SetUpdateNames(updateNames []string) {
+	arg.UpdateNames = updateNames
 }
 
 func (arg *Advertisement) GetOrderBy() string {
@@ -85,76 +93,6 @@ func (arg *Advertisement) GetPageSize() int {
 
 func (arg *Advertisement) SetPageSize(pageSize int) {
 	arg.PageSize = pageSize
-}
-
-func (arg *Advertisement) getBaseSql(sql string) string {
-	return bindTableName(sql, tableNameAdvertisement)
-}
-
-func (arg *Advertisement) getAllColumnNames() []string {
-	return ColumnNamesAdvertisement
-}
-
-func (arg *Advertisement) getShowColumnNames() []string {
-	if arg.ShowColumnNames == nil || len(arg.ShowColumnNames) == 0 {
-		return arg.getAllColumnNames()
-	}
-	s := make([]string, 0, len(arg.ShowColumnNames))
-	for _, v := range arg.ShowColumnNames {
-		switch v {
-		case "id":
-			s = append(s, "id")
-		case "name":
-			s = append(s, "name")
-		case "image":
-			s = append(s, "image")
-		case "link":
-			s = append(s, "link")
-		case "priority":
-			s = append(s, "priority")
-		case "hide":
-			s = append(s, "hide")
-		case "description":
-			s = append(s, "description")
-		}
-	}
-	if len(s) == 0 {
-		return arg.getAllColumnNames()
-	}
-	return s
-}
-
-func (arg *Advertisement) getColumnNameValues() ([]string, []interface{}) {
-	if arg.GetUpdateColumnNames() == nil || len(arg.GetUpdateColumnNames()) == 0 {
-		arg.SetUpdateColumnNames(arg.getAllColumnNames()[1:])
-	}
-	size := len(arg.GetUpdateColumnNames())
-	s := make([]string, size, size)
-	params := make([]interface{}, size, size)
-	for _, v := range arg.GetUpdateColumnNames() {
-
-		switch v {
-		case "name":
-			s = append(s, "name = ?")
-			params = append(params, arg.UpdateObject.(*model.Advertisement).Name)
-		case "image":
-			s = append(s, "image = ?")
-			params = append(params, arg.UpdateObject.(*model.Advertisement).Image)
-		case "link":
-			s = append(s, "link = ?")
-			params = append(params, arg.UpdateObject.(*model.Advertisement).Link)
-		case "priority":
-			s = append(s, "priority = ?")
-			params = append(params, arg.UpdateObject.(*model.Advertisement).Priority)
-		case "hide":
-			s = append(s, "hide = ?")
-			params = append(params, arg.UpdateObject.(*model.Advertisement).Hide)
-		case "description":
-			s = append(s, "description = ?")
-			params = append(params, arg.UpdateObject.(*model.Advertisement).Description)
-		}
-	}
-	return s, params
 }
 
 func (arg *Advertisement) getCountConditions() (string, []interface{}) {

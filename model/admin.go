@@ -21,15 +21,40 @@ func (obj *Admin) SetId(id string) {
 	obj.Id = id
 }
 
-func (obj *Admin) SetRoleListFromInterfaceArr(list []interface{}) {
-	if list != nil && len(list) != 0 {
-		obj.RoleList = make([]*Role, len(list), len(list))
-		for i, role := range list {
-			obj.RoleList[i] = role.(*Role)
-		}
-	} else {
-		obj.RoleList = make([]*Role, 0, 1)
+func (obj *Admin) GetTableName() string {
+	return "tbl_admin"
+}
+
+func (obj *Admin) GetDBNames() []string {
+	return []string{"id", "name", "mobile", "password", "locked"}
+}
+
+func (obj *Admin) GetMapNames() []string {
+	return []string{"id", "name", "mobile", "password", "locked"}
+}
+
+func (obj *Admin) GetValue4Map(name string) interface{} {
+	switch name {
+	case "id":
+		return obj.Id
+	case "name":
+		return obj.Name
+	case "locked":
+		return obj.Locked
+	case "mobile":
+		return obj.Mobile
+	case "password":
+		return obj.Password
 	}
+	panic(errors.New("对象admin属性[" + name + "]不存在"))
+}
+
+func (obj *Admin) GetDBFromMapName(name string) string {
+	str := GetDBFromMapName(obj, name)
+	if str != "" {
+		return str
+	}
+	panic(errors.New("对象admin属性[" + name + "]不存在"))
 }
 
 func (obj *Admin) GetPointer4DB(name string) interface{} {
@@ -48,14 +73,6 @@ func (obj *Admin) GetPointer4DB(name string) interface{} {
 	panic(errors.New("对象admin属性[" + name + "]不存在"))
 }
 
-//func (obj *Admin) GetPointers4DB(names []string) []interface{} {
-//	pointers := make([]interface{}, 0, 5)
-//	for _, name := range names {
-//		pointers = append(pointers, obj.GetPointer4DB(name))
-//	}
-//	return pointers
-//}
-
 func (obj *Admin) GetValue4DB(name string) interface{} {
 	switch name {
 	case "id":
@@ -71,14 +88,6 @@ func (obj *Admin) GetValue4DB(name string) interface{} {
 	}
 	panic(errors.New("对象admin属性[" + name + "]不存在"))
 }
-
-//func (obj *Admin) GetValues4DB(names []string) []interface{} {
-//	values := make([]interface{}, 0, 5)
-//	for _, name := range names {
-//		values = append(values, obj.GetValue4DB(name))
-//	}
-//	return values
-//}
 
 func (obj *Admin) BindPermissionList() {
 	obj.PermissionList = make([]*Permission, 0, 10)
@@ -112,4 +121,16 @@ func (obj *Admin) GetPermissionCodeList() []string {
 		return list
 	}
 	return nil
+}
+
+
+func (obj *Admin) SetRoleListFromInterfaceArr(list []interface{}) {
+	if list != nil && len(list) != 0 {
+		obj.RoleList = make([]*Role, len(list), len(list))
+		for i, role := range list {
+			obj.RoleList[i] = role.(*Role)
+		}
+	} else {
+		obj.RoleList = make([]*Role, 0, 1)
+	}
 }

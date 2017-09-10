@@ -20,10 +20,18 @@ type Admin struct {
 	PageSize   int `form:"pageSize" json:"pageSize"`
 	TargetPage int `form:"targetPage" json:"targetPage"`
 
-	ShowColumnNames []string
+	DisplayNames []string
 
 	UpdateObject      interface{}
-	UpdateColumnNames []string
+	UpdateNames []string
+}
+
+func (arg *Admin) GetDisplayNames() []string {
+	return arg.DisplayNames
+}
+
+func (arg *Admin) GetModelInstance() model.BaseModelInterface {
+	return &model.Admin{}
 }
 
 func (arg *Admin) GetIdsIn() []string {
@@ -34,12 +42,12 @@ func (arg *Admin) SetIdsIn(idsIn []string) {
 	arg.IdsIn = idsIn
 }
 
-func (arg *Admin) GetUpdateColumnNames() []string {
-	return arg.UpdateColumnNames
+func (arg *Admin) GetUpdateNames() []string {
+	return arg.UpdateNames
 }
 
-func (arg *Admin) SetUpdateColumnNames(updateColumnNames []string) {
-	arg.UpdateColumnNames = updateColumnNames
+func (arg *Admin) SetUpdateNames(updateNames []string) {
+	arg.UpdateNames = updateNames
 }
 
 func (arg *Admin) GetOrderBy() string {
@@ -88,64 +96,6 @@ func (arg *Admin) GetPageSize() int {
 
 func (arg *Admin) SetPageSize(pageSize int) {
 	arg.PageSize = pageSize
-}
-
-func (arg *Admin) getBaseSql(sql string) string {
-	return bindTableName(sql, tableNameAdmin)
-}
-
-func (arg *Admin) getAllColumnNames() []string {
-	return ColumnNamesAdmin
-}
-
-func (arg *Admin) getShowColumnNames() []string {
-	if arg.ShowColumnNames == nil || len(arg.ShowColumnNames) == 0 {
-		return arg.getAllColumnNames()
-	}
-	s := make([]string, 0, len(arg.ShowColumnNames))
-	for _, v := range arg.ShowColumnNames {
-		switch v {
-		case "id":
-			s = append(s, "id")
-		case "name":
-			s = append(s, "name")
-		case "mobile":
-			s = append(s, "mobile")
-		case "password":
-			s = append(s, "password")
-		case "locked":
-			s = append(s, "locked")
-		}
-	}
-	if len(s) == 0 {
-		return arg.getAllColumnNames()
-	}
-	return s
-}
-
-func (arg *Admin) getColumnNameValues() ([]string, []interface{}) {
-	if arg.UpdateColumnNames == nil || len(arg.UpdateColumnNames) == 0 {
-		arg.UpdateColumnNames = arg.getAllColumnNames()[1:]
-	}
-	s := make([]string, 0, len(arg.UpdateColumnNames))
-	params := make([]interface{}, 0, 9)
-	for _, v := range arg.UpdateColumnNames {
-		switch v {
-		case "name":
-			s = append(s, "name = ?")
-			params = append(params, arg.UpdateObject.(*model.Admin).Name)
-		case "mobile":
-			s = append(s, "mobile = ?")
-			params = append(params, arg.UpdateObject.(*model.Admin).Mobile)
-		case "password":
-			s = append(s, "password = ?")
-			params = append(params, arg.UpdateObject.(*model.Admin).Password)
-		case "locked":
-			s = append(s, "locked = ?")
-			params = append(params, arg.UpdateObject.(*model.Admin).Locked)
-		}
-	}
-	return s, params
 }
 
 func (arg *Admin) getCountConditions() (string, []interface{}) {

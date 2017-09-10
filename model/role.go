@@ -26,6 +26,40 @@ func (obj *Role) SetId(id string) {
 	obj.Id = id
 }
 
+func (obj *Role) GetTableName() string {
+	return "tbl_role"
+}
+
+func (obj *Role) GetDBNames() []string {
+	return []string{"id", "name", "description", "permission_list_str"}
+}
+
+func (obj *Role) GetMapNames() []string {
+	return []string{"id", "name", "description", "permissionListStr"}
+}
+
+func (obj *Role) GetValue4Map(name string) interface{} {
+	switch name {
+	case "id":
+		return obj.Id
+	case "name":
+		return obj.Name
+	case "description":
+		return obj.Description
+	case "permissionListStr":
+		return obj.PermissionListStr
+	}
+	panic(errors.New("对象role属性[" + name + "]不存在"))
+}
+
+func (obj *Role) GetDBFromMapName(name string) string {
+	str := GetDBFromMapName(obj, name)
+	if str != "" {
+		return str
+	}
+	panic(errors.New("对象role属性[" + name + "]不存在"))
+}
+
 func (obj *Role) GetPointer4DB(name string) interface{} {
 	switch name {
 	case "id":

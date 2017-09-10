@@ -17,7 +17,7 @@ func ShopClassificationList4Open(c *gin.Context) {
 	argObj.NotIncludeHide = true
 	argObj.OrderBy = "priority desc"
 	serviceObj := &service.ShopClassification{}
-	argObj.ShowColumnNames = []string{"id", "name"}
+	argObj.DisplayNames = []string{"id", "name"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }
@@ -33,7 +33,7 @@ func ShopClassificationList(c *gin.Context) {
 	argObj.OrderBy = "priority desc"
 
 	serviceObj := &service.ShopClassification{}
-	argObj.ShowColumnNames = []string{"id", "name", "priority", "hide","description"}
+	argObj.DisplayNames = []string{"id", "name", "priority", "hide","description"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }

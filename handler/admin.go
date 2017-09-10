@@ -108,7 +108,7 @@ func AdminList(c *gin.Context) {
 		return
 	}
 	serviceObj := &service.Admin{}
-	argObj.ShowColumnNames = []string{"id", "name", "mobile", "locked"}
+	argObj.DisplayNames = []string{"id", "name", "mobile", "locked"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }

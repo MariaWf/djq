@@ -121,7 +121,7 @@ func TestRole_Update(t *testing.T) {
 
 	argObj := &arg.Role{}
 	argObj.NameLike = "3"
-	argObj.UpdateColumnNames = []string{"name", "description"}
+	argObj.UpdateNames = []string{"name", "description"}
 	argObj.UpdateObject = &model.Role{Name: "updateName", Description: "updateDesc"}
 	count, err := BatchUpdate(dao, argObj)
 	if err != nil {
@@ -189,7 +189,7 @@ func TestRoleUpdate(t *testing.T) {
 		ids = append(ids, obj.GetId())
 	}
 	argObj.SetIdsIn(ids)
-	argObj.UpdateColumnNames = []string{"name", "description"}
+	argObj.UpdateNames = []string{"name", "description"}
 	argObj.UpdateObject = &model.Role{Name: "updateName", Description: "updateDesc"}
 	count, err := BatchUpdate(dao, argObj)
 	if err != nil {
@@ -239,7 +239,7 @@ func bathAdd(dao *Role, total int) ([]*model.Role, error) {
 
 func findAll(dao *Role) ([]interface{}, error) {
 	argObj := &arg.Role{}
-	argObj.ShowColumnNames = []string{"id", "name", "description", "permissionListStr"}
+	argObj.DisplayNames = []string{"id", "name", "description", "permissionListStr"}
 	argObj.OrderBy = "name"
 	list, err := Find(dao, argObj)
 	if err != nil {

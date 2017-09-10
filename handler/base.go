@@ -17,6 +17,8 @@ import (
 
 var ErrParamException = errors.New("参数异常")
 
+var ErrUnknown = errors.New("操作失败，请稍后重试")
+
 func commonUploadImage(c *gin.Context, typeHead string) {
 	file, err := c.FormFile("theFile")
 	if err != nil {

@@ -70,6 +70,15 @@ func initRole() string {
 		role, err := serviceRole.Add(role)
 		checkErr(err)
 		return role.Id
+	}else{
+		role := roleList[0].(*model.Role)
+		role.BindStr2PermissionList()
+		if len(role.PermissionList) != len(model.GetPermissionList()){
+			role.PermissionList = model.GetPermissionList()
+			role, err := serviceRole.Update(role)
+			checkErr(err)
+			return role.Id
+		}
 	}
 	return roleList[0].(*model.Role).Id
 }
@@ -100,6 +109,8 @@ func initTestData() {
 	initTestRole()
 	initTestAdmin()
 	initTestAdvertisement()
+	initTestShopClassification()
+	initTestShop()
 }
 
 func initTestRole() {
@@ -150,7 +161,6 @@ func initTestAdmin() {
 			checkErr(err)
 			obj, err := serviceAdmin.Add(obj)
 			checkErr(err)
-			checkErr(err)
 		}
 	}
 }
@@ -170,6 +180,57 @@ func initTestAdvertisement() {
 			obj.Hide = rand.Intn(2) < 1
 			obj.Description = "description" + strconv.Itoa(i)
 			_, err := service.Add(serviceAdvertisement, obj)
+			checkErr(err)
+		}
+	}
+}
+func initTestShopClassification() {
+	serviceShopClassification := &service.ShopClassification{}
+	argShopClassification := &arg.ShopClassification{}
+	count, err := service.Count(serviceShopClassification, argShopClassification)
+	checkErr(err)
+	if count < 5 {
+		for i := 0; i < 50; i++ {
+			obj := &model.ShopClassification{}
+			obj.Name = "name" + strconv.Itoa(i)
+			obj.Priority = rand.Intn(1000)
+			obj.Hide = rand.Intn(2) < 1
+			obj.Description = "description" + strconv.Itoa(i)
+			_, err := service.Add(serviceShopClassification, obj)
+			checkErr(err)
+		}
+	}
+}
+
+func initTestShop() {
+	serviceShop := &service.Shop{}
+	argShop := &arg.Shop{}
+	count, err := service.Count(serviceShop, argShop)
+	checkErr(err)
+	if count < 5 {
+		serviceShopClassification := &service.ShopClassification{}
+		argShopClassification := &arg.ShopClassification{}
+		roleList, err := service.Find(serviceShopClassification, argShopClassification)
+		checkErr(err)
+		for i := 0; i < 50; i++ {
+			obj := &model.Shop{}
+			rl := make([]*model.ShopClassification, 0, 10)
+			for _, v := range roleList {
+				if rand.Intn(10) < 2 {
+					rl = append(rl, v.(*model.ShopClassification))
+				}
+			}
+			obj.ShopClassificationList = rl
+			obj.Name = "name" + strconv.Itoa(i)
+			obj.Logo = "https://www.baidu.com/img/bd_logo1.png"
+			obj.PreImage = "https://www.baidu.com/img/bd_logo1.png"
+			obj.TotalCashCouponNumber = rand.Intn(1000)
+			obj.TotalCashCouponPrice = rand.Intn(1000) * obj.TotalCashCouponNumber
+			obj.Introduction = "introduction" + strconv.Itoa(i)
+			obj.Address = "address"+strconv.Itoa(i)
+			obj.Priority = rand.Intn(1000)
+			obj.Hide = rand.Intn(2) < 1
+			obj, err := serviceShop.Add(obj)
 			checkErr(err)
 		}
 	}

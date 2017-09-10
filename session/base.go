@@ -13,6 +13,12 @@ const (
 	SessionNameMiAdminId = "miAdminId"
 	SessionNameMiPermission = "miPermission"
 	SessionNameMiAdminName = "miAdminName"
+
+	SessionNameUiUserId = "uiUserId"
+	SessionNameUiUserMobile = "uiUserMobile"
+
+	SessionNameSiShopAccountId = "siShopAccountId"
+	SessionNameSiShopAccountName = "siShopAccountName"
 )
 
 func GetMi(w http.ResponseWriter, r *http.Request) (*Session, error) {
@@ -20,11 +26,11 @@ func GetMi(w http.ResponseWriter, r *http.Request) (*Session, error) {
 }
 
 func GetUi(w http.ResponseWriter, r *http.Request) (*Session, error) {
-	return Get(w, r, "mi", 60 * 60 * 24 * 365, time.Hour * 24 * 365)
+	return Get(w, r, "ui", 60 * 60 * 24 * 365, time.Hour * 24 * 365)
 }
 
 func GetSi(w http.ResponseWriter, r *http.Request) (*Session, error) {
-	return Get(w, r, "mi", 0, time.Hour * 24)
+	return Get(w, r, "si", 0, time.Hour * 24)
 }
 
 func GetOpen(w http.ResponseWriter, r *http.Request) (*Session, error) {
@@ -84,7 +90,7 @@ func (sn *Session) GetBool(key string) (bool, error) {
 	}
 }
 
-func (sn *Session) Set(key string, value interface{}) error {
+func (sn *Session) Set(key string, value string) error {
 	conn := redis.Get()
 	var vMap map[string]interface{} = make(map[string]interface{})
 
@@ -96,9 +102,11 @@ func (sn *Session) Set(key string, value interface{}) error {
 	if error := conn.Expire(sn.getKey(), sn.RedisExpires).Err(); error != nil {
 		return error
 	}
+	cookie := http.Cookie{Name: key, Value: value, Path: "/", MaxAge: sn.CookieMaxAge}
+	http.SetCookie(sn.w, &cookie)
 	return nil
-
 }
+
 
 func (sn *Session) Del() error {
 	conn := redis.Get()

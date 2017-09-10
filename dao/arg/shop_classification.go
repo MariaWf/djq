@@ -17,10 +17,18 @@ type ShopClassification struct {
 	PageSize          int
 	TargetPage        int
 
-	ShowColumnNames   []string
+	DisplayNames   []string
 
 	UpdateObject      interface{}
-	UpdateColumnNames []string
+	UpdateNames []string
+}
+
+func (arg *ShopClassification) GetDisplayNames() []string {
+	return arg.DisplayNames
+}
+
+func (arg *ShopClassification) GetModelInstance() model.BaseModelInterface {
+	return &model.ShopClassification{}
 }
 
 func (arg *ShopClassification) GetIdsIn() []string {
@@ -31,12 +39,12 @@ func (arg *ShopClassification) SetIdsIn(idsIn []string) {
 	arg.IdsIn = idsIn
 }
 
-func (arg *ShopClassification) GetUpdateColumnNames() []string {
-	return arg.UpdateColumnNames
+func (arg *ShopClassification) GetUpdateNames() []string {
+	return arg.UpdateNames
 }
 
-func (arg *ShopClassification) SetUpdateColumnNames(updateColumnNames []string) {
-	arg.UpdateColumnNames = updateColumnNames
+func (arg *ShopClassification) SetUpdateNames(updateNames []string) {
+	arg.UpdateNames = updateNames
 }
 
 func (arg *ShopClassification) GetOrderBy() string {
@@ -85,67 +93,6 @@ func (arg *ShopClassification) GetPageSize() int {
 
 func (arg *ShopClassification) SetPageSize(pageSize int) {
 	arg.PageSize = pageSize
-}
-
-func (arg *ShopClassification) getBaseSql(sql string) string {
-	return bindTableName(sql, tableNameShopClassification)
-}
-
-func (arg *ShopClassification) getAllColumnNames() []string {
-	return ColumnNamesShopClassification
-}
-
-func (arg *ShopClassification) getShowColumnNames() []string {
-	if arg.ShowColumnNames == nil || len(arg.ShowColumnNames) == 0 {
-		return arg.getAllColumnNames()
-	}
-	s := make([]string, 0, len(arg.ShowColumnNames))
-	for _, v := range arg.ShowColumnNames {
-		switch v {
-		case "id":
-			s = append(s, "id")
-		case "name":
-			s = append(s, "name")
-		case "description":
-			s = append(s, "description")
-		case "hide":
-			s = append(s, "hide")
-		case "priority":
-			s = append(s, "priority")
-		}
-	}
-	if len(s) == 0 {
-		return arg.getAllColumnNames()
-	}
-	return s
-}
-
-func (arg *ShopClassification) getColumnNameValues() ([]string, []interface{}) {
-	if arg.UpdateColumnNames == nil || len(arg.UpdateColumnNames) == 0 {
-		arg.UpdateColumnNames = arg.getAllColumnNames()[1:]
-	}
-	s := make([]string, 0, len(arg.UpdateColumnNames))
-	params := make([]interface{}, 0, 9)
-	for _, v := range arg.UpdateColumnNames {
-		//s = append(s,v+" = ?")
-		//params = append(params,arg.UpdateObject.(*model.ShopClassification).GetValue4Map(v))
-		switch v {
-		case "name":
-			s = append(s, "name = ?")
-			params = append(params, arg.UpdateObject.(*model.ShopClassification).Name)
-		case "description":
-			s = append(s, "description = ?")
-			params = append(params, arg.UpdateObject.(*model.ShopClassification).Description)
-		case "hide":
-			s = append(s, "hide")
-			params = append(params, arg.UpdateObject.(*model.ShopClassification).Hide)
-		case "priority":
-			s = append(s, "priority")
-			params = append(params, arg.UpdateObject.(*model.ShopClassification).Priority)
-
-		}
-	}
-	return s, params
 }
 
 func (arg *ShopClassification) getCountConditions() (string, []interface{}) {

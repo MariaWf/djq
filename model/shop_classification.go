@@ -18,48 +18,55 @@ func (obj *ShopClassification) SetId(id string) {
 	obj.Id = id
 }
 
+func (obj *ShopClassification) GetTableName() string {
+	return "tbl_shop_classification"
+}
+
+func (obj *ShopClassification) GetDBNames() []string {
+	return []string{"id", "name", "hide", "priority", "description"}
+}
+
+func (obj *ShopClassification) GetMapNames() []string {
+	return []string{"id", "name", "hide", "priority", "description"}
+}
+
+func (obj *ShopClassification) GetValue4Map(name string) interface{} {
+	switch name {
+	case "id": return obj.Id
+	case "name": return obj.Name
+	case "priority": return obj.Priority
+	case "description": return obj.Description
+	case "hide": return obj.Hide
+	}
+	panic(errors.New("对象shopClassification属性[" + name + "]不存在"))
+}
+
+func (obj *ShopClassification) GetDBFromMapName(name string) string {
+	str := GetDBFromMapName(obj, name)
+	if str != "" {
+		return str
+	}
+	panic(errors.New("对象shopClassification属性[" + name + "]不存在"))
+}
+
 func (obj *ShopClassification) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id":
-		return &obj.Id
-	case "name":
-		return &obj.Name
+	case "id": return &obj.Id
+	case "name": return &obj.Name
 	case "priority": return &obj.Priority
-	case "description":
-		return &obj.Description
-	case "hide":
-		return &obj.Hide
+	case "description": return &obj.Description
+	case "hide": return &obj.Hide
 	}
 	panic(errors.New("对象shopClassification属性[" + name + "]不存在"))
 }
 
 func (obj *ShopClassification) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id":
-		return obj.Id
-	case "name":
-		return obj.Name
+	case "id": return obj.Id
+	case "name": return obj.Name
 	case "priority": return obj.Priority
-	case "description":
-		return obj.Description
-	case "hide":
-		return obj.Hide
+	case "description": return obj.Description
+	case "hide": return obj.Hide
 	}
 	panic(errors.New("对象shopClassification属性[" + name + "]不存在"))
 }
-
-func (obj *ShopClassification) GetValue4Map(name string) interface{} {
-	switch name {
-	case "id":
-		return obj.Id
-	case "name":
-		return obj.Name
-	case "priority": return obj.Priority
-	case "description":
-		return obj.Description
-	case "hide":
-		return obj.Hide
-	}
-	panic(errors.New("对象shopClassification属性[" + name + "]不存在"))
-}
-

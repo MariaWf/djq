@@ -2,10 +2,10 @@ package model
 
 import "github.com/pkg/errors"
 
-const tableNameAdvertisement = "tbl_advertisement"
-
-var ColumnNamesAdvertisement = []string{"id", "name", "image", "link", "priority", "hide", "description"}
-var MapNamesAdvertisement = []string{"id", "name", "image", "link", "priority", "hide", "description"}
+//const tableNameAdvertisement = "tbl_advertisement"
+//
+//var ColumnNamesAdvertisement = []string{"id", "name", "image", "link", "priority", "hide", "description"}
+//var MapNamesAdvertisement = []string{"id", "name", "image", "link", "priority", "hide", "description"}
 
 type Advertisement struct {
 	Id          string `form:"id" json:"id" db:"id" desc:"id"`
@@ -26,15 +26,36 @@ func (obj *Advertisement) SetId(id string) {
 }
 
 func (obj *Advertisement) GetTableName() string {
-	return tableNameAdvertisement
+	return "tbl_advertisement"
 }
 
 func (obj *Advertisement) GetDBNames() []string {
-	return ColumnNamesAdvertisement
+	return []string{"id", "name", "image", "link", "priority", "hide", "description"}
 }
 
 func (obj *Advertisement) GetMapNames() []string {
-	return MapNamesAdvertisement
+	return []string{"id", "name", "image", "link", "priority", "hide", "description"}
+}
+
+func (obj *Advertisement) GetValue4Map(name string) interface{} {
+	switch name {
+	case "id": return obj.Id
+	case "name": return obj.Name
+	case "image": return obj.Image
+	case "link": return obj.Link
+	case "priority": return obj.Priority
+	case "hide": return obj.Hide
+	case "description": return obj.Description
+	}
+	panic(errors.New("对象advertisement属性[" + name + "]不存在"))
+}
+
+func (obj *Advertisement) GetDBFromMapName(name string) string {
+	str := GetDBFromMapName(obj, name)
+	if str != "" {
+		return str
+	}
+	panic(errors.New("对象advertisement属性[" + name + "]不存在"))
 }
 
 func (obj *Advertisement) GetPointer4DB(name string) interface{} {
@@ -51,19 +72,6 @@ func (obj *Advertisement) GetPointer4DB(name string) interface{} {
 }
 
 func (obj *Advertisement) GetValue4DB(name string) interface{} {
-	switch name {
-	case "id": return obj.Id
-	case "name": return obj.Name
-	case "image": return obj.Image
-	case "link": return obj.Link
-	case "priority": return obj.Priority
-	case "hide": return obj.Hide
-	case "description": return obj.Description
-	}
-	panic(errors.New("对象advertisement属性[" + name + "]不存在"))
-}
-
-func (obj *Advertisement) GetValue4Map(name string) interface{} {
 	switch name {
 	case "id": return obj.Id
 	case "name": return obj.Name

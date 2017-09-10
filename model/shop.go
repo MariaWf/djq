@@ -29,14 +29,50 @@ func (obj *Shop) SetId(id string) {
 	obj.Id = id
 }
 
+func (obj *Shop) GetTableName() string {
+	return "tbl_shop"
+}
+
+func (obj *Shop) GetDBNames() []string {
+	return []string{"id", "name", "logo", "pre_image", "total_cash_coupon_number", "total_cash_coupon_price", "introduction", "address", "priority", "hide"}
+}
+
+func (obj *Shop) GetMapNames() []string {
+	return []string{"id", "name", "logo", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "introduction", "address", "priority", "hide"}
+}
+
+func (obj *Shop) GetValue4Map(name string) interface{} {
+	switch name {
+	case "id": return obj.Id
+	case "name": return obj.Name
+	case "logo": return obj.Logo
+	case "preImage":  return obj.PreImage
+	case "totalCashCouponNumber": return obj.TotalCashCouponNumber
+	case "totalCashCouponPrice": return obj.TotalCashCouponPrice
+	case "introduction": return obj.Introduction
+	case "address": return obj.Address
+	case "priority": return obj.Priority
+	case "hide": return obj.Hide
+	}
+	panic(errors.New("对象shop属性[" + name + "]不存在"))
+}
+
+func (obj *Shop) GetDBFromMapName(name string) string {
+	str := GetDBFromMapName(obj, name)
+	if str != "" {
+		return str
+	}
+	panic(errors.New("对象shop属性[" + name + "]不存在"))
+}
+
 func (obj *Shop) GetPointer4DB(name string) interface{} {
 	switch name {
 	case "id": return &obj.Id
 	case "name": return &obj.Name
 	case "logo": return &obj.Logo
-	case "preImage":  return &obj.PreImage
-	case "totalCashCouponNumber": return &obj.TotalCashCouponNumber
-	case "totalCashCouponPrice": return &obj.TotalCashCouponPrice
+	case "pre_image":  return &obj.PreImage
+	case "total_cash_coupon_number": return &obj.TotalCashCouponNumber
+	case "total_cash_coupon_price": return &obj.TotalCashCouponPrice
 	case "introduction": return &obj.Introduction
 	case "address": return &obj.Address
 	case "priority": return &obj.Priority
@@ -50,9 +86,9 @@ func (obj *Shop) GetValue4DB(name string) interface{} {
 	case "id": return obj.Id
 	case "name": return obj.Name
 	case "logo": return obj.Logo
-	case "preImage":  return obj.PreImage
-	case "totalCashCouponNumber": return obj.TotalCashCouponNumber
-	case "totalCashCouponPrice": return obj.TotalCashCouponPrice
+	case "pre_image":  return obj.PreImage
+	case "total_cash_coupon_number": return obj.TotalCashCouponNumber
+	case "total_cash_coupon_price": return obj.TotalCashCouponPrice
 	case "introduction": return obj.Introduction
 	case "address": return obj.Address
 	case "priority": return obj.Priority

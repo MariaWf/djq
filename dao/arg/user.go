@@ -22,10 +22,10 @@ type User struct {
 	PageSize   int
 	TargetPage int
 
-	ShowColumnNames []string
+	DisplayNames []string
 
 	UpdateObject      *model.User
-	UpdateColumnNames []string
+	UpdateNames []string
 }
 
 func (u *User) BuildFindSql() (string, []interface{}, []string) {
@@ -90,11 +90,11 @@ func (u *User) getBaseSql(sql string) string {
 }
 
 func (u *User) getShowColumnNames() []string {
-	if u.ShowColumnNames == nil || len(u.ShowColumnNames) == 0 {
+	if u.DisplayNames == nil || len(u.DisplayNames) == 0 {
 		return []string{"*"}
 	}
-	s := make([]string, 0, len(u.ShowColumnNames))
-	for _, v := range u.ShowColumnNames {
+	s := make([]string, 0, len(u.DisplayNames))
+	for _, v := range u.DisplayNames {
 		switch v {
 		case "id":
 			s = append(s, "id")
@@ -115,12 +115,12 @@ func (u *User) getShowColumnNames() []string {
 }
 
 func (u *User) getColumnNameValues() ([]string, []interface{}) {
-	if u.UpdateColumnNames == nil || len(u.UpdateColumnNames) == 0 {
-		u.UpdateColumnNames = ColumnNamesUser[1:]
+	if u.UpdateNames == nil || len(u.UpdateNames) == 0 {
+		u.UpdateNames = ColumnNamesUser[1:]
 	}
-	s := make([]string, 0, len(u.UpdateColumnNames))
+	s := make([]string, 0, len(u.UpdateNames))
 	params := make([]interface{}, 0, 9)
-	for _, v := range u.UpdateColumnNames {
+	for _, v := range u.UpdateNames {
 		switch v {
 		case "name":
 			s = append(s, "name = ?")
