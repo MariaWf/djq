@@ -30,8 +30,8 @@ func Begin() {
 	miAdmin.PATCH("/:id", handler.PermissionAdminU, handler.AdminPatch)
 	miAdmin.DELETE("/:id", handler.PermissionAdminD, handler.AdminDelete)
 
-	mi.GET("/adminAction/self",  handler.AdminGetSelf)
-	mi.PATCH("/adminAction/self",  handler.AdminPatchSelf)
+	mi.GET("/adminAction/self", handler.AdminGetSelf)
+	mi.PATCH("/adminAction/self", handler.AdminPatchSelf)
 
 	miRole := mi.Group("/role")
 	miRole.GET("/", handler.PermissionRoleR, handler.RoleList)
@@ -116,7 +116,13 @@ func Begin() {
 	//	c.String(http.StatusOK, "Hello %s %s", firstname, lastname)
 	//})
 	router.Static("/static", "html/assets")
-	router.Static("/upload", config.Get("uploadPath"))
+
+	uploadDirectoryHead := config.Get("uploadPath")
+	if uploadDirectoryHead == "" {
+		uploadDirectoryHead = "upload"
+	}
+	router.Static("/upload", uploadDirectoryHead)
+
 	router.GET("/", handler.Index2)
 	router.GET("/api", handler.Api)
 	//router.GET("/getPublicKey", handler.ApiGlobal,handler.GetPublicKey)
@@ -155,19 +161,18 @@ func initLog() {
 	//gin_file, _ := os.Create("gin.log")
 	routerInfoLogUrl := config.Get("router_info_log")
 	if routerInfoLogUrl == "" {
-		routerInfoLogUrl = "router_info.log"
+		routerInfoLogUrl = "logs/router_info.log"
 
-	} else {
-		path := filepath.Dir(routerInfoLogUrl)
-		os.MkdirAll(path, 0777)
 	}
+	path := filepath.Dir(routerInfoLogUrl)
+	os.MkdirAll(path, 0777)
+
 	routerErrorLogUrl := config.Get("router_error_log")
 	if routerErrorLogUrl == "" {
-		routerErrorLogUrl = "router_error.log"
-	} else {
-		path := filepath.Dir(routerErrorLogUrl)
-		os.MkdirAll(path, 0777)
+		routerErrorLogUrl = "logs/router_error.log"
 	}
+	path = filepath.Dir(routerErrorLogUrl)
+	os.MkdirAll(path, 0777)
 	infoFile, err := os.OpenFile(routerInfoLogUrl, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)

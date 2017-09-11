@@ -18,7 +18,7 @@ import (
 
 func main() {
 	initLog()
-	log.Println("------LstdFlags：" + time.Now().String())
+	log.Println("------start：" + time.Now().String())
 	log.SetFlags(log.LstdFlags | log.Llongfile)
 	initData()
 	if config.Get("buildTestData") == "true" {
@@ -33,11 +33,10 @@ func initLog() {
 	}
 	globalLogUrl := config.Get("global_log")
 	if globalLogUrl == "" {
-		globalLogUrl = "global.log"
-	} else {
-		path := filepath.Dir(globalLogUrl)
-		os.MkdirAll(path, 0777)
+		globalLogUrl = "logs/global.log"
 	}
+	path := filepath.Dir(globalLogUrl)
+	os.MkdirAll(path, 0777)
 	logFile, err := os.OpenFile(globalLogUrl, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
@@ -62,7 +61,7 @@ func initTestData() {
 	initTestAdvertisement()
 	initTestShopClassification()
 	initTestShop()
-	//tempInitTestShop()
+	tempInitTestShop()
 }
 
 func initRole() string {
@@ -234,7 +233,7 @@ func initTestShop() {
 			obj.Hide = rand.Intn(2) < 1
 			obj, err := serviceShop.Add(obj)
 			checkErr(err)
-			initTestShopAccount(obj.Id)
+			initTestShopAccount(obj.Id, i)
 			initTestShopIntroductionImage(obj.Id)
 			initTestCashCoupon(obj.Id)
 		}
@@ -245,21 +244,21 @@ func tempInitTestShop() {
 	argShop := &arg.Shop{}
 	list, err := service.Find(serviceShop, argShop)
 	checkErr(err)
-	for _, obj := range list {
-		//initTestShopAccount(obj.(*model.Shop).Id)
+	for i, obj := range list {
+		initTestShopAccount(obj.(*model.Shop).Id, i)
 		//initTestShopIntroductionImage(obj.(*model.Shop).Id)
-		initTestCashCoupon(obj.(*model.Shop).Id)
+		//initTestCashCoupon(obj.(*model.Shop).Id)
 	}
 }
 
-func initTestShopAccount(shopId string) {
+func initTestShopAccount(shopId string, index int) {
 	serviceShopAccount := &service.ShopAccount{}
 	total := rand.Intn(5)
 	var err error
 	for i := 0; i < total; i++ {
 		obj := &model.ShopAccount{}
 		obj.ShopId = shopId
-		obj.Name = "name" + strconv.Itoa(i)
+		obj.Name = "name" + strconv.Itoa(index) + "_" + strconv.Itoa(i)
 		obj.Password = "123123"
 		obj.Password, err = util.EncryptPassword(obj.Password)
 		checkErr(err)
@@ -267,7 +266,7 @@ func initTestShopAccount(shopId string) {
 		obj.TotalMoney = rand.Intn(1000)
 		obj.Locked = rand.Intn(2) < 1
 		obj.Description = "description" + strconv.Itoa(i)
-		_, err := service.Add(serviceShopAccount, obj)
+		_, err := serviceShopAccount.Add(obj)
 		checkErr(err)
 	}
 }
