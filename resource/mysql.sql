@@ -149,13 +149,13 @@ drop table if exists tbl_present;
 create table tbl_present(
 id varchar(64) not null primary key,
 name varchar(32) not null default '',
+image varchar(200) not null default '',
 address varchar(200) not null default '',
 stock int(8) not null default 0,
 requirement int(8) not null default 0,
 weight int(8) not null default 1,
-expiryDate timestamp DEFAULT CURRENT_TIMESTAMP,
-expired tinyint(1) default false,
-locked tinyint(1) default false,
+expiry_date timestamp DEFAULT CURRENT_TIMESTAMP,
+hide tinyint(1) default false,
 del_flag tinyint(1) default false
 )default charset=utf8;
 
@@ -163,6 +163,7 @@ drop table if exists tbl_present_order;
 create table tbl_present_order(
 id varchar(64) not null primary key,
 present_id varchar(64) not null default '',
+user_id varchar(64) not null default '',
 number varchar(200) not null default '',
 status int(8) not null default 0,
 del_flag tinyint(1) default false

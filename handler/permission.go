@@ -152,6 +152,38 @@ func PermissionPromotionalPartnerD(c *gin.Context) {
 	checkPermission(c, "promotionalPartner_d")
 }
 
+func PermissionPresentC(c *gin.Context) {
+	checkPermission(c, "present_c")
+}
+
+func PermissionPresentR(c *gin.Context) {
+	checkPermission(c, "present_r")
+}
+
+func PermissionPresentU(c *gin.Context) {
+	checkPermission(c, "present_u")
+}
+
+func PermissionPresentD(c *gin.Context) {
+	checkPermission(c, "present_d")
+}
+
+func PermissionPresentOrderC(c *gin.Context) {
+	checkPermission(c, "presentOrder_c")
+}
+
+func PermissionPresentOrderR(c *gin.Context) {
+	checkPermission(c, "presentOrder_r")
+}
+
+func PermissionPresentOrderU(c *gin.Context) {
+	checkPermission(c, "presentOrder_u")
+}
+
+func PermissionPresentOrderD(c *gin.Context) {
+	checkPermission(c, "presentOrder_d")
+}
+
 //func PermissionCashCouponC(c *gin.Context) {
 //	checkPermission(c, "cashCoupon_c")
 //}

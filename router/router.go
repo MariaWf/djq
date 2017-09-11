@@ -103,6 +103,20 @@ func Begin() {
 	miUser.PATCH("/:id", handler.PermissionUserU, handler.UserPatch)
 	miUser.DELETE("/", handler.PermissionUserD, handler.UserDelete)
 
+	miPresent := mi.Group("/present")
+	miPresent.GET("/", handler.PermissionPresentR, handler.PresentList)
+	miPresent.GET("/:id", handler.PermissionPresentR, handler.PresentGet)
+	miPresent.POST("/", handler.PermissionPresentC, handler.PresentPost)
+	miPresent.PATCH("/:id", handler.PermissionPresentU, handler.PresentPatch)
+	miPresent.DELETE("/", handler.PermissionPresentD, handler.PresentDelete)
+
+	miPresentOrder := mi.Group("/presentOrder")
+	miPresentOrder.GET("/", handler.PermissionPresentOrderR, handler.PresentOrderList)
+	miPresentOrder.GET("/:id", handler.PermissionPresentOrderR, handler.PresentOrderGet)
+	miPresentOrder.POST("/", handler.PermissionPresentOrderC, handler.PresentOrderPost)
+	miPresentOrder.PATCH("/:id", handler.PermissionPresentOrderU, handler.PresentOrderPatch)
+	miPresentOrder.DELETE("/", handler.PermissionPresentOrderD, handler.PresentOrderDelete)
+
 	si := router.Group("/si", handler.ApiGlobal, handler.ShopAccountCheckLogin)
 	si.POST("/login", handler.ShopAccountLogin)
 	si.POST("/logout", handler.ShopAccountLogout)

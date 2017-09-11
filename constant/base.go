@@ -21,6 +21,11 @@ const (
 	ApiTypeOpen
 )
 
+const (
+	PresentOrderStatusWaiting2Receive int = iota
+	PresentOrderStatusReceived
+)
+
 var (
 	ErrUpload = errors.New("上传失败")
 	ErrUploadUnknownType = errors.New("未知文件类型")

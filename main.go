@@ -333,7 +333,13 @@ func initTestUser() {
 	initTestPromotionalPartner()
 	servicePromotionalPartner := &service.PromotionalPartner{}
 	argPromotionalPartner := &arg.PromotionalPartner{}
-	list, err := service.Find(servicePromotionalPartner, argPromotionalPartner)
+	promotionalPartnerList, err := service.Find(servicePromotionalPartner, argPromotionalPartner)
+	checkErr(err)
+
+	initTestPresent()
+	servicePresent := &service.Present{}
+	argPresent := &arg.Present{}
+	presentList, err := service.Find(servicePresent, argPresent)
 	checkErr(err)
 
 	serviceUser := &service.User{}
@@ -349,11 +355,63 @@ func initTestUser() {
 			obj.Locked = rand.Intn(2) < 1
 			obj.Shared = rand.Intn(2) < 1
 			if rand.Intn(2) < 1 {
-				obj.PromotionalPartnerId = list[rand.Intn(len(list))].(*model.PromotionalPartner).Id
+				obj.PromotionalPartnerId = promotionalPartnerList[rand.Intn(len(promotionalPartnerList))].(*model.PromotionalPartner).Id
 			}
 			_, err := service.Add(serviceUser, obj)
+			for j := 0; j < 10; j++ {
+				if rand.Intn(2) < 1 {
+					initTestPresentOrder(obj.Id, presentList[rand.Intn(len(presentList))].(*model.Present).Id)
+				}
+			}
+			checkErr(err)
+
+		}
+	}
+}
+
+func initTestPresent() {
+	servicePresent := &service.Present{}
+	argPresent := &arg.Present{}
+	count, err := service.Count(servicePresent, argPresent)
+	checkErr(err)
+	if count < 5 {
+		checkErr(err)
+		for i := 0; i < 50; i++ {
+			obj := &model.Present{}
+			obj.Name = "name" + strconv.Itoa(i)
+			obj.Weight = rand.Intn(1000)
+			obj.Address = "address" + strconv.Itoa(i)
+			t := time.Now()
+			if rand.Intn(2) < 1 {
+				t = t.Add(time.Hour * time.Duration(rand.Int63n(1000)))
+			} else {
+				t = t.Add(-time.Hour * time.Duration(rand.Int63n(1000)))
+			}
+			obj.ExpiryDate = util.StringTime4DB(t)
+			obj.Hide = rand.Intn(2) < 1
+			obj.Image = "https://www.baidu.com/img/bd_logo1.png"
+			obj.Requirement = 1000 + rand.Intn(2000)
+			obj.Stock = 1000 + rand.Intn(2000) + obj.Requirement
+			_, err := service.Add(servicePresent, obj)
 			checkErr(err)
 		}
 	}
 }
 
+func initTestPresentOrder(userId, presentId string) {
+	servicePresentOrder := &service.PresentOrder{}
+	total := rand.Intn(10)
+	for i := 0; i < total; i++ {
+		obj := &model.PresentOrder{}
+		obj.PresentId = presentId
+		obj.UserId = userId
+		obj.Number = util.BuildPresentOrderNumber()
+		if rand.Intn(2) < 1 {
+			obj.Status = constant.PresentOrderStatusReceived
+		} else {
+			obj.Status = constant.PresentOrderStatusWaiting2Receive
+		}
+		_, err := service.Add(servicePresentOrder, obj)
+		checkErr(err)
+	}
+}

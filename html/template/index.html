@@ -45,8 +45,10 @@ index
     <input type="text" id="adminId" name="name" value="" placeholder="管理员ID"/>
     <input type="text" id="roleIds" name="name" value="" placeholder="管理员角色ID"/>
     <input type="text" id="adminName" name="name" value="" placeholder="管理员名称"/>
+    <input type="text" id="adminMobile" name="name" value="" placeholder="管理员电话"/>
     <input type="text" id="adminPassword" name="password" value="" placeholder="管理员密码"/>
     <button type="button" onclick="saveAdmin()">保存管理员信息</button>
+    <button type="button" onclick="saveAdminSelf()">保存管理员自己的信息</button>
 
 </div>
 </body>
@@ -346,6 +348,7 @@ index
     function saveAdmin(){
         obj = {}
         obj.name = $("#adminName").val()
+        obj.mobile = $("#adminMobile").val()
         obj.id = $("#adminId").val()
         obj.password = $("#adminPassword").val()
         obj.roleIds = $("#roleIds").val()
@@ -359,6 +362,38 @@ index
             url+="/"+obj.id;
             method = "PATCH"
         }
+        $.ajax({
+            type: method,
+            url: url,
+            data: obj,
+            dataType: "json",
+            success: function (data) {
+                if (data.status) {
+                    alert(data.result)
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (data) {
+                alert("删除失败");
+            },
+            complete: function () {
+            }
+        });
+    }
+    function saveAdminSelf(){
+        obj = {}
+        obj.name = $("#adminName").val()
+        obj.mobile = $("#adminMobile").val()
+        obj.id = $("#adminId").val()
+        obj.password = $("#adminPassword").val()
+        obj.roleIds = $("#roleIds").val()
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey($('#resultMsg').val());
+        obj.password = encrypt.encrypt(obj.password);
+
+        url = "/mi/adminAction/self"
+        method = "PATCH"
         $.ajax({
             type: method,
             url: url,

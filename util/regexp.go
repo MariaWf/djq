@@ -13,6 +13,7 @@ var (
 	ErrMobileFormat = errors.New("手机号码为11为数字")
 	ErrPasswordFormat = errors.New("密码长度为6到32")
 	ErrPriorityFormat = errors.New("优先权重范围为0到999")
+	ErrWeightFormat = errors.New("抽奖权重范围为0到999")
 )
 
 func MatchNonnegativeNumberWithErr(number int, name string) error {
@@ -27,6 +28,13 @@ func MatchPriority(priority int) error {
 		return nil
 	}
 	return ErrPriorityFormat
+}
+
+func MatchWeight(weight int) error {
+	if 0 <= weight && weight <= 999 {
+		return nil
+	}
+	return ErrWeightFormat
 }
 
 func MatchLenWithErr(str string, minInclude int, maxInclude int, name string) error {

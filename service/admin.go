@@ -170,6 +170,48 @@ func (service *Admin) Add(obj *model.Admin) (*model.Admin, error) {
 	}
 	return obj, nil
 }
+func (service *Admin) UpdateSelf(obj *model.Admin) (*model.Admin, error) {
+	sourcePassword, err := util.DecryptPassword(obj.Password)
+	if err != nil {
+		return nil, checkErr(err)
+	}
+	obj.Password = sourcePassword
+
+	if obj.Password != "" {
+		err = service.checkWithOptions(obj,"id","mobile","password")
+		if err != nil {
+			return nil, err
+		}
+		obj.Password = util.BuildPassword4DB(obj.Password)
+	}else{
+		err = service.checkWithOptions(obj,"id","mobile")
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	conn, err := mysql.Get()
+	if err != nil {
+		return nil, checkErr(err)
+	}
+
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+	daoObj := service.GetDaoInstance(conn)
+
+
+	if obj.Password != "" {
+		_, err = dao.Update(daoObj, obj, "mobile", "password")
+	} else {
+		_, err = dao.Update(daoObj, obj,  "mobile")
+	}
+	if err != nil {
+		rollback = true
+		return nil, checkErr(err)
+	}
+	obj.Password = ""
+	return obj, checkErr(err)
+}
 
 func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
 	sourcePassword, err := util.DecryptPassword(obj.Password)
@@ -178,12 +220,17 @@ func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
 	}
 	obj.Password = sourcePassword
 
-	err = service.CheckUpdate(obj)
-	if err != nil {
-		return nil, err
-	}
 	if obj.Password != "" {
+		err = service.checkWithOptions(obj,"id","name", "mobile", "password", "locked")
+		if err != nil {
+			return nil, err
+		}
 		obj.Password = util.BuildPassword4DB(obj.Password)
+	}else{
+		err = service.checkWithOptions(obj,"id","name", "mobile",  "locked")
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	conn, err := mysql.Get()
@@ -209,7 +256,7 @@ func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
 
 	if obj.Password != "" {
 		_, err = dao.Update(daoObj, obj, "name", "mobile", "password", "locked")
-	}else{
+	} else {
 		_, err = dao.Update(daoObj, obj, "name", "mobile", "locked")
 	}
 	if err != nil {
@@ -224,6 +271,7 @@ func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
 	}
 	return obj, checkErr(err)
 }
+
 
 func (service *Admin) refreshRelationshipWithRole(conn *sql.Tx, obj *model.Admin) error {
 	daoObj := service.GetDaoInstance(conn).(*dao.Admin)
@@ -314,32 +362,38 @@ func (service *Admin) Delete(ids ...string) (int64, error) {
 
 }
 
-func (service *Admin) check(obj *model.Admin) error {
+func (service *Admin) checkWithOptions(obj *model.Admin, args ... string) error {
 	if obj == nil {
 		return ErrObjectEmpty
 	}
-	if !util.MatchName(obj.Name) {
-		return util.ErrNameFormat
-	}
-	if obj.Mobile != "" && !util.MatchMobile(obj.Mobile) {
-		return util.ErrMobileFormat
-	}
-	if obj.Password != "" && !util.MatchPassword(obj.Password) {
-		return util.ErrPasswordFormat
+	for _, arg := range args {
+		switch arg {
+		case "id":
+			if obj.Id == ""{
+				return ErrIdEmpty
+			}
+		case "name":
+			if !util.MatchName(obj.Name) {
+				return util.ErrNameFormat
+			}
+		case "mobile":
+			if obj.Mobile != "" && !util.MatchMobile(obj.Mobile) {
+				return util.ErrMobileFormat
+			}
+		case "password":
+			if !util.MatchPassword(obj.Password) {
+				return util.ErrPasswordFormat
+			}
+		}
 	}
 	return nil
 }
 
+
 func (service *Admin) CheckUpdate(obj model.BaseModelInterface) error {
-	if obj != nil && obj.GetId() == "" {
-		return ErrIdEmpty
-	}
-	return service.check(obj.(*model.Admin))
+	return service.checkWithOptions(obj.(*model.Admin),"id","name","mobile","password")
 }
 
 func (service *Admin) CheckAdd(obj model.BaseModelInterface) error {
-	if obj != nil && obj.(*model.Admin).Password == "" {
-		return util.ErrPasswordFormat
-	}
-	return service.check(obj.(*model.Admin))
+	return service.checkWithOptions(obj.(*model.Admin),"name","mobile","password")
 }
