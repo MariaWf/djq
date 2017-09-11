@@ -117,7 +117,7 @@ func (service *Shop) refreshRelationshipWithShopClassification(conn *sql.Tx, obj
 		return nil
 	}
 
-	toUpdateShopClassificationIds := make([]string, 0, len(obj.ShopClassificationList))
+	toUpdateShopClassificationIds := make([]string, len(obj.ShopClassificationList), len(obj.ShopClassificationList))
 	for i, shopClassification := range obj.ShopClassificationList {
 		toUpdateShopClassificationIds[i] = shopClassification.GetId()
 	}
@@ -136,7 +136,7 @@ func (service *Shop) refreshRelationshipWithShopClassification(conn *sql.Tx, obj
 		toDeleteShopClassificationIds = nil
 	} else {
 		toAddShopClassificationIds = make([]string, 0, 10)
-		toDeleteShopClassificationIds := util.StringArrCopy(existShopClassificationIds)
+		toDeleteShopClassificationIds = util.StringArrCopy(existShopClassificationIds)
 		for _, toUpdateShopClassificationId := range toUpdateShopClassificationIds {
 			exist := false
 			for _, existShopClassificationId := range existShopClassificationIds {

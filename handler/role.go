@@ -20,6 +20,8 @@ func RoleList(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, util.BuildFailResult(ErrParamException.Error()))
 		return
 	}
+	argObj.IdsNotIn = []string{constant.AdminRoleId}
+	argObj.OrderBy = "name"
 	c.JSON(http.StatusOK, service.ResultList(&service.Role{}, argObj))
 }
 
@@ -45,6 +47,7 @@ func RolePost(c *gin.Context) {
 		return
 	}
 	serviceObj := &service.Role{}
+	obj.BindStr2PermissionList()
 	obj, err = serviceObj.Add(obj)
 	if err != nil {
 		log.Println(err)
@@ -65,9 +68,10 @@ func RolePatch(c *gin.Context) {
 	}
 	serviceObj := &service.Role{}
 	if obj.Id == constant.AdminRoleId {
-		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("禁止修改超级管理员信息"))
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("禁止修改超级管理员角色信息"))
 		return
 	}
+	obj.BindStr2PermissionList()
 	obj, err = serviceObj.Update(obj)
 	if err != nil {
 		log.Println(err)
@@ -79,7 +83,7 @@ func RolePatch(c *gin.Context) {
 }
 
 func RoleDelete(c *gin.Context) {
-	ids := strings.Split(c.PostForm("ids"), constant.Split4Id)
+	ids := strings.Split(c.Query("ids"), constant.Split4Id)
 	for _, v := range ids {
 		if v == constant.AdminRoleId {
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("禁止删除超级管理员信息"))

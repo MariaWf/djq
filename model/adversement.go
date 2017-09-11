@@ -2,11 +2,6 @@ package model
 
 import "github.com/pkg/errors"
 
-//const tableNameAdvertisement = "tbl_advertisement"
-//
-//var ColumnNamesAdvertisement = []string{"id", "name", "image", "link", "priority", "hide", "description"}
-//var MapNamesAdvertisement = []string{"id", "name", "image", "link", "priority", "hide", "description"}
-
 type Advertisement struct {
 	Id          string `form:"id" json:"id" db:"id" desc:"id"`
 	Name        string `form:"name" json:"name" db:"name" desc:"名称"`

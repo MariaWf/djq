@@ -132,7 +132,7 @@ func (service *ShopAccount) Update(obj *model.ShopAccount) (*model.ShopAccount, 
 		rollback = true
 		return nil, checkErr(err)
 	}
-	if len(list) > 1 || (len(list) > 0 && list[0].(*model.ShopAccount).GetId() == obj.GetId()) {
+	if len(list) > 1 || (len(list) > 0 && list[0].(*model.ShopAccount).GetId() != obj.GetId()) {
 		rollback = true
 		return nil, errors.New("用户名已存在")
 	}

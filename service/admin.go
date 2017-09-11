@@ -202,15 +202,15 @@ func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
 		rollback = true
 		return nil, checkErr(err)
 	}
-	if len(list) > 1 || (len(list) > 0 && list[0].(*model.Admin).GetId() == obj.GetId()) {
+	if len(list) > 1 || (len(list) > 0 && list[0].(*model.Admin).GetId() != obj.GetId()) {
 		rollback = true
 		return nil, errors.New("用户名已存在")
 	}
 
 	if obj.Password != "" {
-		_, err = dao.Update(daoObj, obj, "name", "mobile", "Locked")
+		_, err = dao.Update(daoObj, obj, "name", "mobile", "password", "locked")
 	}else{
-		_, err = dao.Update(daoObj, obj, "name", "mobile", "password", "Locked")
+		_, err = dao.Update(daoObj, obj, "name", "mobile", "locked")
 	}
 	if err != nil {
 		rollback = true
@@ -236,7 +236,7 @@ func (service *Admin) refreshRelationshipWithRole(conn *sql.Tx, obj *model.Admin
 		return nil
 	}
 
-	toUpdateRoleIds := make([]string, 0, len(obj.RoleList))
+	toUpdateRoleIds := make([]string, len(obj.RoleList), len(obj.RoleList))
 	for i, role := range obj.RoleList {
 		toUpdateRoleIds[i] = role.GetId()
 	}
@@ -255,7 +255,7 @@ func (service *Admin) refreshRelationshipWithRole(conn *sql.Tx, obj *model.Admin
 		toDeleteRoleIds = nil
 	} else {
 		toAddRoleIds = make([]string, 0, 10)
-		toDeleteRoleIds := util.StringArrCopy(existRoleIds)
+		toDeleteRoleIds = util.StringArrCopy(existRoleIds)
 		for _, toUpdateRoleId := range toUpdateRoleIds {
 			exist := false
 			for _, existRoleId := range existRoleIds {

@@ -15,17 +15,17 @@ var ErrNeedMiLogin = errors.New("请先登录再进行下一步操作")
 var ErrNeedMiPermission = errors.New("没有足够权限进行下一步操作")
 
 type ResultVO struct {
-	Status int         `json:"status"`
-	Msg    string      `json:"msg"`
-	Result interface{} `json:"result"`
+	Status int         `form:"status" json:"status"`
+	Msg    string      `form:"msg" json:"msg"`
+	Result interface{} `form:"result" json:"result"`
 }
 
 type PageVO struct {
-	TargetPage int
-	PageSize   int
-	Total      int
-	TotalPage  int
-	Datas      interface{}
+	TargetPage int `form:"targetPage" json:"targetPage"`
+	PageSize   int `form:"pageSize" json:"pageSize"`
+	Total      int `form:"total" json:"total"`
+	TotalPage  int `form:"totalPage" json:"totalPage"`
+	Datas      interface{} `form:"datas" json:"datas"`
 }
 
 func BuildSuccessResult(data interface{}) *ResultVO {

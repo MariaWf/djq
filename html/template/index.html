@@ -31,18 +31,27 @@ index
     <button type="button" onclick="getPublicKey()">获取公匙</button>
 
     <form enctype="multipart/form-data" method="post" action="http://localhost:8080/mi/login">
-    <input type="text" id="loginName" name="name" value="" placeholder="登录名称"/>
-    <input type="text" id="password" name="password" value="" placeholder="登录密码"/>
-    <button type="button" onclick="login()">登录</button>
-    <button type="button" id="popup-submit">滑动验证登录</button>
-    <button type="button" onclick="logout()">登出</button>
-        <input type="submit" value="submit" />
+        <input type="text" id="loginName" name="name" value="" placeholder="登录名称"/>
+        <input type="text" id="password" name="password" value="" placeholder="登录密码"/>
+        <button type="button" onclick="login()">登录</button>
+        <button type="button" id="popup-submit">滑动验证登录</button>
+        <button type="button" onclick="logout()">登出</button>
+        <input type="submit" value="submit"/>
         <div id="popup-captcha"></div>
     </form>
+    <button type="button" onclick="batchDeleteAdmin()">批量删除管理员</button>
+</div>
+<div>
+    <input type="text" id="adminId" name="name" value="" placeholder="管理员ID"/>
+    <input type="text" id="roleIds" name="name" value="" placeholder="管理员角色ID"/>
+    <input type="text" id="adminName" name="name" value="" placeholder="管理员名称"/>
+    <input type="text" id="adminPassword" name="password" value="" placeholder="管理员密码"/>
+    <button type="button" onclick="saveAdmin()">保存管理员信息</button>
+
 </div>
 </body>
 <script>
-    if (getCookie("miSessionId")){
+    if (getCookie("miSessionId")) {
         $("#resultMsg").val(getCookie("miSessionId"))
     }
     getPublicKey()
@@ -140,7 +149,7 @@ index
         }
     });
 
-    function getPublicKey(){
+    function getPublicKey() {
         obj = {}
         $.ajax({
             type: 'GET',
@@ -169,7 +178,7 @@ index
 
         var encrypt = new JSEncrypt();
         encrypt.setPublicKey($('#resultMsg').val());
-        obj.password  = encrypt.encrypt(obj.password);
+        obj.password = encrypt.encrypt(obj.password);
         $.ajax({
             type: 'POST',
             url: "/mi/login",
@@ -311,6 +320,64 @@ index
 
 
     })
+    function batchDeleteAdmin() {
+        ids = $("#resultMsg").val()
+        $.ajax({
+            type: 'DELETE',
+//                url: "http://djq.tunnel.qydev.com/upload",
+//                url: "/upload",
+            url: "/mi/admin?ids=" + ids,
+//            data: {ids:ids},
+            dataType: "json",
+            success: function (data) {
+                if (data.status) {
+                    alert(data.result)
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (data) {
+                alert("删除失败");
+            },
+            complete: function () {
+            }
+        });
+    }
+    function saveAdmin(){
+        obj = {}
+        obj.name = $("#adminName").val()
+        obj.id = $("#adminId").val()
+        obj.password = $("#adminPassword").val()
+        obj.roleIds = $("#roleIds").val()
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey($('#resultMsg').val());
+        obj.password = encrypt.encrypt(obj.password);
+
+        url = "/mi/admin"
+        method = "POST"
+        if (obj.id) {
+            url+="/"+obj.id;
+            method = "PATCH"
+        }
+        $.ajax({
+            type: method,
+            url: url,
+            data: obj,
+            dataType: "json",
+            success: function (data) {
+                if (data.status) {
+                    alert(data.result)
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (data) {
+                alert("删除失败");
+            },
+            complete: function () {
+            }
+        });
+    }
     function getCookie(name) {
         var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
         if (arr = document.cookie.match(reg))

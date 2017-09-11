@@ -36,5 +36,15 @@ func GetPermissionList() []*Permission {
 		{"cashCoupon_c", "添加代金券信息", "添加代金券信息"},
 		{"cashCoupon_r", "查看代金券信息", "查看代金券信息"},
 		{"cashCoupon_u", "更新代金券信息", "更新代金券信息"},
-		{"cashCoupon_d", "删除代金券信息", "删除代金券信息"}}
+		{"cashCoupon_d", "删除代金券信息", "删除代金券信息"},
+		
+		{"promotionalPartner_c", "添加推广伙伴信息", "添加推广伙伴信息"},
+		{"promotionalPartner_r", "查看推广伙伴信息", "查看推广伙伴信息"},
+		{"promotionalPartner_u", "更新推广伙伴信息", "更新推广伙伴信息"},
+		{"promotionalPartner_d", "删除推广伙伴信息", "删除推广伙伴信息"},
+
+		{"user_c", "添加用户信息", "添加用户信息"},
+		{"user_r", "查看用户信息", "查看用户信息"},
+		{"user_u", "更新用户信息", "更新用户信息"},
+		{"user_d", "删除用户信息", "删除用户信息"}}
 }

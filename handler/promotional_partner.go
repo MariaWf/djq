@@ -12,30 +12,30 @@ import (
 	"strings"
 )
 
-func CashCouponList(c *gin.Context) {
-	argObj := &arg.CashCoupon{}
+func PromotionalPartnerList(c *gin.Context) {
+	argObj := &arg.PromotionalPartner{}
 	err := c.Bind(argObj)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
 		return
 	}
-	argObj.OrderBy = "priority desc"
+	argObj.OrderBy = "name"
 
-	serviceObj := &service.CashCoupon{}
-	argObj.DisplayNames = []string{"id","shopId", "name", "preImage", "discountAmount", "expiryDate", "expired", "hide", "priority"}
+	serviceObj := &service.PromotionalPartner{}
+	argObj.DisplayNames = []string{"id", "name", "description", "totalUser", "totalPrice", "totalPay"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }
 
-func CashCouponGet(c *gin.Context) {
-	serviceObj := &service.CashCoupon{}
+func PromotionalPartnerGet(c *gin.Context) {
+	serviceObj := &service.PromotionalPartner{}
 	result := service.ResultGet(serviceObj, c.Param("id"))
 	c.JSON(http.StatusOK, result)
 }
 
-func CashCouponPost(c *gin.Context) {
-	obj := &model.CashCoupon{}
+func PromotionalPartnerPost(c *gin.Context) {
+	obj := &model.PromotionalPartner{}
 	err := c.Bind(obj)
 	if err != nil {
 		log.Println(err)
@@ -43,13 +43,13 @@ func CashCouponPost(c *gin.Context) {
 		return
 	}
 
-	serviceObj := &service.CashCoupon{}
+	serviceObj := &service.PromotionalPartner{}
 	result := service.ResultAdd(serviceObj, obj)
 	c.JSON(http.StatusOK, result)
 }
 
-func CashCouponPatch(c *gin.Context) {
-	obj := &model.CashCoupon{}
+func PromotionalPartnerPatch(c *gin.Context) {
+	obj := &model.PromotionalPartner{}
 	err := c.Bind(obj)
 	if err != nil {
 		log.Println(err)
@@ -57,21 +57,23 @@ func CashCouponPatch(c *gin.Context) {
 		return
 	}
 
-	serviceObj := &service.CashCoupon{}
-	result := service.ResultUpdate(serviceObj, obj, "name", "preImage", "discountAmount", "expiryDate", "expired", "hide", "priority")
+	serviceObj := &service.PromotionalPartner{}
+	result := service.ResultUpdate(serviceObj, obj, "name", "description", "totalUser", "totalPrice", "totalPay")
 	c.JSON(http.StatusOK, result)
 }
 
-func CashCouponDelete(c *gin.Context) {
+func PromotionalPartnerDelete(c *gin.Context) {
 	ids := strings.Split(c.Query("ids"), constant.Split4Id)
 
-	serviceObj := &service.CashCoupon{}
-	argObj := &arg.CashCoupon{}
+	serviceObj := &service.PromotionalPartner{}
+	argObj := &arg.PromotionalPartner{}
 	argObj.IdsIn = ids
-	result := service.ResultBatchDelete(serviceObj, argObj)
+	count, err := serviceObj.Delete(ids...)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(count)
 	c.JSON(http.StatusOK, result)
-}
-
-func CashCouponUploadImage(c *gin.Context) {
-	commonUploadImage(c, "cashCoupon")
 }

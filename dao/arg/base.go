@@ -201,13 +201,13 @@ func getColumnNameValues(arg BaseArgInterface) ([]string, []interface{}) {
 
 func getFindConditions(arg BaseArgInterface) (string, []interface{}) {
 	sql, params := getCountConditions(arg)
+	if arg.GetOrderBy() != "" {
+		sql += " order by " + arg.GetOrderBy()
+	}
 	if arg.GetPageSize() > 0 {
 		sql += " limit ?,?"
 		start := util.ComputePageStart(arg.GetTargetPage(), arg.GetPageSize())
 		params = append(params, start, arg.GetPageSize())
-	}
-	if arg.GetOrderBy() != "" {
-		sql += " order by " + arg.GetOrderBy()
 	}
 	return sql, params
 }

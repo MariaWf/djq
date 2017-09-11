@@ -73,7 +73,7 @@ func AdvertisementPatch(c *gin.Context) {
 }
 
 func AdvertisementDelete(c *gin.Context) {
-	ids := strings.Split(c.PostForm("ids"), constant.Split4Id)
+	ids := strings.Split(c.Query("ids"), constant.Split4Id)
 
 	serviceObj := &service.Advertisement{}
 	argObj := &arg.Advertisement{}

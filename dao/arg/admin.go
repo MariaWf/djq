@@ -11,19 +11,20 @@ type Admin struct {
 	NameEqual      string
 	OrderBy        string
 	IdsIn          []string
+	IdsNotIn       []string
 	LockedOnly     bool
 	UnlockedOnly   bool
-	KeywordLike    string
+	KeywordLike    string `form:"keyword" json:"keyword"`
 
-	PasswordEqual string
+	PasswordEqual  string
 
-	PageSize   int `form:"pageSize" json:"pageSize"`
-	TargetPage int `form:"targetPage" json:"targetPage"`
+	PageSize       int `form:"pageSize" json:"pageSize"`
+	TargetPage     int `form:"targetPage" json:"targetPage"`
 
-	DisplayNames []string
+	DisplayNames   []string
 
-	UpdateObject      interface{}
-	UpdateNames []string
+	UpdateObject   interface{}
+	UpdateNames    []string
 }
 
 func (arg *Admin) GetDisplayNames() []string {
@@ -106,7 +107,7 @@ func (arg *Admin) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " name like ?"
-		params = append(params, "%"+arg.NameLike+"%")
+		params = append(params, "%" + arg.NameLike + "%")
 	}
 	if arg.NameEqual != "" {
 		if sql != "" {
@@ -120,8 +121,8 @@ func (arg *Admin) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " (name like ? or mobile like ?)"
-		params = append(params, arg.KeywordLike)
-		params = append(params, arg.KeywordLike)
+		params = append(params, "%" + arg.KeywordLike + "%")
+		params = append(params, "%" + arg.KeywordLike + "%")
 	}
 	if arg.PasswordEqual != "" {
 		if sql != "" {
@@ -136,6 +137,20 @@ func (arg *Admin) getCountConditions() (string, []interface{}) {
 		}
 		sql += " locked = ?"
 		params = append(params, arg.LockedOnly)
+	}
+	if arg.IdsNotIn != nil && len(arg.IdsNotIn) != 0 {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " id not in ("
+		for i, id := range arg.IdsNotIn {
+			if i != 0 {
+				sql += ","
+			}
+			sql += "?"
+			params = append(params, id)
+		}
+		sql += ")"
 	}
 	if len(params) != 0 {
 		sql = " where" + sql

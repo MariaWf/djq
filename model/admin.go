@@ -35,16 +35,11 @@ func (obj *Admin) GetMapNames() []string {
 
 func (obj *Admin) GetValue4Map(name string) interface{} {
 	switch name {
-	case "id":
-		return obj.Id
-	case "name":
-		return obj.Name
-	case "locked":
-		return obj.Locked
-	case "mobile":
-		return obj.Mobile
-	case "password":
-		return obj.Password
+	case "id": return obj.Id
+	case "name": return obj.Name
+	case "locked": return obj.Locked
+	case "mobile": return obj.Mobile
+	case "password": return obj.Password
 	}
 	panic(errors.New("对象admin属性[" + name + "]不存在"))
 }
@@ -59,32 +54,22 @@ func (obj *Admin) GetDBFromMapName(name string) string {
 
 func (obj *Admin) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id":
-		return &obj.Id
-	case "name":
-		return &obj.Name
-	case "mobile":
-		return &obj.Mobile
-	case "locked":
-		return &obj.Locked
-	case "password":
-		return &obj.Password
+	case "id": return &obj.Id
+	case "name": return &obj.Name
+	case "mobile": return &obj.Mobile
+	case "locked": return &obj.Locked
+	case "password": return &obj.Password
 	}
 	panic(errors.New("对象admin属性[" + name + "]不存在"))
 }
 
 func (obj *Admin) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id":
-		return obj.Id
-	case "name":
-		return obj.Name
-	case "locked":
-		return obj.Locked
-	case "mobile":
-		return obj.Mobile
-	case "password":
-		return obj.Password
+	case "id": return obj.Id
+	case "name": return obj.Name
+	case "locked": return obj.Locked
+	case "mobile": return obj.Mobile
+	case "password": return obj.Password
 	}
 	panic(errors.New("对象admin属性[" + name + "]不存在"))
 }
@@ -122,7 +107,6 @@ func (obj *Admin) GetPermissionCodeList() []string {
 	}
 	return nil
 }
-
 
 func (obj *Admin) SetRoleListFromInterfaceArr(list []interface{}) {
 	if list != nil && len(list) != 0 {

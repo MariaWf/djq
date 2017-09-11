@@ -173,6 +173,7 @@ create table tbl_promotional_partner(
 id varchar(64) not null primary key,
 name varchar(32) not null default '',
 description varchar(200) not null default '',
+total_user int(8) not null default 0,
 total_price int(8) not null default 0,
 total_pay int(8) not null default 0,
 del_flag tinyint(1) default false

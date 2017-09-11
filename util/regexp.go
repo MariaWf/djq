@@ -15,6 +15,13 @@ var (
 	ErrPriorityFormat = errors.New("优先权重范围为0到999")
 )
 
+func MatchNonnegativeNumberWithErr(number int, name string) error {
+	if number >= 0 {
+		return nil
+	}
+	return errors.New(name + "应为非负数:" + strconv.Itoa(number))
+}
+
 func MatchPriority(priority int) error {
 	if 0 <= priority && priority <= 999 {
 		return nil
@@ -24,7 +31,7 @@ func MatchPriority(priority int) error {
 
 func MatchLenWithErr(str string, minInclude int, maxInclude int, name string) error {
 	if !MatchLen(str, minInclude, maxInclude) {
-		return errors.New(name + "长度为" + strconv.Itoa(minInclude) + "到" + strconv.Itoa(maxInclude))
+		return errors.New(name + "长度为" + strconv.Itoa(minInclude) + "到" + strconv.Itoa(maxInclude) + ":" + str)
 	}
 	return nil
 }

@@ -8,7 +8,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/pem"
-	"errors"
+	"github.com/pkg/errors"
 )
 
 // 公钥和私钥可以从文件中读取
@@ -164,7 +164,7 @@ func RsaDecrypt(ciphertext []byte) ([]byte, error) {
 func EncryptPassword(str string) (string, error) {
 	mid, err := RsaEncrypt([]byte(str))
 	if err != nil {
-		return str, err
+		return str, errors.Wrap(err,"密码加密异常")
 	}
 	return base64.StdEncoding.EncodeToString(mid), nil
 }
@@ -172,11 +172,11 @@ func EncryptPassword(str string) (string, error) {
 func DecryptPassword(str string) (string, error) {
 	mid, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
-		return str, err
+		return str, errors.Wrap(err,"密码加密异常")
 	}
 	mid2, err := RsaDecrypt(mid)
 	if err != nil {
-		return str, err
+		return str, errors.Wrap(err,"密码加密异常")
 	}
 	return string(mid2), nil
 }

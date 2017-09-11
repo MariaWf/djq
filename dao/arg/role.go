@@ -7,10 +7,11 @@ import (
 type Role struct {
 	IdEqual        string
 	IncludeDeleted bool
-	NameLike       string
+	NameLike       string `form:"keyword" json:"keyword"`
 	NameEqual      string
 	OrderBy        string
 	IdsIn          []string
+	IdsNotIn        []string
 
 	PageSize       int `form:"pageSize" json:"pageSize"`
 	TargetPage     int `form:"targetPage" json:"targetPage"`
@@ -109,6 +110,20 @@ func (arg *Role) getCountConditions() (string, []interface{}) {
 		}
 		sql += " name = ?"
 		params = append(params, arg.NameEqual)
+	}
+	if arg.IdsNotIn != nil && len(arg.IdsNotIn) != 0 {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " id not in ("
+		for i, id := range arg.IdsNotIn {
+			if i != 0 {
+				sql += ","
+			}
+			sql += "?"
+			params = append(params, id)
+		}
+		sql += ")"
 	}
 	if len(params) != 0 {
 		sql = " where" + sql

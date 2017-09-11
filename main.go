@@ -56,12 +56,11 @@ func initData() {
 }
 
 func initTestData() {
-	initTestRole()
 	initTestAdmin()
 	initTestAdvertisement()
-	initTestShopClassification()
 	initTestShop()
-	tempInitTestShop()
+	initTestUser()
+	//tempInitTestShop()
 }
 
 func initRole() string {
@@ -137,6 +136,7 @@ func initTestRole() {
 }
 
 func initTestAdmin() {
+	initTestRole()
 	serviceAdmin := &service.Admin{}
 	argAdmin := &arg.Admin{}
 	count, err := service.Count(serviceAdmin, argAdmin)
@@ -154,9 +154,11 @@ func initTestAdmin() {
 					rl = append(rl, v.(*model.Role))
 				}
 			}
+			obj.Mobile = "12345678910"
 			obj.RoleList = rl
 			obj.Name = "name" + strconv.Itoa(i)
 			obj.Password = "123123"
+			obj.Locked = rand.Intn(2) < 1
 			obj.Password, err = util.EncryptPassword(obj.Password)
 			checkErr(err)
 			obj, err := serviceAdmin.Add(obj)
@@ -204,6 +206,7 @@ func initTestShopClassification() {
 }
 
 func initTestShop() {
+	initTestShopClassification()
 	serviceShop := &service.Shop{}
 	argShop := &arg.Shop{}
 	count, err := service.Count(serviceShop, argShop)
@@ -308,3 +311,49 @@ func initTestCashCoupon(shopId string) {
 		checkErr(err)
 	}
 }
+
+func initTestPromotionalPartner() {
+	servicePromotionalPartner := &service.PromotionalPartner{}
+	argPromotionalPartner := &arg.PromotionalPartner{}
+	count, err := service.Count(servicePromotionalPartner, argPromotionalPartner)
+	checkErr(err)
+	if count < 5 {
+		checkErr(err)
+		for i := 0; i < 50; i++ {
+			obj := &model.PromotionalPartner{}
+			obj.Name = "name" + strconv.Itoa(i)
+			obj.Description = "description" + strconv.Itoa(i)
+			_, err := service.Add(servicePromotionalPartner, obj)
+			checkErr(err)
+		}
+	}
+}
+
+func initTestUser() {
+	initTestPromotionalPartner()
+	servicePromotionalPartner := &service.PromotionalPartner{}
+	argPromotionalPartner := &arg.PromotionalPartner{}
+	list, err := service.Find(servicePromotionalPartner, argPromotionalPartner)
+	checkErr(err)
+
+	serviceUser := &service.User{}
+	argUser := &arg.User{}
+	count, err := service.Count(serviceUser, argUser)
+	checkErr(err)
+	if count < 5 {
+		checkErr(err)
+		for i := 10; i < 80; i++ {
+			obj := &model.User{}
+			obj.Mobile = "123456789" + strconv.Itoa(i)
+			obj.PresentChance = rand.Intn(10)
+			obj.Locked = rand.Intn(2) < 1
+			obj.Shared = rand.Intn(2) < 1
+			if rand.Intn(2) < 1 {
+				obj.PromotionalPartnerId = list[rand.Intn(len(list))].(*model.PromotionalPartner).Id
+			}
+			_, err := service.Add(serviceUser, obj)
+			checkErr(err)
+		}
+	}
+}
+

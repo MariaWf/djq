@@ -2,220 +2,122 @@ package arg
 
 import (
 	"mimi/djq/model"
-	"mimi/djq/util"
-	"strings"
 )
 
 type User struct {
-	NameLike      string
-	NameEqual     string
-	MobileLike    string
-	MobileEqual   string
-	NickNameLike  string
-	NickNameEqual string
-	IdEqual       string
+	IdEqual                   string
+	IncludeDeleted            bool
+	PromotionalPartnerIdEqual string
+	MobileEqual               string
+	OrderBy                   string
+	IdsIn                     []string
+	LockedOnly                bool
+	UnlockedOnly              bool
 
-	LoginNameLike  string
-	LoginNameEqual string
-	PasswordEqual  string
+	PageSize                  int `form:"pageSize" json:"pageSize"`
+	TargetPage                int `form:"targetPage" json:"targetPage"`
 
-	PageSize   int
-	TargetPage int
+	DisplayNames              []string
 
-	DisplayNames []string
-
-	UpdateObject      *model.User
-	UpdateNames []string
+	UpdateObject              interface{}
+	UpdateNames               []string
 }
 
-func (u *User) BuildFindSql() (string, []interface{}, []string) {
-	sql := u.getBaseSql(SelectSql)
-
-	columnNames := u.getShowColumnNames()
-	sql = bindColumnNames(sql, strings.Join(columnNames, ","))
-
-	conditionStr, params := u.getFindConditions()
-	sql = bindConditions(sql, conditionStr)
-
-	return sql, params, columnNames
+func (arg *User) GetDisplayNames() []string {
+	return arg.DisplayNames
 }
 
-func (u *User) BuildCountSql() (string, []interface{}) {
-	sql := u.getBaseSql(CountSql)
-
-	conditionStr, params := u.getCountConditions()
-	sql = bindConditions(sql, conditionStr)
-
-	return sql, params
+func (arg *User) GetModelInstance() model.BaseModelInterface {
+	return &model.User{}
 }
 
-func (u *User) BuildInsertSql() (string, []string) {
-	sql := u.getBaseSql(InsertSql)
-
-	columnNames := ColumnNamesUser
-	sql = bindColumnNames(sql, strings.Join(columnNames, ","))
-
-	columnValues := u.getColumnValuePlaceHolder(columnNames)
-	sql = bindColumnValues(sql, strings.Join(columnValues, ","))
-
-	return sql, columnNames
+func (arg *User) GetIdsIn() []string {
+	return arg.IdsIn
 }
 
-func (u *User) BuildUpdateSql() (string, []interface{}) {
-	if u.UpdateObject == nil {
-		panic(ErrUpdateObjectEmpty)
-	}
-	sql := u.getBaseSql(UpdateSql)
-
-	columnNameValues, paramValues := u.getColumnNameValues()
-	sql = bindColumnNameValues(sql, strings.Join(columnNameValues, ","))
-
-	conditionStr, paramConditions := u.getCountConditions()
-	sql = bindConditions(sql, conditionStr)
-
-	return sql, append(paramValues, paramConditions...)
+func (arg *User) SetIdsIn(idsIn []string) {
+	arg.IdsIn = idsIn
 }
 
-func (u *User) BuildDeleteSql() (string, []interface{}) {
-	sql := u.getBaseSql(DeleteSql)
-
-	conditionStr, params := u.getCountConditions()
-	sql = bindConditions(sql, conditionStr)
-
-	return sql, params
+func (arg *User) GetUpdateNames() []string {
+	return arg.UpdateNames
 }
 
-func (u *User) getBaseSql(sql string) string {
-	return bindTableName(sql, tableNameUser)
+func (arg *User) SetUpdateNames(updateNames []string) {
+	arg.UpdateNames = updateNames
 }
 
-func (u *User) getShowColumnNames() []string {
-	if u.DisplayNames == nil || len(u.DisplayNames) == 0 {
-		return []string{"*"}
-	}
-	s := make([]string, 0, len(u.DisplayNames))
-	for _, v := range u.DisplayNames {
-		switch v {
-		case "id":
-			s = append(s, "id")
-		case "name":
-			s = append(s, "name")
-		case "nickName":
-			s = append(s, "nick_name")
-		case "mobile":
-			s = append(s, "mobile")
-		case "password":
-			s = append(s, "password")
-		}
-	}
-	if len(s) == 0 {
-		s = append(s, "*")
-	}
-	return s
+func (arg *User) GetOrderBy() string {
+	return arg.OrderBy
 }
 
-func (u *User) getColumnNameValues() ([]string, []interface{}) {
-	if u.UpdateNames == nil || len(u.UpdateNames) == 0 {
-		u.UpdateNames = ColumnNamesUser[1:]
-	}
-	s := make([]string, 0, len(u.UpdateNames))
-	params := make([]interface{}, 0, 9)
-	for _, v := range u.UpdateNames {
-		switch v {
-		case "name":
-			s = append(s, "name = ?")
-			params = append(params, u.UpdateObject.Name)
-		case "nickName":
-			s = append(s, "nick_name = ?")
-			params = append(params, u.UpdateObject.NickName)
-		case "mobile":
-			s = append(s, "mobile = ?")
-			params = append(params, u.UpdateObject.Mobile)
-		case "password":
-			s = append(s, "password = ?")
-			params = append(params, u.UpdateObject.Password)
-		}
-	}
-	return s, params
+func (arg *User) SetOrderBy(orderBy string) {
+	arg.OrderBy = orderBy
 }
 
-func (u *User) getColumnValuePlaceHolder(columnNames []string) []string {
-	len := len(columnNames)
-	placeholder := make([]string, 0, len)
-	for i := 0; i < len; i++ {
-		placeholder = append(placeholder, "?")
-	}
-	return placeholder
+func (arg *User) GetIncludeDeleted() bool {
+	return arg.IncludeDeleted
 }
 
-func (u *User) getFindConditions() (string, []interface{}) {
-	sql, params := u.getCountConditions()
-	if u.PageSize > 0 {
-		sql += " limit ?,?"
-		start := util.ComputePageStart(u.TargetPage, u.PageSize)
-		params = append(params, start, u.PageSize)
-	}
-	return sql, params
+func (arg *User) SetIncludeDeleted(includeDeleted bool) {
+	arg.IncludeDeleted = includeDeleted
 }
 
-func (u *User) getCountConditions() (string, []interface{}) {
+func (arg *User) GetIdEqual() string {
+	return arg.IdEqual
+}
+
+func (arg *User) SetIdEqual(idEqual string) {
+	arg.IdEqual = idEqual
+}
+
+func (arg *User) GetUpdateObject() interface{} {
+	return arg.UpdateObject
+}
+
+func (arg *User) SetUpdateObject(updateObject interface{}) {
+	arg.UpdateObject = updateObject
+}
+
+func (arg *User) GetTargetPage() int {
+	return arg.TargetPage
+}
+
+func (arg *User) SetTargetPage(targetPage int) {
+	arg.TargetPage = targetPage
+}
+
+func (arg *User) GetPageSize() int {
+	return arg.PageSize
+}
+
+func (arg *User) SetPageSize(pageSize int) {
+	arg.PageSize = pageSize
+}
+
+func (arg *User) getCountConditions() (string, []interface{}) {
 	sql := ""
 	params := make([]interface{}, 0, 9)
-	if u.NameLike != "" {
-		if sql != "" {
-			sql += " and"
-		}
-		sql += " name like ?"
-		params = append(params, "%"+u.NameLike+"%")
-	}
-	if u.NameEqual != "" {
+	if arg.MobileEqual != "" {
 		if sql != "" {
 			sql += " and"
 		}
 		sql += " name = ?"
-		params = append(params, u.NameEqual)
+		params = append(params, arg.MobileEqual)
 	}
-	if u.NickNameLike != "" {
-		if sql != "" {
-			sql += " and"
-		}
-		sql += " nick_name like ?"
-		params = append(params, "%"+u.NickNameLike+"%")
-	}
-	if u.NickNameEqual != "" {
-		if sql != "" {
-			sql += " and"
-		}
-		sql += " nick_name = ?"
-		params = append(params, u.NickNameEqual)
-	}
-	if u.MobileLike != "" {
-		if sql != "" {
-			sql += " and"
-		}
-		sql += " mobile like ?"
-		params = append(params, "%"+u.MobileLike+"%")
-	}
-	if u.MobileEqual != "" {
-		if sql != "" {
-			sql += " and"
-		}
-		sql += " mobile = ?"
-		params = append(params, u.MobileEqual)
-	}
-	if u.LoginNameEqual != "" {
-		if sql != "" {
-			sql += " and"
-		}
-		sql += " (nick_name = ? or mobile = ?)"
-		params = append(params, u.LoginNameEqual, u.LoginNameEqual)
-	}
-	if u.PasswordEqual != "" {
+	if arg.PromotionalPartnerIdEqual != "" {
 		if sql != "" {
 			sql += " and"
 		}
 		sql += " password = ?"
-		params = append(params, u.PasswordEqual)
+		params = append(params, arg.PromotionalPartnerIdEqual)
+	}
+	if arg.LockedOnly || arg.UnlockedOnly {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " locked = ?"
+		params = append(params, arg.LockedOnly)
 	}
 	if len(params) != 0 {
 		sql = " where" + sql

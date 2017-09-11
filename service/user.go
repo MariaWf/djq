@@ -1,52 +1,39 @@
 package service
 
-//import (
-//	"github.com/pkg/errors"
-//	"mimi/djq/dao/arg"
-//	"mimi/uservice/rpc/reply"
-//)
-//
-//var ErrLoginMismatch = errors.New("service: login mismatch")
-//
-//type User int
-//
-//func (t *User) Find(args *arg.User, reply *reply.Objects) error {
-//	//conn, _ := mysql.Get()
-//	//defer mysql.Close(conn)
-//	//userDao := &dao.UserDao{conn}
-//	//users, err := userDao.Find(args)
-//	////reply.Objects = users
-//	//reply.Err = err
-//	return nil
-//}
-//
-////func (t *User) FindWithoutPassword(args *arg.User, reply *reply.Objects) error {
-////	conn, _ := mysql.Get()
-////	defer mysql.Close(conn)
-////	userDao := &dao.UserDao{conn}
-////	user := new(model.User)
-////	user.NickName = "mimi"
-////	user.Mobile = "11111111111"
-////	user.Password = "123123"
-////	return nil
-////}
-////
-////func (t *User) getWithoutPassword(args *Args, reply *Reply) error {
-////	reply.C = args.A * args.B
-////	return nil
-////}
-//
-//func (t *User) Login(args *arg.User, reply *reply.Normal) error {
-//	//conn, _ := mysql.Get()
-//	//defer mysql.Close(conn)
-//	//userDao := &dao.UserDao{conn}
-//	//users, err := userDao.Find(args)
-//	//if err != nil {
-//	//	reply.Err = errors.Wrap(err, "userDao.Find")
-//	//}else if len(users) ==0{
-//	//	reply.Err = ErrLoginMismatch
-//	//}else{
-//	//	reply.Ok = true
-//	//}
-//	return nil
-//}
+import (
+	"database/sql"
+	"mimi/djq/dao"
+	"mimi/djq/model"
+	"mimi/djq/util"
+)
+
+type User struct {
+}
+
+func (service *User) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
+	return &dao.User{conn}
+}
+
+func (service *User) check(obj *model.User) error {
+	if obj == nil {
+		return ErrObjectEmpty
+	}
+	if !util.MatchMobile(obj.Mobile) {
+		return util.ErrMobileFormat
+	}
+	if err := util.MatchNonnegativeNumberWithErr(obj.PresentChance, "抽奖次数"); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (service *User) CheckUpdate(obj model.BaseModelInterface) error {
+	if obj != nil && obj.GetId() == "" {
+		return ErrIdEmpty
+	}
+	return service.check(obj.(*model.User))
+}
+
+func (service *User) CheckAdd(obj model.BaseModelInterface) error {
+	return service.check(obj.(*model.User))
+}

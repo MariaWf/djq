@@ -116,8 +116,29 @@ func AdminList(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
 		return
 	}
-	serviceObj := &service.Admin{}
+	locked := c.Query("locked")
+	if locked == "true" {
+		argObj.LockedOnly = true
+	} else if locked == "false" {
+		argObj.UnlockedOnly = true
+	}
+
+	sn, err := session.GetMi(c.Writer, c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	id, err := sn.Get(session.SessionNameMiAdminId)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	argObj.IdsNotIn = []string{id, constant.AdminId}
+	argObj.OrderBy = "name"
 	argObj.DisplayNames = []string{"id", "name", "mobile", "locked"}
+	serviceObj := &service.Admin{}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }
@@ -137,13 +158,13 @@ func AdminGet(c *gin.Context) {
 
 func AdminGetSelf(c *gin.Context) {
 	serviceObj := &service.Admin{}
-	sn, err := session.GetSi(c.Writer, c.Request)
+	sn, err := session.GetMi(c.Writer, c.Request)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	id, err := sn.Get(session.SessionNameSiShopAccountId)
+	id, err := sn.Get(session.SessionNameMiAdminId)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
@@ -240,17 +261,17 @@ func AdminPatch(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	id, err := sn.Get(session.SessionNameMiAdminId)
+	curId, err := sn.Get(session.SessionNameMiAdminId)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	if id == obj.GetId() {
+	if curId == obj.GetId() {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("禁止修改当前登录管理员信息"))
 		return
 	}
-	if id == constant.AdminId {
+	if obj.GetId() == constant.AdminId {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("禁止修改超级管理员信息"))
 		return
 	}
@@ -283,13 +304,13 @@ func AdminDelete(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	id, err := sn.Get("id")
+	id, err := sn.Get(session.SessionNameMiAdminId)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	ids := strings.Split(c.PostForm("ids"), constant.Split4Id)
+	ids := strings.Split(c.Query("ids"), constant.Split4Id)
 	for _, v := range ids {
 		if v == id {
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("禁止删除当前登录管理员信息"))

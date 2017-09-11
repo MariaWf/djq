@@ -63,7 +63,7 @@ func ShopIntroductionImagePatch(c *gin.Context) {
 }
 
 func ShopIntroductionImageDelete(c *gin.Context) {
-	ids := strings.Split(c.PostForm("ids"), constant.Split4Id)
+	ids := strings.Split(c.Query("ids"), constant.Split4Id)
 
 	serviceObj := &service.ShopIntroductionImage{}
 	argObj := &arg.ShopIntroductionImage{}
