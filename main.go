@@ -56,11 +56,12 @@ func initData() {
 }
 
 func initTestData() {
+	//tempInitTestShop()
 	initTestAdmin()
 	initTestAdvertisement()
 	initTestShop()
 	initTestUser()
-	//tempInitTestShop()
+	initTestCashCouponOrder()
 }
 
 func initRole() string {
@@ -127,8 +128,8 @@ func initTestRole() {
 				}
 			}
 			obj.PermissionList = pl
-			obj.Name = "name" + strconv.Itoa(i)
-			obj.Description = "description" + strconv.Itoa(i)
+			obj.Name = "名称" + strconv.Itoa(i)
+			obj.Description = "描述" + strconv.Itoa(i)
 			obj, err := serviceRole.Add(obj)
 			checkErr(err)
 		}
@@ -175,12 +176,12 @@ func initTestAdvertisement() {
 	if count < 5 {
 		for i := 0; i < 50; i++ {
 			obj := &model.Advertisement{}
-			obj.Name = "name" + strconv.Itoa(i)
+			obj.Name = "名称" + strconv.Itoa(i)
 			obj.Image = "https://www.baidu.com/img/bd_logo1.png"
 			obj.Link = "https://www.baidu.com"
 			obj.Priority = rand.Intn(1000)
 			obj.Hide = rand.Intn(2) < 1
-			obj.Description = "description" + strconv.Itoa(i)
+			obj.Description = "描述" + strconv.Itoa(i)
 			_, err := service.Add(serviceAdvertisement, obj)
 			checkErr(err)
 		}
@@ -195,10 +196,10 @@ func initTestShopClassification() {
 	if count < 5 {
 		for i := 0; i < 50; i++ {
 			obj := &model.ShopClassification{}
-			obj.Name = "name" + strconv.Itoa(i)
+			obj.Name = "名称" + strconv.Itoa(i)
 			obj.Priority = rand.Intn(1000)
 			obj.Hide = rand.Intn(2) < 1
-			obj.Description = "description" + strconv.Itoa(i)
+			obj.Description = "描述" + strconv.Itoa(i)
 			_, err := service.Add(serviceShopClassification, obj)
 			checkErr(err)
 		}
@@ -225,13 +226,13 @@ func initTestShop() {
 				}
 			}
 			obj.ShopClassificationList = rl
-			obj.Name = "name" + strconv.Itoa(i)
+			obj.Name = "名称" + strconv.Itoa(i)
 			obj.Logo = "https://www.baidu.com/img/bd_logo1.png"
 			obj.PreImage = "https://www.baidu.com/img/bd_logo1.png"
 			obj.TotalCashCouponNumber = rand.Intn(1000)
 			obj.TotalCashCouponPrice = rand.Intn(1000) * obj.TotalCashCouponNumber
-			obj.Introduction = "introduction" + strconv.Itoa(i)
-			obj.Address = "address" + strconv.Itoa(i)
+			obj.Introduction = "介绍" + strconv.Itoa(i)
+			obj.Address = "地址" + strconv.Itoa(i)
 			obj.Priority = rand.Intn(1000)
 			obj.Hide = rand.Intn(2) < 1
 			obj, err := serviceShop.Add(obj)
@@ -247,10 +248,10 @@ func tempInitTestShop() {
 	argShop := &arg.Shop{}
 	list, err := service.Find(serviceShop, argShop)
 	checkErr(err)
-	for i, obj := range list {
-		initTestShopAccount(obj.(*model.Shop).Id, i)
+	for _, obj := range list {
+		//initTestShopAccount(obj.(*model.Shop).Id, i)
 		//initTestShopIntroductionImage(obj.(*model.Shop).Id)
-		//initTestCashCoupon(obj.(*model.Shop).Id)
+		initTestCashCoupon(obj.(*model.Shop).Id)
 	}
 }
 
@@ -261,14 +262,14 @@ func initTestShopAccount(shopId string, index int) {
 	for i := 0; i < total; i++ {
 		obj := &model.ShopAccount{}
 		obj.ShopId = shopId
-		obj.Name = "name" + strconv.Itoa(index) + "_" + strconv.Itoa(i)
+		obj.Name = "名称" + strconv.Itoa(index) + "_" + strconv.Itoa(i)
 		obj.Password = "123123"
 		obj.Password, err = util.EncryptPassword(obj.Password)
 		checkErr(err)
 		obj.MoneyChance = rand.Intn(20)
 		obj.TotalMoney = rand.Intn(1000)
 		obj.Locked = rand.Intn(2) < 1
-		obj.Description = "description" + strconv.Itoa(i)
+		obj.Description = "描述" + strconv.Itoa(i)
 		_, err := serviceShopAccount.Add(obj)
 		checkErr(err)
 	}
@@ -294,9 +295,10 @@ func initTestCashCoupon(shopId string) {
 	for i := 0; i < total; i++ {
 		obj := &model.CashCoupon{}
 		obj.ShopId = shopId
-		obj.Name = "name" + strconv.Itoa(i)
+		obj.Name = "名称" + strconv.Itoa(i)
 		obj.PreImage = "https://www.baidu.com/img/bd_logo1.png"
-		obj.DiscountAmount = rand.Intn(500)
+		obj.DiscountAmount = 10 + rand.Intn(2000)
+		obj.Price = obj.DiscountAmount + rand.Intn(2000)
 		t := time.Now()
 		if rand.Intn(2) < 1 {
 			t = t.Add(time.Hour * time.Duration(rand.Int63n(1000)))
@@ -321,8 +323,8 @@ func initTestPromotionalPartner() {
 		checkErr(err)
 		for i := 0; i < 50; i++ {
 			obj := &model.PromotionalPartner{}
-			obj.Name = "name" + strconv.Itoa(i)
-			obj.Description = "description" + strconv.Itoa(i)
+			obj.Name = "名称" + strconv.Itoa(i)
+			obj.Description = "描述" + strconv.Itoa(i)
 			_, err := service.Add(servicePromotionalPartner, obj)
 			checkErr(err)
 		}
@@ -378,9 +380,9 @@ func initTestPresent() {
 		checkErr(err)
 		for i := 0; i < 50; i++ {
 			obj := &model.Present{}
-			obj.Name = "name" + strconv.Itoa(i)
+			obj.Name = "名称" + strconv.Itoa(i)
 			obj.Weight = rand.Intn(1000)
-			obj.Address = "address" + strconv.Itoa(i)
+			obj.Address = "地址" + strconv.Itoa(i)
 			t := time.Now()
 			if rand.Intn(2) < 1 {
 				t = t.Add(time.Hour * time.Duration(rand.Int63n(1000)))
@@ -414,4 +416,175 @@ func initTestPresentOrder(userId, presentId string) {
 		_, err := service.Add(servicePresentOrder, obj)
 		checkErr(err)
 	}
+}
+
+func initTestRefundReason() {
+	serviceRefundReason := &service.RefundReason{}
+	argRefundReason := &arg.RefundReason{}
+	count, err := service.Count(serviceRefundReason, argRefundReason)
+	checkErr(err)
+	if count < 5 {
+		checkErr(err)
+		for i := 0; i < 50; i++ {
+			obj := &model.RefundReason{}
+			obj.Description = "退款理由" + strconv.Itoa(i)
+			obj.Priority = rand.Intn(1000)
+			obj.Hide = rand.Intn(2) < 1
+			_, err := service.Add(serviceRefundReason, obj)
+			checkErr(err)
+		}
+	}
+}
+
+func initTestCashCouponOrder() {
+	initTestRefundReason()
+	serviceCashCoupon := &service.CashCoupon{}
+	argCashCoupon := &arg.CashCoupon{}
+	cashCouponList, err := service.Find(serviceCashCoupon, argCashCoupon)
+	checkErr(err)
+
+	serviceUser := &service.User{}
+	argUser := &arg.User{}
+	userList, err := service.Find(serviceUser, argUser)
+	checkErr(err)
+
+	serviceCashCouponOrder := &service.CashCouponOrder{}
+	argCashCouponOrder := &arg.CashCouponOrder{}
+	count, err := service.Count(serviceCashCouponOrder, argCashCouponOrder)
+	checkErr(err)
+	if count < 5 {
+		checkErr(err)
+		status := []int{constant.CashCouponOrderStatusInCart,
+			constant.CashCouponOrderStatusPaidNotUsed,
+			constant.CashCouponOrderStatusUsed,
+			constant.CashCouponOrderStatusNotUsedRefunding,
+			constant.CashCouponOrderStatusUsedRefunding,
+			constant.CashCouponOrderStatusNotUsedRefunded,
+			constant.CashCouponOrderStatusUsedRefunded}
+		for i := 0; i < 50; i++ {
+			cashCoupon := cashCouponList[rand.Intn(len(cashCouponList))].(*model.CashCoupon)
+			obj := &model.CashCouponOrder{}
+			obj.UserId = userList[rand.Intn(len(userList))].(*model.User).GetId()
+			obj.CashCouponId = cashCoupon.GetId()
+			obj.Number = util.BuildCashCouponOrderNumber()
+			obj.Status = status[rand.Intn(len(status))]
+			obj.Price = cashCoupon.Price
+			obj.PayOrderNumber = util.BuildUUID()
+			if obj.Status == constant.CashCouponOrderStatusUsedRefunded || obj.Status == constant.CashCouponOrderStatusUsedRefunding {
+				obj.RefundAmount = rand.Intn(obj.Price)
+			}
+			_, err := service.Add(serviceCashCouponOrder, obj)
+			initTestRefund(obj)
+			checkErr(err)
+		}
+	}
+}
+
+func initTestRefund(cashCouponOrder *model.CashCouponOrder) {
+	serviceRefundReason := &service.RefundReason{}
+	argRefundReason := &arg.RefundReason{}
+	refundReasonList, err := service.Find(serviceRefundReason, argRefundReason)
+	checkErr(err)
+
+	serviceRefund := &service.Refund{}
+	//status := []int{constant.RefundStatusNotUsedRefunding,
+	//	constant.RefundStatusNotUsedRefundSuccess,
+	//	constant.RefundStatusNotUsedRefundCancel,
+	//	constant.RefundStatusUsedRefunding,
+	//	constant.RefundStatusUsedRefundSuccess,
+	//	constant.RefundStatusUsedRefundFail,
+	//	constant.RefundStatusUsedRefundCancel}
+
+	switch cashCouponOrder.Status{
+	case constant.CashCouponOrderStatusInCart:
+		return
+	case constant.CashCouponOrderStatusPaidNotUsed:
+		goto PaidNotUsed
+	case constant.CashCouponOrderStatusUsed:
+		goto Used
+	case constant.CashCouponOrderStatusNotUsedRefunding:
+		obj := buildTestRefundModel(refundReasonList, cashCouponOrder)
+		obj.Status = constant.RefundStatusNotUsedRefunding
+		_, err := service.Add(serviceRefund, obj)
+		checkErr(err)
+		goto PaidNotUsed
+	case constant.CashCouponOrderStatusUsedRefunding:
+		if cashCouponOrder.RefundAmount > 0 {
+			obj := buildTestRefundModel(refundReasonList, cashCouponOrder)
+			obj.Status = constant.RefundStatusUsedRefundSuccess
+			obj.RefundAmount = cashCouponOrder.RefundAmount
+			_, err := service.Add(serviceRefund, obj)
+			checkErr(err)
+		}
+		obj := buildTestRefundModel(refundReasonList, cashCouponOrder)
+		obj.Status = constant.RefundStatusUsedRefunding
+		obj.RefundAmount = rand.Intn(cashCouponOrder.Price - cashCouponOrder.RefundAmount) + 1
+		_, err := service.Add(serviceRefund, obj)
+		checkErr(err)
+		goto Used
+	case constant.CashCouponOrderStatusNotUsedRefunded:
+		obj := buildTestRefundModel(refundReasonList, cashCouponOrder)
+		obj.Status = constant.RefundStatusNotUsedRefundSuccess
+		_, err := service.Add(serviceRefund, obj)
+		checkErr(err)
+		goto PaidNotUsed
+	case constant.CashCouponOrderStatusUsedRefunded:
+		obj := buildTestRefundModel(refundReasonList, cashCouponOrder)
+		obj.Status = constant.RefundStatusUsedRefundSuccess
+		obj.RefundAmount = cashCouponOrder.RefundAmount
+		_, err := service.Add(serviceRefund, obj)
+		checkErr(err)
+		goto Used
+	}
+
+	Used:
+	if rand.Intn(2) < 1 {
+		obj := buildTestRefundModel(refundReasonList, cashCouponOrder)
+		obj.Status = constant.RefundStatusUsedRefundCancel
+		_, err := service.Add(serviceRefund, obj)
+		checkErr(err)
+	}
+	if rand.Intn(2) < 1 {
+		obj := buildTestRefundModel(refundReasonList, cashCouponOrder)
+		obj.Status = constant.RefundStatusUsedRefundFail
+		_, err := service.Add(serviceRefund, obj)
+		checkErr(err)
+	}
+
+	PaidNotUsed:
+	if rand.Intn(2) < 1 {
+		obj := buildTestRefundModel(refundReasonList, cashCouponOrder)
+		obj.Status = constant.RefundStatusNotUsedRefundCancel
+		_, err := service.Add(serviceRefund, obj)
+		checkErr(err)
+	}
+
+	//for i := 0; i < 3; i++ {
+	//	obj := &model.Refund{}
+	//	obj.Common = "平台意见" + strconv.Itoa(rand.Intn(1000))
+	//	obj.CashCouponOrderId = cashCouponOrder.GetId()
+	//	obj.Evidence = "https://www.baidu.com/img/bd_logo1.png"
+	//	obj.Reason = refundReasonList[rand.Intn(len(refundReasonList))].(*model.RefundReason).Description
+	//	if rand.Intn(10) < 1 {
+	//		obj.Reason = "其他退款理由" + strconv.Itoa(rand.Intn(1000))
+	//	}
+	//	obj.RefundAmount = cashCouponOrder.Price
+	//	obj.Status = status[rand.Intn(len(status))]
+	//	_, err := service.Add(serviceRefund, obj)
+	//	checkErr(err)
+	//}
+}
+
+func buildTestRefundModel(refundReasonList []interface{}, cashCouponOrder *model.CashCouponOrder) *model.Refund {
+	obj := &model.Refund{}
+	obj.Common = "平台意见" + strconv.Itoa(rand.Intn(1000))
+	obj.CashCouponOrderId = cashCouponOrder.GetId()
+	obj.Evidence = "https://www.baidu.com/img/bd_logo1.png"
+	obj.Reason = refundReasonList[rand.Intn(len(refundReasonList))].(*model.RefundReason).Description
+	if rand.Intn(10) < 1 {
+		obj.Reason = "其他退款理由" + strconv.Itoa(rand.Intn(1000))
+	}
+	obj.RefundAmount = cashCouponOrder.Price
+	//obj.Status = status[rand.Intn(len(status))]
+	return obj
 }

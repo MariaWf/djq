@@ -99,6 +99,7 @@ id varchar(64) not null primary key,
 shop_id varchar(64) not null default '',
 name varchar(32) not null default '',
 pre_image varchar(200) not null default '',
+price int(8) not null default 0,
 discount_amount int(8) not null default 0,
 expiry_date timestamp DEFAULT CURRENT_TIMESTAMP,
 expired tinyint(1) default false,
@@ -123,6 +124,9 @@ create table tbl_cash_coupon_order(
 id varchar(64) not null primary key,
 user_id varchar(64) not null default '',
 cash_coupon_id varchar(64) not null default '',
+price int(8) not null default 0,
+refund_amount int(8) not null default 0,
+pay_order_number varchar(200) not null default '',
 number varchar(200) not null default '',
 status int(8) not null default 0,
 del_flag tinyint(1) default false
@@ -134,6 +138,8 @@ id varchar(64) not null primary key,
 cash_coupon_order_id varchar(64) not null default '',
 evidence varchar(200) not null default '',
 reason varchar(200) not null default '',
+comment varchar(200) not null default '',
+refund_amount int(8) not null default 0,
 status int(8) not null default 0,
 del_flag tinyint(1) default false
 )default charset=utf8;
@@ -142,6 +148,8 @@ drop table if exists tbl_refund_reason;
 create table tbl_refund_reason(
 id varchar(64) not null primary key,
 description varchar(200) not null default '',
+hide tinyint(1) default false,
+priority int(8) not null default 0,
 del_flag tinyint(1) default false
 )default charset=utf8;
 

@@ -56,5 +56,20 @@ func GetPermissionList() []*Permission {
 		{"presentOrder_c", "添加礼品订单信息", "添加礼品订单信息"},
 		{"presentOrder_r", "查看礼品订单信息", "查看礼品订单信息"},
 		{"presentOrder_u", "更新礼品订单信息", "更新礼品订单信息"},
-		{"presentOrder_d", "删除礼品订单信息", "删除礼品订单信息"}}
+		{"presentOrder_d", "删除礼品订单信息", "删除礼品订单信息"},
+
+		{"cashCouponOrder_c", "添加代金券订单信息", "添加代金券订单信息"},
+		{"cashCouponOrder_r", "查看代金券订单信息", "查看代金券订单信息"},
+		{"cashCouponOrder_u", "更新代金券订单信息", "更新代金券订单信息"},
+		{"cashCouponOrder_d", "删除代金券订单信息", "删除代金券订单信息"},
+
+		{"refund_c", "添加退款申请信息", "添加退款申请信息"},
+		{"refund_r", "查看退款申请信息", "查看退款申请信息"},
+		{"refund_u", "更新退款申请信息", "更新退款申请信息"},
+		{"refund_d", "删除退款申请信息", "删除退款申请信息"},
+
+		{"refundReason_c", "添加退款理由信息", "添加退款理由信息"},
+		{"refundReason_r", "查看退款理由信息", "查看退款理由信息"},
+		{"refundReason_u", "更新退款理由信息", "更新退款理由信息"},
+		{"refundReason_d", "删除退款理由信息", "删除退款理由信息"}}
 }

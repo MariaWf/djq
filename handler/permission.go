@@ -37,7 +37,7 @@ func checkPermission(c *gin.Context, permission string) {
 			}
 		}
 	}
-	c.AbortWithStatusJSON(http.StatusUnauthorized, util.BuildNeedPermissionResult())
+	c.AbortWithStatusJSON(http.StatusOK, util.BuildNeedPermissionResult())
 }
 
 func PermissionAdminC(c *gin.Context) {
@@ -182,6 +182,54 @@ func PermissionPresentOrderU(c *gin.Context) {
 
 func PermissionPresentOrderD(c *gin.Context) {
 	checkPermission(c, "presentOrder_d")
+}
+
+func PermissionCashCouponOrderC(c *gin.Context) {
+	checkPermission(c, "cashCouponOrder_c")
+}
+
+func PermissionCashCouponOrderR(c *gin.Context) {
+	checkPermission(c, "cashCouponOrder_r")
+}
+
+func PermissionCashCouponOrderU(c *gin.Context) {
+	checkPermission(c, "cashCouponOrder_u")
+}
+
+func PermissionCashCouponOrderD(c *gin.Context) {
+	checkPermission(c, "cashCouponOrder_d")
+}
+
+func PermissionRefundC(c *gin.Context) {
+	checkPermission(c, "refund_c")
+}
+
+func PermissionRefundR(c *gin.Context) {
+	checkPermission(c, "refund_r")
+}
+
+func PermissionRefundU(c *gin.Context) {
+	checkPermission(c, "refund_u")
+}
+
+func PermissionRefundD(c *gin.Context) {
+	checkPermission(c, "refund_d")
+}
+
+func PermissionRefundReasonC(c *gin.Context) {
+	checkPermission(c, "refundReason_c")
+}
+
+func PermissionRefundReasonR(c *gin.Context) {
+	checkPermission(c, "refundReason_r")
+}
+
+func PermissionRefundReasonU(c *gin.Context) {
+	checkPermission(c, "refundReason_u")
+}
+
+func PermissionRefundReasonD(c *gin.Context) {
+	checkPermission(c, "refundReason_d")
 }
 
 //func PermissionCashCouponC(c *gin.Context) {

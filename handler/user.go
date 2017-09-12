@@ -123,7 +123,7 @@ func UserList(c *gin.Context) {
 	}
 
 	argObj.OrderBy = "mobile"
-	argObj.DisplayNames = []string{"id",  "mobile", "presentChance", "locked"}
+	argObj.DisplayNames = []string{"id", "promotionalPartnerId", "mobile", "presentChance", "shared", "locked"}
 	serviceObj := &service.User{}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
@@ -138,7 +138,7 @@ func UserGet(c *gin.Context) {
 	//	return
 	//}
 	//result := util.BuildSuccessResult(obj)
-	result := service.ResultGet(serviceObj,c.Param("id"))
+	result := service.ResultGet(serviceObj, c.Param("id"))
 	c.JSON(http.StatusOK, result)
 }
 
@@ -183,7 +183,7 @@ func UserPost(c *gin.Context) {
 	//	return
 	//}
 	//result := util.BuildSuccessResult(obj.Id)
-	result := service.ResultAdd(serviceObj,obj)
+	result := service.ResultAdd(serviceObj, obj)
 	c.JSON(http.StatusOK, result)
 }
 
@@ -204,7 +204,7 @@ func UserPatch(c *gin.Context) {
 	//	return
 	//}
 	//result := util.BuildSuccessResult(obj.Id)
-	result := service.ResultUpdate(serviceObj,obj)
+	result := service.ResultUpdate(serviceObj, obj)
 	c.JSON(http.StatusOK, result)
 }
 

@@ -12,30 +12,30 @@ import (
 	"strings"
 )
 
-func CashCouponList(c *gin.Context) {
-	argObj := &arg.CashCoupon{}
+func RefundReasonList(c *gin.Context) {
+	argObj := &arg.RefundReason{}
 	err := c.Bind(argObj)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
 		return
 	}
-	argObj.OrderBy = "priority desc,name"
+	argObj.OrderBy = "priority desc"
 
-	serviceObj := &service.CashCoupon{}
-	argObj.DisplayNames = []string{"id", "shopId", "name", "preImage", "price", "discountAmount", "expiryDate", "expired", "hide", "priority"}
+	serviceObj := &service.RefundReason{}
+	argObj.DisplayNames = []string{"id", "priority", "hide", "description"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }
 
-func CashCouponGet(c *gin.Context) {
-	serviceObj := &service.CashCoupon{}
+func RefundReasonGet(c *gin.Context) {
+	serviceObj := &service.RefundReason{}
 	result := service.ResultGet(serviceObj, c.Param("id"))
 	c.JSON(http.StatusOK, result)
 }
 
-func CashCouponPost(c *gin.Context) {
-	obj := &model.CashCoupon{}
+func RefundReasonPost(c *gin.Context) {
+	obj := &model.RefundReason{}
 	err := c.Bind(obj)
 	if err != nil {
 		log.Println(err)
@@ -43,13 +43,13 @@ func CashCouponPost(c *gin.Context) {
 		return
 	}
 
-	serviceObj := &service.CashCoupon{}
+	serviceObj := &service.RefundReason{}
 	result := service.ResultAdd(serviceObj, obj)
 	c.JSON(http.StatusOK, result)
 }
 
-func CashCouponPatch(c *gin.Context) {
-	obj := &model.CashCoupon{}
+func RefundReasonPatch(c *gin.Context) {
+	obj := &model.RefundReason{}
 	err := c.Bind(obj)
 	if err != nil {
 		log.Println(err)
@@ -57,21 +57,17 @@ func CashCouponPatch(c *gin.Context) {
 		return
 	}
 
-	serviceObj := &service.CashCoupon{}
-	result := service.ResultUpdate(serviceObj, obj, "name", "preImage", "price", "discountAmount", "expiryDate", "expired", "hide", "priority")
+	serviceObj := &service.RefundReason{}
+	result := service.ResultUpdate(serviceObj, obj, "priority", "hide", "description")
 	c.JSON(http.StatusOK, result)
 }
 
-func CashCouponDelete(c *gin.Context) {
+func RefundReasonDelete(c *gin.Context) {
 	ids := strings.Split(c.Query("ids"), constant.Split4Id)
 
-	serviceObj := &service.CashCoupon{}
-	argObj := &arg.CashCoupon{}
+	serviceObj := &service.RefundReason{}
+	argObj := &arg.RefundReason{}
 	argObj.IdsIn = ids
 	result := service.ResultBatchDelete(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
-}
-
-func CashCouponUploadImage(c *gin.Context) {
-	commonUploadImage(c, "cashCoupon")
 }

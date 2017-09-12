@@ -21,6 +21,7 @@ func NotFound(c *gin.Context) {
 func ApiGlobal(c *gin.Context) {
 	//c.Writer.Header().Set("Access-Control-Allow-Origin", "http://192.168.1.104:8080")
 	//c.Writer.Header().Add("Access-Control-Allow-Origin", "http://localhost:8080")
+	c.MultipartForm()
 	origins := strings.Split(config.Get("allowOrigin"), ",")
 	if origins != nil && len(origins) != 0 {
 		for _, origin := range origins {
@@ -106,6 +107,21 @@ func GeetestInit(c *gin.Context) {
 	gt.PreProcess(userID)
 	responseMap := gt.GetResponseMap()
 	c.JSON(http.StatusOK, responseMap)
+}
+
+func Test(c *gin.Context) {
+	//_, _ = c.FormFile("theFile")
+	//c.Request.MultipartReader()
+	c.MultipartForm()
+	fmt.Println(c.ContentType())
+	//c.MultipartForm()
+
+	c.AbortWithStatusJSON(http.StatusOK, util.BuildNeedLoginResult())
+}
+
+func TestGet(c *gin.Context) {
+	result := util.BuildSuccessResult("mimi")
+	c.JSON(http.StatusOK, result)
 }
 
 func Upload(c *gin.Context) {

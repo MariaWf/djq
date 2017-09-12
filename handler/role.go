@@ -17,7 +17,7 @@ func RoleList(c *gin.Context) {
 	err := c.Bind(argObj)
 	if err != nil {
 		log.Println(err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, util.BuildFailResult(ErrParamException.Error()))
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
 		return
 	}
 	argObj.IdsNotIn = []string{constant.AdminRoleId}

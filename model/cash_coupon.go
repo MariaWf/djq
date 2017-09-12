@@ -9,6 +9,7 @@ type CashCoupon struct {
 	ShopId         string `form:"shopId" json:"shopId" db:"shop_id" desc:"shopId"`
 	Name           string `form:"name" json:"name" db:"name" desc:"名称"`
 	PreImage       string `form:"preImage" json:"preImage" db:"pre_image" desc:"图片"`
+	Price          int `form:"price" json:"price" db:"price" desc:"价格"`
 	DiscountAmount int `form:"discountAmount" json:"discountAmount" db:"discount_amount" desc:"优惠额度"`
 	ExpiryDate     string   `form:"expiryDate" json:"expiryDate" db:"expiry_date" desc:"有效日期" time_format:"2006-01-02" time_utc:"1"`
 	Expired        bool `form:"expired" json:"expired" db:"expired" desc:"已过期"`
@@ -29,12 +30,12 @@ func (obj *CashCoupon) GetTableName() string {
 }
 
 func (obj *CashCoupon) GetDBNames() []string {
-	return []string{"id", "shop_id", "name", "pre_image", "discount_amount", "expiry_date", "expired", "hide", "priority"}
+	return []string{"id", "shop_id", "name", "pre_image","price", "discount_amount", "expiry_date", "expired", "hide", "priority"}
 
 }
 
 func (obj *CashCoupon) GetMapNames() []string {
-	return []string{"id", "shopId", "name", "preImage", "discountAmount", "expiryDate", "expired", "hide", "priority"}
+	return []string{"id", "shopId", "name", "preImage","price", "discountAmount", "expiryDate", "expired", "hide", "priority"}
 }
 
 func (obj *CashCoupon) GetValue4Map(name string) interface{} {
@@ -43,6 +44,7 @@ func (obj *CashCoupon) GetValue4Map(name string) interface{} {
 	case "shopId": return obj.ShopId
 	case "name": return obj.Name
 	case "preImage": return obj.PreImage
+	case "price": return obj.Price
 	case "discountAmount": return obj.DiscountAmount
 	case "expiryDate": return obj.ExpiryDate
 	case "expired": return obj.Expired
@@ -66,6 +68,7 @@ func (obj *CashCoupon) GetPointer4DB(name string) interface{} {
 	case "shop_id": return &obj.ShopId
 	case "name": return &obj.Name
 	case "pre_image": return &obj.PreImage
+	case "price": return &obj.Price
 	case "discount_amount": return &obj.DiscountAmount
 	case "expiry_date": return &obj.ExpiryDate
 	case "expired": return &obj.Expired
@@ -81,6 +84,7 @@ func (obj *CashCoupon) GetValue4DB(name string) interface{} {
 	case "shop_id": return obj.ShopId
 	case "name": return obj.Name
 	case "pre_image": return obj.PreImage
+	case "price": return obj.Price
 	case "discount_amount": return obj.DiscountAmount
 	case "expiry_date": return obj.ExpiryDate
 	case "expired": return obj.Expired

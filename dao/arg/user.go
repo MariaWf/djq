@@ -9,6 +9,7 @@ type User struct {
 	IncludeDeleted            bool
 	PromotionalPartnerIdEqual string
 	MobileEqual               string
+	KeywordLike               string `form:"keyword" json:"keyword"`
 	OrderBy                   string
 	IdsIn                     []string
 	LockedOnly                bool
@@ -111,6 +112,13 @@ func (arg *User) getCountConditions() (string, []interface{}) {
 		}
 		sql += " password = ?"
 		params = append(params, arg.PromotionalPartnerIdEqual)
+	}
+	if arg.KeywordLike != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " mobile like ?"
+		params = append(params, "%" + arg.KeywordLike + "%")
 	}
 	if arg.LockedOnly || arg.UnlockedOnly {
 		if sql != "" {

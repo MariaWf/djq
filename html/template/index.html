@@ -20,6 +20,7 @@ index
     <input type="file" name="theFile" accept="image/gif, image/jpeg, image/png"/>
     <input type="text" name="wawaName" value="文件名称"/>
     <button id="b02" type="button">upload</button>
+    <button type="button" onclick="postTest()">post</button>
 </form>
 
 <div>
@@ -297,8 +298,8 @@ index
             $.ajax({
                 type: 'POST',
 //                url: "http://djq.tunnel.qydev.com/upload",
-//                url: "/upload",
-                url: "/mi/advertisementAction/uploadImage",
+//                url: "/upload1",
+                url: "/mi/cashCouponAction/uploadImage",
                 data: formData,
                 async: true,
                 cache: false,
@@ -322,6 +323,30 @@ index
 
 
     })
+    function postTest() {
+        $.ajax({
+            type: 'POST',
+            url: "/test",
+            data: {name: "mimi"},
+            async: true,
+            cache: false,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.status == 1) {
+                    alert(data.result)
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (data) {
+                alert("Post失败");
+            },
+            complete: function () {
+            }
+        });
+    }
     function batchDeleteAdmin() {
         ids = $("#resultMsg").val()
         $.ajax({
@@ -345,7 +370,7 @@ index
             }
         });
     }
-    function saveAdmin(){
+    function saveAdmin() {
         obj = {}
         obj.name = $("#adminName").val()
         obj.mobile = $("#adminMobile").val()
@@ -359,7 +384,7 @@ index
         url = "/mi/admin"
         method = "POST"
         if (obj.id) {
-            url+="/"+obj.id;
+            url += "/" + obj.id;
             method = "PATCH"
         }
         $.ajax({
@@ -381,7 +406,7 @@ index
             }
         });
     }
-    function saveAdminSelf(){
+    function saveAdminSelf() {
         obj = {}
         obj.name = $("#adminName").val()
         obj.mobile = $("#adminMobile").val()
