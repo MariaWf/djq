@@ -11,6 +11,8 @@ type CashCouponOrder struct {
 	PayOrderNumber string `form:"payOrderNumber" json:"payOrderNumber" db:"pay_order_number" desc:"支付订单编码"`
 	Number         string `form:"number" json:"number" db:"name" desc:"编码"`
 	Status         int    `form:"status" json:"status" db:"status" desc:"状态"`
+
+	CashCoupon     *CashCoupon `form:"cashCoupon" json:"cashCoupon"  desc:"代金券"`
 }
 
 func (obj *CashCouponOrder) GetId() string {

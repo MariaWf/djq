@@ -30,7 +30,28 @@ func RefundList(c *gin.Context) {
 
 func RefundGet(c *gin.Context) {
 	serviceObj := &service.Refund{}
-	result := service.ResultGet(serviceObj, c.Param("id"))
+	obj, err := service.Get(serviceObj, c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	serviceCashCouponOrder := &service.CashCouponOrder{}
+	cashCouponOrder, err := service.Get(serviceCashCouponOrder, obj.(*model.Refund).CashCouponOrderId)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	serviceCashCoupon := &service.CashCoupon{}
+	cashCoupon, err := service.Get(serviceCashCoupon, cashCouponOrder.(*model.CashCouponOrder).CashCouponId)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(map[string]interface{}{"refund":obj,"cashCouponOrder":cashCouponOrder,"cashCoupon":cashCoupon})
+	//result := service.ResultGet(serviceObj, c.Param("id"))
 	c.JSON(http.StatusOK, result)
 }
 

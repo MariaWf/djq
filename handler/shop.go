@@ -56,7 +56,7 @@ func ShopGet4Open(c *gin.Context) {
 	argCashCoupon.NotIncludeHide = true
 	argCashCoupon.BeforeExpiryDate = true
 	argCashCoupon.OrderBy = "priority desc"
-	argCashCoupon.DisplayNames = []string{"id", "name", "preImage","expiryDate"}
+	argCashCoupon.DisplayNames = []string{"id", "name", "preImage", "expiryDate"}
 	cashCouponList, err := service.Find(serviceCashCoupon, argCashCoupon)
 	if err != nil {
 		log.Println(err)
@@ -86,7 +86,13 @@ func ShopList(c *gin.Context) {
 
 func ShopGet(c *gin.Context) {
 	serviceObj := &service.Shop{}
-	result := service.ResultGet(serviceObj, c.Param("id"))
+	obj, err := serviceObj.Get(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(obj)
 	c.JSON(http.StatusOK, result)
 }
 

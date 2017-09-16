@@ -18,7 +18,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-var ErrParamException = errors.New("验证码不正确")
+var ErrParamException = errors.New("滑动验证码不正确")
 
 const (
 	FN_CHALLENGE = "geetest_challenge"

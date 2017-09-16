@@ -5,7 +5,7 @@ import (
 )
 
 func TestGet(t *testing.T) {
-	t.Log(Get("mysqlDataSourceName"))
+	t.Log(Get("wxpay_sandboxnew_131"))
 }
 
 func BenchmarkGet(b *testing.B) {

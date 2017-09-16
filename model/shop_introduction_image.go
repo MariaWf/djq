@@ -3,10 +3,10 @@ package model
 import "github.com/pkg/errors"
 
 type ShopIntroductionImage struct {
-	Id         string `json:"id" db:"id" desc:"id"`
+	Id         string `form:"id" json:"id" db:"id" desc:"id"`
 	ShopId     string `form:"shopId" json:"shopId" db:"shop_id" desc:"shopId"`
-	Priority   int    `json:"priority" db:"priority" desc:"优先权重"`
-	ContentUrl string `json:"contentUrl" db:"content_url" desc:"内容路径"`
+	Priority   int    `form:"priority" json:"priority" db:"priority" desc:"优先权重"`
+	ContentUrl string `form:"contentUrl" json:"contentUrl" db:"content_url" desc:"内容路径"`
 	Hide       bool   `form:"hide" json:"hide" db:"hide" desc:"隐藏"`
 }
 

@@ -11,12 +11,42 @@ import (
 	"strings"
 )
 
+const (
+	PermissionCheckModeAnd = iota
+	PermissionCheckModeOr
+)
+
 func PermissionList(c *gin.Context) {
 	permissionList := model.GetPermissionList()
 	c.JSON(http.StatusOK, util.BuildSuccessResult(permissionList))
 }
 
 func checkPermission(c *gin.Context, permission string) {
+	checkPermissionComplicated(c, PermissionCheckModeOr, permission)
+	//sn, err := session.GetMi(c.Writer, c.Request)
+	//if err != nil {
+	//	log.Println(err)
+	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+	//	return
+	//}
+	//permissionStr, err := sn.Get(session.SessionNameMiPermission)
+	//if err != nil {
+	//	log.Println(err)
+	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+	//	return
+	//}
+	//permissionList := strings.Split(permissionStr, constant.Split4Permission)
+	//if permissionList != nil || len(permissionList) != 0 {
+	//	for _, pn := range permissionList {
+	//		if permission == pn {
+	//			return
+	//		}
+	//	}
+	//}
+	//c.AbortWithStatusJSON(http.StatusOK, util.BuildNeedPermissionResult())
+}
+
+func checkPermissionComplicated(c *gin.Context, mode int, permissions ... string) {
 	sn, err := session.GetMi(c.Writer, c.Request)
 	if err != nil {
 		log.Println(err)
@@ -31,13 +61,33 @@ func checkPermission(c *gin.Context, permission string) {
 	}
 	permissionList := strings.Split(permissionStr, constant.Split4Permission)
 	if permissionList != nil || len(permissionList) != 0 {
-		for _, pn := range permissionList {
-			if permission == pn {
-				return
+		existCount := 0
+		for i, permission := range permissions {
+			for _, pn := range permissionList {
+				if permission == pn {
+					existCount++
+					break;
+				}
+			}
+			if (mode == PermissionCheckModeOr) {
+				if existCount > 0 {
+					return
+				}
+			} else {
+				if existCount != i + 1 {
+					c.AbortWithStatusJSON(http.StatusOK, util.BuildNeedPermissionResult())
+					return
+				}
 			}
 		}
 	}
-	c.AbortWithStatusJSON(http.StatusOK, util.BuildNeedPermissionResult())
+	if mode == PermissionCheckModeOr {
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildNeedPermissionResult())
+	}
+}
+
+func checkPermissionOr(c *gin.Context, permissions ... string) {
+	checkPermissionComplicated(c, PermissionCheckModeOr, permissions...)
 }
 
 func PermissionAdminC(c *gin.Context) {
@@ -88,6 +138,10 @@ func PermissionAdvertisementD(c *gin.Context) {
 	checkPermission(c, "advertisement_d")
 }
 
+func PermissionAdvertisementCU(c *gin.Context) {
+	checkPermissionOr(c, "advertisement_c", "advertisement_u")
+}
+
 func PermissionShopC(c *gin.Context) {
 	checkPermission(c, "shop_c")
 }
@@ -102,6 +156,10 @@ func PermissionShopU(c *gin.Context) {
 
 func PermissionShopD(c *gin.Context) {
 	checkPermission(c, "shop_d")
+}
+
+func PermissionShopCU(c *gin.Context) {
+	checkPermissionOr(c, "shop_c","shop_u")
 }
 
 func PermissionShopClassificationC(c *gin.Context) {

@@ -7,6 +7,19 @@ import (
 	"testing"
 )
 
+func TestPing(t *testing.T){
+
+	var err error
+	db, err = sql.Open("mysql", "root:123456@tcp(localhost:3306)/djq")
+	if err != nil {
+		panic(err)
+	}
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+}
+
 func TestClose(t *testing.T) {
 	err := test1()
 	if err != nil {

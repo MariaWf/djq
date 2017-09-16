@@ -15,8 +15,7 @@ func Begin() {
 	initLog()
 	router := gin.Default()
 	router.NoRoute(handler.NotFound)
-	ui := router.Group("/ui", handler.ApiGlobal)
-	ui.POST("/login", handler.AdminList)
+
 
 	mi := router.Group("/mi", handler.ApiGlobal, handler.AdminCheckLogin)
 
@@ -49,7 +48,7 @@ func Begin() {
 	miAdvertisement.POST("/", handler.PermissionAdvertisementC, handler.AdvertisementPost)
 	miAdvertisement.PATCH("/:id", handler.PermissionAdvertisementU, handler.AdvertisementPatch)
 	miAdvertisement.DELETE("/", handler.PermissionAdvertisementD, handler.AdvertisementDelete)
-	mi.POST("/advertisementAction/uploadImage", handler.PermissionAdvertisementU, handler.AdvertisementUploadImage)
+	mi.POST("/advertisementAction/uploadImage", handler.PermissionAdvertisementCU, handler.AdvertisementUploadImage)
 
 	miShop := mi.Group("/shop")
 	miShop.GET("/", handler.PermissionShopR, handler.ShopList)
@@ -57,8 +56,8 @@ func Begin() {
 	miShop.POST("/", handler.PermissionShopC, handler.ShopPost)
 	miShop.PATCH("/:id", handler.PermissionShopU, handler.ShopPatch)
 	miShop.DELETE("/", handler.PermissionShopD, handler.ShopDelete)
-	mi.POST("/shopAction/uploadPreImage", handler.PermissionShopU, handler.ShopUploadPreImage)
-	mi.POST("/shopAction/uploadLogo", handler.PermissionShopU, handler.ShopUploadLogo)
+	mi.POST("/shopAction/uploadPreImage", handler.PermissionShopCU, handler.ShopUploadPreImage)
+	mi.POST("/shopAction/uploadLogo", handler.PermissionShopCU, handler.ShopUploadLogo)
 
 	miShopClassification := mi.Group("/shopClassification")
 	miShopClassification.GET("/", handler.PermissionShopClassificationR, handler.ShopClassificationList)
@@ -87,7 +86,7 @@ func Begin() {
 	miCashCoupon.POST("/", handler.PermissionShopC, handler.CashCouponPost)
 	miCashCoupon.PATCH("/:id", handler.PermissionShopU, handler.CashCouponPatch)
 	miCashCoupon.DELETE("/", handler.PermissionShopD, handler.CashCouponDelete)
-	mi.POST("/cashCouponAction/uploadImage", handler.PermissionShopU, handler.CashCouponUploadImage)
+	mi.POST("/cashCouponAction/uploadImage", handler.PermissionShopCU, handler.CashCouponUploadImage)
 
 	miPromotionalPartner := mi.Group("/promotionalPartner")
 	miPromotionalPartner.GET("/", handler.PermissionPromotionalPartnerR, handler.PromotionalPartnerList)
@@ -109,6 +108,7 @@ func Begin() {
 	miPresent.POST("/", handler.PermissionPresentC, handler.PresentPost)
 	miPresent.PATCH("/:id", handler.PermissionPresentU, handler.PresentPatch)
 	miPresent.DELETE("/", handler.PermissionPresentD, handler.PresentDelete)
+	mi.POST("/presentAction/uploadImage", handler.PermissionShopCU, handler.PresentUploadImage)
 
 	miPresentOrder := mi.Group("/presentOrder")
 	miPresentOrder.GET("/", handler.PermissionPresentOrderR, handler.PresentOrderList)
@@ -144,9 +144,28 @@ func Begin() {
 
 	si.GET("/shopAccountAction/self", handler.ShopAccountGetSelf)
 
+
+	ui := router.Group("/ui", handler.ApiGlobal, handler.UserCheckLogin)
+	ui.POST("/login", handler.UserLogin)
+	ui.POST("/logout", handler.UserLogout)
+
+	ui.GET("/cashCouponOrderInCart",handler.CashCouponOrderListInCart4Ui)
+	ui.GET("/cashCouponOrderUnused",handler.CashCouponOrderListUnused4Ui)
+	ui.GET("/cashCouponOrderUsed",handler.CashCouponOrderListUsed4Ui)
+
+	ui.POST("/cashCouponOrder",handler.CashCouponOrderPost4Ui)
+	ui.POST("/cashCouponOrderAction/buyFromCashCoupon",handler.CashCouponOrderActionBuyFromCashCoupon4Ui)
+	ui.POST("/cashCouponOrderAction/buyFromCashCouponOrder", handler.CashCouponOrderActionBuyFromCashCouponOrder4Ui)
+
+
 	open := router.Group("/open", handler.ApiGlobal)
 
+
+	open.GET("/getServerRootUrl", handler.GetServerRootUrl)
+
 	open.POST("/geetest", handler.GeetestInit)
+	open.POST("/captcha", handler.GetCaptcha)
+
 	open.GET("/getPublicKey", handler.GetPublicKey)
 
 	open.GET("/shop", handler.ShopList4Open)
@@ -154,6 +173,15 @@ func Begin() {
 	open.GET("/shopClassification", handler.ShopClassificationList4Open)
 
 	open.GET("/advertisement", handler.AdvertisementList4Open)
+
+
+	wxpay := open.Group("/wxpay")
+	wxpay.GET("config",handler.WxpayConfig)
+	wxpay.GET("query",handler.WxpayQuery)
+	wxpay.GET("getOpenId",handler.WxpayGetOpenId)
+
+	wxpay.POST("notify4UnifiedOrder",handler.WxpayNotifyUnifiedOrder)
+	wxpay.POST("notify4refund",handler.WxpayNotifyUnifiedOrder)
 
 	// Query string parameters are parsed using the existing underlying request object.
 	// The request responds to a url matching:  /welcome?firstname=Jane&lastname=Doe
@@ -173,7 +201,10 @@ func Begin() {
 	router.Static("/upload", uploadDirectoryHead)
 
 	router.GET("/", handler.Index2)
+	router.GET("/testUser", handler.TestUser)
 	router.GET("/api", handler.Api)
+	wxpay.GET("/index", handler.Wxpay)
+	//router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "E:/download/wx/MP_verify_IrIxUvnx9Bob0ktY.txt")
 	//router.GET("/getPublicKey", handler.ApiGlobal,handler.GetPublicKey)
 	//router.GET("/user/:id", handler.UserGet)
 	//router.GET("/user", handler.UserList)

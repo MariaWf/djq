@@ -22,8 +22,8 @@ func Get(key string) string {
 func GetInstance() *Config {
 	once.Do(func() {
 		myConfig = new(Config)
-		myConfig.InitConfig("resource/config")
-		//myConfig.InitConfig("C:\\work\\Workspaces\\goWorkspace20161022\\src\\mimi\\djq\\resource\\config")
+		//myConfig.InitConfig("resource/config")
+		myConfig.InitConfig("C:\\work\\Workspaces\\goWorkspace20161022\\src\\mimi\\djq\\resource\\config")
 	})
 	return myConfig
 }

@@ -61,8 +61,7 @@ func commonUploadImage(c *gin.Context, typeHead string) {
 
 	imagePath := filepath.Join(directoryHead, directory, newName)
 
-	path := filepath.Join(directoryHead, directory)
-	err = os.MkdirAll(path, 0777)
+	err = os.MkdirAll(filepath.Join(directoryHead, directory), 0777)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(constant.ErrUpload.Error()))
@@ -76,6 +75,13 @@ func commonUploadImage(c *gin.Context, typeHead string) {
 		return
 	}
 
-	result := util.BuildSuccessResult(filepath.Join("/upload/image", directory, newName))
+	//serverRootUrl := config.Get("server_root_url")
+	//if serverRootUrl != "" && strings.LastIndex(serverRootUrl, "/") == len(serverRootUrl) - 1 {
+	//	serverRootUrl = serverRootUrl[:len(serverRootUrl) - 1]
+	//}
+	//fmt.Println(serverRootUrl + filepath.ToSlash(filepath.Join("/upload/image", directory, newName)))
+	//util.PathAppend(serverRootUrl,filepath.Join("/upload/image", directory, newName))
+	//result := util.BuildSuccessResult(serverRootUrl + filepath.ToSlash(filepath.Join("/upload/image", directory, newName)))
+	result := util.BuildSuccessResult(util.PathAppend(config.Get("server_root_url"), filepath.Join("/upload/image", directory, newName)))
 	c.JSON(http.StatusOK, result)
 }

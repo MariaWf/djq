@@ -10,6 +10,8 @@ import (
 	"strings"
 	"mimi/djq/session"
 	"log"
+	"math/rand"
+	"strconv"
 )
 
 func NotFound(c *gin.Context) {
@@ -66,26 +68,19 @@ func ApiGlobal(c *gin.Context) {
 
 func Index2(c *gin.Context) {
 	values := make(map[string]interface{})
-	//if authentication, session, err := CheckLogin(w, r); err != nil {
-	//	log.Println(err)
-	//} else {
-	//	values["authentication"] = authentication
-	//	if loginName, err := session.Get("loginName"); err != nil {
-	//		log.Println(err)
-	//	} else {
-	//		values["loginName"] = loginName
-	//	}
-	//}
-	//t, _ := template.ParseFiles("html/template/index.html", "html/template/head.html")
-	//t.ExecuteTemplate(c.Writer, "head", values)
-
-	//c.Writer.Header().Add("Access-Control-Allow-Origin","http://localhost:8080,http://192.168.1.104:8080")
-	//c.Writer.Header().Set("Access-Control-Allow-Origin","*")
-	//c.Writer.Header().Set("Access-Control-Allow-Credentials","true")
-	//c.Writer.Header().Set("Access-Control-Allow-Method","POST,GET")
-	//c.Writer.Header().Add("Access-Control-Expose-Headers","FooBar")
 	t, _ := template.ParseFiles("html/template/index.html")
 	t.Execute(c.Writer, values)
+}
+
+func TestUser(c *gin.Context) {
+	values := make(map[string]interface{})
+	t, _ := template.ParseFiles("html/template/user.html")
+	t.Execute(c.Writer, values)
+}
+
+func GetServerRootUrl(c *gin.Context){
+	result := util.BuildSuccessResult(config.Get("server_root_url"))
+	c.JSON(http.StatusOK, result)
 }
 
 func GetPublicKey(c *gin.Context) {
@@ -107,6 +102,32 @@ func GeetestInit(c *gin.Context) {
 	gt.PreProcess(userID)
 	responseMap := gt.GetResponseMap()
 	c.JSON(http.StatusOK, responseMap)
+}
+
+func GetCaptcha(c *gin.Context){
+	if !util.GeetestCheck(c) {
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrParamException.Error()))
+		return
+	}
+	if !util.MatchMobile(c.PostForm("mobile")){
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrMobileFormat.Error()))
+		return
+	}
+	sn ,err := session.GetUi(c.Writer,c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	captcha := strconv.Itoa(rand.Intn(8888)+1000)
+	err = sn.Set(session.SessionNameUiUserCaptcha,captcha)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(captcha)
+	c.JSON(http.StatusOK, result)
 }
 
 func Test(c *gin.Context) {

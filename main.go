@@ -17,6 +17,7 @@ import (
 )
 
 func main() {
+	log.Println("------start：" + time.Now().String())
 	initLog()
 	log.Println("------start：" + time.Now().String())
 	log.SetFlags(log.LstdFlags | log.Llongfile)

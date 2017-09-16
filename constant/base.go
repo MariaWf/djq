@@ -22,7 +22,9 @@ const (
 )
 
 const (
+	//待取
 	PresentOrderStatusWaiting2Receive int = iota
+	//已取
 	PresentOrderStatusReceived
 )
 

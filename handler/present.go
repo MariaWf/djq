@@ -70,3 +70,8 @@ func PresentDelete(c *gin.Context) {
 	result := service.ResultBatchDelete(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }
+
+
+func PresentUploadImage(c *gin.Context) {
+	commonUploadImage(c, "present")
+}

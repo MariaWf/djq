@@ -29,7 +29,28 @@ func PresentOrderList(c *gin.Context) {
 
 func PresentOrderGet(c *gin.Context) {
 	serviceObj := &service.PresentOrder{}
-	result := service.ResultGet(serviceObj, c.Param("id"))
+	obj, err := service.Get(serviceObj, c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	servicePresent := &service.Present{}
+	present, err := service.Get(servicePresent, obj.(*model.PresentOrder).PresentId)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	serviceUser := &service.User{}
+	user, err := service.Get(serviceUser, obj.(*model.PresentOrder).UserId)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(map[string]interface{}{"presentOrder":obj,"present":present,"user":user})
+	//result := service.ResultGet(serviceObj, c.Param("id"))
 	c.JSON(http.StatusOK, result)
 }
 

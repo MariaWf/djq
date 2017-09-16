@@ -103,14 +103,14 @@ func (arg *User) getCountConditions() (string, []interface{}) {
 		if sql != "" {
 			sql += " and"
 		}
-		sql += " name = ?"
+		sql += " mobile = ?"
 		params = append(params, arg.MobileEqual)
 	}
 	if arg.PromotionalPartnerIdEqual != "" {
 		if sql != "" {
 			sql += " and"
 		}
-		sql += " password = ?"
+		sql += " promotional_partner_id = ?"
 		params = append(params, arg.PromotionalPartnerIdEqual)
 	}
 	if arg.KeywordLike != "" {

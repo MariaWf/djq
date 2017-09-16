@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!-- 为使用方便，直接使用jquery.js库 -->
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+    <!-- 引入封装了failback的接口--initGeetest -->
+    <script src="http://static.geetest.com/static/tools/gt.js"></script>
+</head>
+<body>
+
+<form enctype="multipart/form-data" method="post" action="http://localhost:8080/mi/login">
+    <input type="text" id="mobile" name="name" value="" placeholder="手机"/>
+    <input type="text" id="captcha" name="name" value="" placeholder="验证码"/>
+    <button type="button" id="getCaptchaBtn" >获取验证码</button>
+    <button type="button" id="loginBtn">登录</button>
+    <button type="button" onclick="logout()">登出</button>
+    <div id="popup-captcha"></div>
+</form>
+<br/>
+<textarea id="resultMsg" style="width:600px;height:400px"></textarea>
+<br/>
+</body>
+<script>
+    alert(getCookie("uiUserId"))
+    var gt_server_status;
+    var user_id;
+    var handlerPopup = function (captchaObj) {
+        $("#getCaptchaBtn").click(function () {
+            var validate = captchaObj.getValidate();
+            if (!validate) {
+                alert('请先完成滑动验证！');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/open/captcha",
+                data: {
+                    mobile: $("#mobile").val(),
+                    gt_server_status: gt_server_status,
+                    user_id: user_id,
+                    // 二次验证所需的三个值
+                    geetest_challenge: validate.geetest_challenge,
+                    geetest_validate: validate.geetest_validate,
+                    geetest_seccode: validate.geetest_seccode
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.status == 1) {
+                        $("#resultMsg").val(data.result)
+                    } else {
+                        $("#resultMsg").val(data.msg)
+                    }
+                },
+                error: function (data) {
+                    $("#resultMsg").val(data.msg)
+                },
+                complete: function (data) {
+                    captchaObj.reset();
+//                $("#resultMsg").val(data)
+                }
+            });
+        });
+        $("#loginBtn").click(function () {
+//            var validate = captchaObj.getValidate();
+//            if (!validate) {
+//                alert('请先完成滑动验证！');
+//                return;
+//            }
+            if (!$("#captcha").val()){
+                alert('请先完成手机验证！');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/ui/login",
+                data: {
+                    mobile: $("#mobile").val(),
+                    captcha: $("#captcha").val(),
+//                    gt_server_status: gt_server_status,
+//                    user_id: user_id,
+//                    // 二次验证所需的三个值
+//                    geetest_challenge: validate.geetest_challenge,
+//                    geetest_validate: validate.geetest_validate,
+//                    geetest_seccode: validate.geetest_seccode
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.status == 1) {
+                        $("#resultMsg").val(data.result.mobile + getCookie("uiSessionId"))
+                    } else {
+                        $("#resultMsg").val(data.msg)
+                    }
+                },
+                error: function (data) {
+                    $("#resultMsg").val(data.msg)
+                },
+                complete: function (data) {
+//                    captchaObj.reset();
+//                $("#resultMsg").val(data)
+                }
+            });
+        });
+        // 弹出式需要绑定触发验证码弹出按钮
+//        captchaObj.bindOn("#popup-submit");
+        // 将验证码加到id为captcha的元素里
+        captchaObj.appendTo("#popup-captcha");
+        // 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
+    };
+    $.ajax({
+        // 获取id，challenge，success（是否启用failback）
+        url: "/open/geetest?t=" + (new Date()).getTime(), // 加随机数防止缓存
+        type: "POST",
+        dataType: "json",
+        success: function (data) {
+            gt_server_status = data.success;
+            user_id = data.user_id;
+            // 使用initGeetest接口
+            // 参数1：配置参数
+            // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+            initGeetest({
+                gt: data.gt,
+                challenge: data.challenge,
+                product: "popup", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                offline: !data.success // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+            }, handlerPopup);
+        }
+    });
+
+    function logout() {
+        obj = {}
+        obj.mobile = $("#mobile").val()
+        obj.captcha = $("#captcha").val()
+        $.ajax({
+            type: 'POST',
+            url: "/ui/logout",
+            data: obj,
+            async: true,
+            cache: false,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.status == 1) {
+                    $("#resultMsg").val(getCookie("uiSessionId"))
+                } else {
+                    $("#resultMsg").val(data.msg)
+                }
+            },
+            error: function (data) {
+                $("#resultMsg").val(data.msg)
+            },
+            complete: function (data) {
+//                $("#resultMsg").val(data)
+            }
+        });
+
+    }
+    function getCookie(name)
+    {
+        var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+        if(arr=document.cookie.match(reg))
+            return unescape(arr[2]);
+        else
+            return null;
+    }
+
+</script>
+</html>

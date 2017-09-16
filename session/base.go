@@ -16,6 +16,9 @@ const (
 
 	SessionNameUiUserId = "uiUserId"
 	SessionNameUiUserMobile = "uiUserMobile"
+	SessionNameUiUserOpenId = "uiUserOpenId"
+	SessionNameUiUserCaptcha = "uiUserCaptcha"
+	SessionNameUiUserLoginCount = "uiUserLoginCount"
 
 	SessionNameSiShopAccountId = "siShopAccountId"
 	SessionNameSiShopAccountName = "siShopAccountName"
@@ -100,6 +103,21 @@ func (sn *Session) Set(key string, value string) error {
 		return error
 	}
 	if error := conn.Expire(sn.getKey(), sn.RedisExpires).Err(); error != nil {
+		return error
+	}
+	return nil
+}
+
+func (sn *Session) SetTemp(key string, value string,expires time.Duration) error {
+	conn := redis.Get()
+	var vMap map[string]interface{} = make(map[string]interface{})
+
+	vMap[key] = value
+
+	if error := conn.HMSet(sn.getKey(), vMap).Err(); error != nil {
+		return error
+	}
+	if error := conn.Expire(sn.getKey(), expires).Err(); error != nil {
 		return error
 	}
 	return nil

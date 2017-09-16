@@ -11,62 +11,92 @@ import (
 	"net/http"
 	"strings"
 	"mimi/djq/constant"
+	"strconv"
+	"time"
+	"fmt"
 )
 
 func UserLogin(c *gin.Context) {
-	if !util.GeetestCheck(c) {
-		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrParamException.Error()))
+	//if !util.GeetestCheck(c) {
+	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrParamException.Error()))
+	//	return
+	//}
+
+	mobile := c.PostForm("mobile")
+	captcha := c.PostForm("captcha")
+	promotionalPartnerId := c.PostForm("promotionalPartnerId")
+
+	sn, err := session.GetUi(c.Writer, c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	value, err := sn.Get(session.SessionNameUiUserCaptcha)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	if value != captcha {
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("手机验证码不正确"))
+		return
+	}
+
+	count, err := sn.Get(session.SessionNameUiUserLoginCount)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	newCount := 0
+	if count != "" {
+		newCount, err = strconv.Atoi(count)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+	}
+	newCount++
+	fmt.Println(newCount)
+	if newCount > 10 {
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("登录频繁，请休息5分钟再来"))
+		return
+	}
+	err = sn.SetTemp(session.SessionNameUiUserLoginCount, strconv.Itoa(newCount), time.Minute * 5)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
 		return
 	}
 
 	obj := &model.User{}
-	err := c.Bind(obj)
-
+	obj.PromotionalPartnerId = promotionalPartnerId
+	obj.Mobile = mobile
+	serviceObj := &service.User{}
+	obj, err = serviceObj.Register(obj)
 	if err != nil {
-		log.Println(err)
-		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	//serviceObj := &service.User{}
-	//obj, err = serviceObj.CheckLogin(obj)
-	//if err != nil {
-	//	log.Println(err)
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//	return
-	//}
-	//
-	//sn, err := session.GetUi(c.Writer, c.Request)
-	//if err != nil {
-	//	log.Println(err)
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//	return
-	//}
-	//if err = sn.Set(session.SessionNameUiUserId, obj.Id); err != nil {
-	//	log.Println(err)
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//	return
-	//} else {
-	//	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserId, Value: obj.Id, Path: "/", MaxAge: sn.CookieMaxAge})
-	//}
-	//if err = sn.Set(session.SessionNameUiUserName, obj.Name); err != nil {
-	//	log.Println(err)
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//	return
-	//} else {
-	//	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserName, Value: obj.Name, Path: "/", MaxAge: sn.CookieMaxAge})
-	//}
-	//if codeList := obj.GetPermissionCodeList(); codeList != nil && len(codeList) != 0 {
-	//	if err = sn.Set(session.SessionNameUiPermission, strings.Join(codeList, constant.Split4Permission)); err != nil {
-	//		log.Println(err)
-	//		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//		return
-	//	} else {
-	//		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiPermission, Value: strings.Join(codeList, constant.Split4Permission), Path: "/", MaxAge: sn.CookieMaxAge})
-	//	}
-	//}
-
+	err = sn.Set(session.SessionNameUiUserId, obj.Id)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	err = sn.Set(session.SessionNameUiUserMobile, obj.Mobile)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserId, Value: obj.Id, Path: "/", MaxAge: sn.CookieMaxAge})
+	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserMobile, Value: obj.Mobile, Path: "/", MaxAge: sn.CookieMaxAge})
 	result := util.BuildSuccessResult(obj)
 	c.JSON(http.StatusOK, result)
+
 }
 
 func UserLogout(c *gin.Context) {

@@ -9,6 +9,9 @@ type CashCouponOrder struct {
 	IncludeDeleted bool
 	OrderBy        string
 	IdsIn          []string
+	UserIdEqual    string `form:"userId" json:"userId"`
+
+	StatusEqual    string `form:"status" json:"status"`
 
 	PageSize       int `form:"pageSize" json:"pageSize"`
 	TargetPage     int `form:"targetPage" json:"targetPage"`
@@ -94,6 +97,20 @@ func (arg *CashCouponOrder) SetPageSize(pageSize int) {
 func (arg *CashCouponOrder) getCountConditions() (string, []interface{}) {
 	sql := ""
 	params := make([]interface{}, 0, 9)
+	if arg.UserIdEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " user_id = ?"
+		params = append(params, arg.UserIdEqual)
+	}
+	if arg.StatusEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " status = ?"
+		params = append(params, arg.StatusEqual)
+	}
 	if len(params) != 0 {
 		sql = " where" + sql
 	}

@@ -2,6 +2,7 @@ package util
 
 import (
 	"testing"
+	"fmt"
 )
 
 func TestBuildPresentOrderNumber(t *testing.T) {
@@ -69,4 +70,8 @@ func testBuildCashCouponOrderNumber(c chan []string) {
 		list[i] = BuildCashCouponOrderNumber()
 	}
 	c <- list
+}
+
+func TestBuildUUID(t *testing.T) {
+	fmt.Println(BuildUUID())
 }
