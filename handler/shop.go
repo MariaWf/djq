@@ -24,6 +24,7 @@ func ShopList4Open(c *gin.Context) {
 	argObj.NotIncludeHide = true
 	serviceObj := &service.Shop{}
 	argObj.DisplayNames = []string{"id", "name", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "priority"}
+	argObj.PageSize = 5
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }

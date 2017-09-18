@@ -14,6 +14,7 @@ type Present struct {
 	OrderBy          string
 	IdsIn            []string
 
+	Enough           bool
 	NotIncludeHide   bool
 	OverExpiryDate   bool
 	BeforeExpiryDate bool
@@ -136,6 +137,12 @@ func (arg *Present) getCountConditions() (string, []interface{}) {
 		}
 		sql += " hide = ?"
 		params = append(params, false)
+	}
+	if arg.Enough{
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " stock > requirement"
 	}
 	if len(params) != 0 {
 		sql = " where" + sql

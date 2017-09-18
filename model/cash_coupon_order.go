@@ -11,6 +11,8 @@ type CashCouponOrder struct {
 	PayOrderNumber string `form:"payOrderNumber" json:"payOrderNumber" db:"pay_order_number" desc:"支付订单编码"`
 	Number         string `form:"number" json:"number" db:"name" desc:"编码"`
 	Status         int    `form:"status" json:"status" db:"status" desc:"状态"`
+	PayBegin     string   `form:"payBegin" json:"payBegin" db:"pay_begin" desc:"支付开始日期" time_format:"2006-01-02" time_utc:"1"`
+	PayEnd     string   `form:"payEnd" json:"payEnd" db:"pay_end" desc:"支付结束日期" time_format:"2006-01-02" time_utc:"1"`
 
 	CashCoupon     *CashCoupon `form:"cashCoupon" json:"cashCoupon"  desc:"代金券"`
 }
@@ -28,11 +30,11 @@ func (obj *CashCouponOrder) GetTableName() string {
 }
 
 func (obj *CashCouponOrder) GetDBNames() []string {
-	return []string{"id", "user_id", "cash_coupon_id", "price", "refund_amount", "pay_order_number", "number", "status"}
+	return []string{"id", "user_id", "cash_coupon_id", "price", "refund_amount", "pay_order_number", "number", "status","pay_begin","pay_end"}
 }
 
 func (obj *CashCouponOrder) GetMapNames() []string {
-	return []string{"id", "userId", "cashCouponId", "price", "refundAmount", "payOrderNumber", "number", "status"}
+	return []string{"id", "userId", "cashCouponId", "price", "refundAmount", "payOrderNumber", "number", "status","payBegin","payEnd"}
 }
 
 func (obj *CashCouponOrder) GetValue4Map(name string) interface{} {
@@ -45,6 +47,8 @@ func (obj *CashCouponOrder) GetValue4Map(name string) interface{} {
 	case "payOrderNumber": return obj.PayOrderNumber
 	case "number": return obj.Number
 	case "status": return obj.Status
+	case "payBegin": return obj.PayBegin
+	case "payEnd": return obj.PayEnd
 	}
 	panic(errors.New("对象cashCouponOrder属性[" + name + "]不存在"))
 }
@@ -67,6 +71,8 @@ func (obj *CashCouponOrder) GetPointer4DB(name string) interface{} {
 	case "pay_order_number": return &obj.PayOrderNumber
 	case "number": return &obj.Number
 	case "status": return &obj.Status
+	case "pay_begin": return &obj.PayBegin
+	case "pay_end": return &obj.PayEnd
 	}
 	panic(errors.New("对象cashCouponOrder属性[" + name + "]不存在"))
 }
@@ -81,6 +87,8 @@ func (obj *CashCouponOrder) GetValue4DB(name string) interface{} {
 	case "pay_order_number": return obj.PayOrderNumber
 	case "number": return obj.Number
 	case "status": return obj.Status
+	case "pay_begin": return obj.PayBegin
+	case "pay_end": return obj.PayEnd
 	}
 	panic(errors.New("对象cashCouponOrder属性[" + name + "]不存在"))
 }

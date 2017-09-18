@@ -3,6 +3,7 @@ package wxpay
 import (
 	"mimi/djq/config"
 	"mimi/djq/util"
+	"github.com/pkg/errors"
 )
 
 func OrderQuery(payOrderNumber string) (Params, error) {
@@ -35,6 +36,76 @@ func OrderQuery(payOrderNumber string) (Params, error) {
 	params.SetString("sign", c.Sign(params))//签名	sign	是	String(32)	5K8264ILTKCH16CQ2502SI8ZNMTM67VS	通过签名算法计算得出的签名值，详见签名生成算法
 
 	return c.Post(url, params, false)
+}
+
+func OrderQueryResult(payOrderNumber string)(err error){
+	_,err = OrderQuery(payOrderNumber)
+	if err!=nil{
+		return
+	}
+	client := NewDefaultClient()
+	if config.Get("running_state") == "test" {
+		client.ApiKey, err = GetSignKey()
+		if err != nil {
+			panic(errors.Wrap(err, "获取测试API_KEY失败"))
+		}
+	}
+	return
+
+	//if client.CheckSign(params) {
+	//	p2.SetString("return_code", "FAIL")
+	//	p2.SetString("return_msg", "签名失败")
+	//} else  if params["return_code"] == "FAIL" {
+	//	log.Println(params)
+	//	p2.SetString("return_code", "FAIL")
+	//	p2.SetString("return_msg", "接收失败")
+	//}else {
+	//	payOrderNumber := params["out_trade_no"]
+	//	//timeEnd := params["time_end"]
+	//	totalFeeStr := params["total_fee"]
+	//	cashFeeStr := params["cash_fee"]
+	//	appId := params["appid"]
+	//	mchId := params["mch_id"]
+	//
+	//	if client.AppId != appId || client.MchId != mchId || totalFeeStr != cashFeeStr || payOrderNumber == "" {
+	//		p2.SetString("return_code", "FAIL")
+	//		p2.SetString("return_msg", "参数格式校验错误")
+	//	} else if params["result_code"] == "FAIL" {
+	//		serviceObj := &service.CashCouponOrder{}
+	//		idListStr, err := serviceObj.CancelOrder(payOrderNumber)
+	//		if err != nil {
+	//			err = errors.Wrap(err, payOrderNumber)
+	//			log.Println(err)
+	//			cache.Set(cache.CacheNameWxpayErrorPayOrderNumberCancel + payOrderNumber, err.Error(), time.Hour * 24 * 7)
+	//			p2.SetString("return_code", "FAIL")
+	//			p2.SetString("return_msg", "系统异常")
+	//		}else{
+	//			p2.SetString("return_code", "SUCCESS")
+	//			p2.SetString("return_msg", "")
+	//		}
+	//		cache.Set(cache.CacheNameWxpayPayOrderNumberCancel + payOrderNumber, idListStr, time.Hour * 24 * 7)
+	//	} else {
+	//		totalFee, err := strconv.Atoi(totalFeeStr)
+	//		if err != nil {
+	//			p2.SetString("return_code", "FAIL")
+	//			p2.SetString("return_msg", "参数格式校验错误")
+	//		} else {
+	//			serviceObj := &service.CashCouponOrder{}
+	//			idListStr,err := serviceObj.ConfirmOrder(payOrderNumber, totalFee)
+	//			if err != nil {
+	//				err = errors.Wrap(err, payOrderNumber + "_" + strconv.Itoa(totalFee))
+	//				log.Println(err)
+	//				cache.Set(cache.CacheNameWxpayErrorPayOrderNumberConfirm + payOrderNumber, err.Error(), time.Hour * 24 * 7)
+	//				p2.SetString("return_code", "FAIL")
+	//				p2.SetString("return_msg", "系统异常")
+	//			} else {
+	//				p2.SetString("return_code", "SUCCESS")
+	//				p2.SetString("return_msg", "")
+	//			}
+	//			cache.Set(cache.CacheNameWxpayPayOrderNumberConfirm + payOrderNumber, idListStr, time.Hour * 24 * 7)
+	//		}
+	//	}
+	//}
 }
 
 //应用场景

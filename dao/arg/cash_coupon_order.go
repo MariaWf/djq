@@ -5,21 +5,26 @@ import (
 )
 
 type CashCouponOrder struct {
-	IdEqual        string
-	IncludeDeleted bool
-	OrderBy        string
-	IdsIn          []string
-	UserIdEqual    string `form:"userId" json:"userId"`
+	IdEqual             string
+	IncludeDeleted      bool
+	OrderBy             string
+	IdsIn               []string
+	UserIdEqual         string `form:"userId" json:"userId"`
 
-	StatusEqual    string `form:"status" json:"status"`
+	NumberEqual         string  `form:"keyword" json:"keyword"`
+	StatusEqual         string `form:"status" json:"status"`
 
-	PageSize       int `form:"pageSize" json:"pageSize"`
-	TargetPage     int `form:"targetPage" json:"targetPage"`
+	PayBeginGT          string
 
-	DisplayNames   []string
+	PayOrderNumberEqual string `form:"payOrderNumber" json:"payOrderNumber"`
 
-	UpdateObject   interface{}
-	UpdateNames    []string
+	PageSize            int `form:"pageSize" json:"pageSize"`
+	TargetPage          int `form:"targetPage" json:"targetPage"`
+
+	DisplayNames        []string
+
+	UpdateObject        interface{}
+	UpdateNames         []string
 }
 
 func (arg *CashCouponOrder) GetDisplayNames() []string {
@@ -104,12 +109,33 @@ func (arg *CashCouponOrder) getCountConditions() (string, []interface{}) {
 		sql += " user_id = ?"
 		params = append(params, arg.UserIdEqual)
 	}
+	if arg.NumberEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " number = ?"
+		params = append(params, arg.NumberEqual)
+	}
+	if arg.PayOrderNumberEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " pay_order_number = ?"
+		params = append(params, arg.PayOrderNumberEqual)
+	}
 	if arg.StatusEqual != "" {
 		if sql != "" {
 			sql += " and"
 		}
 		sql += " status = ?"
 		params = append(params, arg.StatusEqual)
+	}
+	if arg.PayBeginGT != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " pay_begin > ?"
+		params = append(params, arg.PayBeginGT)
 	}
 	if len(params) != 0 {
 		sql = " where" + sql

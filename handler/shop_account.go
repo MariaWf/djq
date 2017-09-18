@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"strings"
 	"mimi/djq/session"
+	"strconv"
 )
 
 func ShopAccountLogin(c *gin.Context) {
@@ -97,22 +98,6 @@ func ShopAccountCheckLogin(c *gin.Context) {
 	}
 }
 
-func ShopAccountList(c *gin.Context) {
-	argObj := &arg.ShopAccount{}
-	err := c.Bind(argObj)
-	if err != nil {
-		log.Println(err)
-		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
-		return
-	}
-	argObj.OrderBy = "name"
-
-	serviceObj := &service.ShopAccount{}
-	argObj.DisplayNames = []string{"id", "shopId", "name", "description", "moneyChance", "totalMoney", "locked"}
-	result := service.ResultList(serviceObj, argObj)
-	c.JSON(http.StatusOK, result)
-}
-
 func ShopAccountGetSelf(c *gin.Context) {
 	serviceObj := &service.ShopAccount{}
 	sn, err := session.GetSi(c.Writer, c.Request)
@@ -136,6 +121,132 @@ func ShopAccountGetSelf(c *gin.Context) {
 	obj.(*model.ShopAccount).Password = ""
 	result := util.BuildSuccessResult(obj)
 	//result := service.ResultGet(serviceObj, c.Param("id"))
+	c.JSON(http.StatusOK, result)
+}
+
+func ShopAccountGetMoney4Si(c *gin.Context) {
+	sn, err := session.GetSi(c.Writer, c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	shopAccountId, err := sn.Get(session.SessionNameSiShopAccountId)
+	if err != nil || shopAccountId == "" {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	serviceObj := &service.ShopAccount{}
+	money, err := serviceObj.GetMoney(shopAccountId)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(money)
+	c.JSON(http.StatusOK, result)
+}
+
+func ShopAccountActionGetPresentOrderOrCashCouponOrder4Si(c *gin.Context) {
+	sn, err := session.GetSi(c.Writer, c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	shopAccountId, err := sn.Get(session.SessionNameSiShopAccountId)
+	if err != nil || shopAccountId == "" {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	number := c.PostForm("number")
+	if number == "" {
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("编号不能为空"))
+		return
+	}
+	var result *util.ResultVO
+	if strings.Index(number, "C") == 0 {
+		serviceCashCouponOrder := &service.CashCouponOrder{}
+		argCashCouponOrder := &arg.CashCouponOrder{}
+		argCashCouponOrder.NumberEqual = number
+		argCashCouponOrder.PageSize = 1
+		argCashCouponOrder.StatusEqual = strconv.Itoa(constant.CashCouponOrderStatusPaidNotUsed)
+		list, err := service.Find(serviceCashCouponOrder, argCashCouponOrder)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+		if len(list) == 0 {
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("找不到匹配代金券"))
+			return
+		}
+		serviceCashCoupon := &service.CashCoupon{}
+		cashCoupon, err := service.Get(serviceCashCoupon, list[0].(*model.CashCouponOrder).CashCouponId)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+		serviceObj := &service.ShopAccount{}
+		obj, err := service.Get(serviceObj, shopAccountId)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+		if cashCoupon.(*model.CashCoupon).ShopId == obj.(*model.ShopAccount).ShopId {
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("代金券不属于本店"))
+			return
+		}
+		result = util.BuildSuccessResult(list[0])
+	} else if strings.Index(number, "P") == 0 {
+		servicePresentOrder := &service.PresentOrder{}
+		argPresentOrder := &arg.PresentOrder{}
+		argPresentOrder.NumberEqual = number
+		argPresentOrder.PageSize = 1
+		argPresentOrder.StatusEqual = strconv.Itoa(constant.PresentOrderStatusWaiting2Receive)
+		list, err := service.Find(servicePresentOrder, argPresentOrder)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+		if len(list) == 0 {
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("找不到匹配代抽奖记录"))
+			return
+		}
+		presentOrder := list[0].(*model.PresentOrder)
+		servciePresent := &service.Present{}
+		present, err := service.Get(servciePresent, presentOrder.PresentId)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+		presentOrder.Present = present.(*model.Present)
+		result = util.BuildSuccessResult(presentOrder)
+	} else {
+		result = util.BuildFailResult("无法识别编号")
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+func ShopAccountList(c *gin.Context) {
+	argObj := &arg.ShopAccount{}
+	err := c.Bind(argObj)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+		return
+	}
+	argObj.OrderBy = "name"
+
+	serviceObj := &service.ShopAccount{}
+	argObj.DisplayNames = []string{"id", "shopId", "name", "description", "moneyChance", "totalMoney", "locked"}
+	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }
 

@@ -12,6 +12,18 @@ import (
 	"strings"
 )
 
+func PresentList4Ui(c *gin.Context) {
+	argObj := &arg.Present{}
+	argObj.NotIncludeHide = true
+	argObj.BeforeExpiryDate = true
+	argObj.OrderBy = "name"
+	argObj.Enough = true
+	serviceObj := &service.Present{}
+	argObj.DisplayNames = []string{"id", "name", "image"}
+	result := service.ResultList(serviceObj, argObj)
+	c.JSON(http.StatusOK, result)
+}
+
 func PresentList(c *gin.Context) {
 	argObj := &arg.Present{}
 	err := c.Bind(argObj)
@@ -70,7 +82,6 @@ func PresentDelete(c *gin.Context) {
 	result := service.ResultBatchDelete(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }
-
 
 func PresentUploadImage(c *gin.Context) {
 	commonUploadImage(c, "present")

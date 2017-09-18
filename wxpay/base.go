@@ -17,6 +17,7 @@ import (
 	"strconv"
 )
 
+
 func GetSignKey() (signKey string, err error) {
 	cacheName := "sandBoxSignKey"
 	if signKey, err = cache.Get(cacheName); err != nil {
@@ -93,6 +94,9 @@ func GetAccessToken() (string, error) {
 		if err != nil {
 			return "", errors.Wrap(err, "获取微信AccessToken异常")
 		}
+		if result["errcode"] != nil{
+			return "", errors.Wrap(err, "获取微信AccessToken异常")
+		}
 		accessToken = result["access_token"].(string)
 		if err := cache.Set(cacheName, accessToken, time.Second * 7000); err != nil {
 			return "", errors.Wrap(err, "获取微信AccessToken异常")
@@ -125,6 +129,9 @@ func GetJsapiTicket() (string, error) {
 		var result map[string]interface{}
 		err = json.Unmarshal(bytes, &result)
 		if err != nil {
+			return "", errors.Wrap(err, "获取微信JsapiTicket异常")
+		}
+		if result["errmsg"].(string) != "ok"{
 			return "", errors.Wrap(err, "获取微信JsapiTicket异常")
 		}
 		jsapiTicket = result["ticket"].(string)

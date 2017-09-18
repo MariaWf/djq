@@ -10,8 +10,9 @@ import (
 	"mimi/djq/wxpay"
 	"mimi/djq/util"
 	"log"
-	"fmt"
 	"mimi/djq/constant"
+	"strings"
+	"time"
 )
 
 type CashCouponOrder struct {
@@ -21,13 +22,81 @@ func (service *CashCouponOrder) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterfac
 	return &dao.CashCouponOrder{conn}
 }
 
+func (service *CashCouponOrder) Complete(shopAccountId, id string) (err error) {
+	if shopAccountId == "" {
+		err = errors.New("未知商户")
+	}
+	if id == "" {
+		err = errors.New("未知代金券订单")
+	}
+
+	conn, err := mysql.Get()
+	if err != nil {
+		err = checkErr(err)
+		return
+	}
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+
+	daoObj := service.GetDaoInstance(conn).(*dao.CashCouponOrder)
+	cashCouponOrderO, err := dao.Get(daoObj, id)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	cashCouponOrder := cashCouponOrderO.(*model.CashCouponOrder)
+	if cashCouponOrder.Status != constant.CashCouponOrderStatusPaidNotUsed {
+		rollback = true
+		err = errors.New("代金券订单状态异常")
+		return
+	}
+	daoCashCoupon := &dao.CashCoupon{conn}
+	cashCouponO, err := dao.Get(daoCashCoupon, cashCouponOrder.CashCouponId)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	cashCoupon := cashCouponO.(*model.CashCoupon)
+
+	daoShopAccount := &dao.ShopAccount{conn}
+	shopAccountO, err := dao.Get(daoShopAccount, shopAccountId)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	shopAccount := shopAccountO.(*model.ShopAccount)
+	if shopAccount.ShopId != cashCoupon.ShopId {
+		rollback = true
+		err = errors.New("代金券不属于本店")
+		return
+	}
+	cashCouponOrder.Status = constant.CashCouponOrderStatusUsed
+	_, err = dao.Update(daoObj, cashCouponOrder, "status")
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	shopAccount.MoneyChance = shopAccount.MoneyChance + 1
+	_, err = dao.Update(daoShopAccount, shopAccount, "moneyChance")
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	return
+}
+
 func (service *CashCouponOrder) BatchAddInCart(userId string, ids ... string) (list []*model.CashCouponOrder, err error) {
-	list = make([]*model.CashCouponOrder,0,len(ids))
-	if len(ids)==0{
+	list = make([]*model.CashCouponOrder, 0, len(ids))
+	if len(ids) == 0 {
 		err = errors.New("未包含代金券")
 		return
 	}
-	if userId == ""{
+	if userId == "" {
 		err = errors.New("未知用户")
 		return
 	}
@@ -39,20 +108,20 @@ func (service *CashCouponOrder) BatchAddInCart(userId string, ids ... string) (l
 	rollback := false
 	defer mysql.Close(conn, &rollback)
 	daoObj := service.GetDaoInstance(conn).(*dao.CashCouponOrder)
-	daoCashCoupon := &dao.CashCoupon{}
+	daoCashCoupon := &dao.CashCoupon{conn}
 	argCashCoupon := &arg.CashCoupon{}
 	argCashCoupon.IdsIn = ids
-	cashCouponList,err := dao.Find(daoCashCoupon,argCashCoupon)
+	cashCouponList, err := dao.Find(daoCashCoupon, argCashCoupon)
 	if err != nil {
 		rollback = true
 		err = checkErr(err)
 		return
 	}
-	if len(cashCouponList)==0{
+	if len(cashCouponList) == 0 {
 		err = errors.New("找不到代金券")
 		return
 	}
-	for _,v := range cashCouponList{
+	for _, v := range cashCouponList {
 		cashCoupon := v.(*model.CashCoupon)
 		obj := &model.CashCouponOrder{}
 		obj.CashCouponId = cashCoupon.Id
@@ -60,13 +129,15 @@ func (service *CashCouponOrder) BatchAddInCart(userId string, ids ... string) (l
 		obj.Price = cashCoupon.Price
 		obj.Status = constant.CashCouponOrderStatusInCart
 		obj.UserId = userId
-		_,err = dao.Add(daoObj,obj)
+		obj.PayBegin = util.StringDefaultTime4DB()
+		obj.PayEnd = util.StringDefaultTime4DB()
+		_, err = dao.Add(daoObj, obj)
 		if err != nil {
 			rollback = true
 			err = checkErr(err)
 			return
 		}
-		list = append(list,obj)
+		list = append(list, obj)
 	}
 	return
 }
@@ -117,21 +188,34 @@ func (service *CashCouponOrder) Pay(userId string, openId string, clientIp strin
 			err = errors.New("代金券订单不属于当前用户")
 			return
 		}
-		if obj.PayOrderNumber != "" {
+		if obj.PayOrderNumber != "" || obj.Status != constant.CashCouponOrderStatusInCart {
 			err = errors.New("代金券订单处于支付状态，避免重复付款请稍后重试")
 			return
 		}
 		totalFee += obj.Price
 	}
+	totalFee *= 100
 
-	//状态改为
 	payOrderNumber := util.BuildUUID()
+
+	obj := &model.CashCouponOrder{}
+	obj.PayOrderNumber = payOrderNumber
+	obj.PayBegin = util.StringTime4DB(time.Now())
+	obj.Status = constant.CashCouponOrderStatusPaying
+	argObj.UpdateObject = obj
+	argObj.UpdateNames = []string{"payOrderNumber", "payBegin", "status"}
+	_, err = dao.BatchUpdate(daoObj, argObj)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+
 	params, err := wxpay.UnifiedOrder(payOrderNumber, totalFee, clientIp, openId)
 	if err != nil {
 		err = checkErr(err)
 		return
 	}
-	fmt.Println(params)
 	if params["return_code"] == "SUCCESS" && params["result_code"] == "SUCCESS" {
 		client := wxpay.NewDefaultClient()
 		np.SetString("appId", client.AppId)
@@ -139,11 +223,14 @@ func (service *CashCouponOrder) Pay(userId string, openId string, clientIp strin
 		np.SetString("package", "prepay_id=" + params["prepay_id"])
 		np.SetString("signType", "SHA1")//MD5
 		np.SetString("paySign", wxpay.Signature(np))
+		return
 	} else {
 		log.Println(params)
 		err = errors.New("支付请求失败")
+		rollback = true
+		return
 	}
-	return
+	//状态改为
 	//totalFee := rand.Intn(100) + 1
 	//fmt.Println(c.Request.RemoteAddr)
 	//fmt.Println(c.Request.Header.Get("Remote_addr"))
@@ -189,6 +276,107 @@ func (service *CashCouponOrder) Pay(userId string, openId string, clientIp strin
 	//} else {
 	//	result = util.BuildFailResult(params["return_msg"] + params["err_code"] + params["err_code_des"])
 	//}
+}
+
+func (service *CashCouponOrder) ConfirmOrder(payOrderNumber string, totalFee int) (idListStr string, err error) {
+	if payOrderNumber == "" {
+		err = errors.New("订单号为空")
+		return
+	}
+	if totalFee <= 0 {
+		err = errors.New("支付金额不合法")
+		return
+	}
+	conn, err := mysql.Get()
+	if err != nil {
+		err = checkErr(err)
+		return
+	}
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+	daoObj := service.GetDaoInstance(conn).(*dao.CashCouponOrder)
+	argObj := daoObj.GetArgInstance().(*arg.CashCouponOrder)
+	argObj.PayOrderNumberEqual = payOrderNumber
+	list, err := dao.Find(daoObj, argObj)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	total := 0
+	ids := make([]string, len(list), len(list))
+	for i, v := range list {
+		total += v.(*model.CashCouponOrder).Price
+		ids[i] = v.(*model.CashCouponOrder).Id
+		status := v.(*model.CashCouponOrder).Status
+		if status != constant.CashCouponOrderStatusInCart && status != constant.CashCouponOrderStatusPaidNotUsed {
+			rollback = true
+			err = constant.ErrWxpayConfirmIllegalOrderStatus
+			return
+		}
+	}
+	idListStr = strings.Join(ids, constant.Split4Id)
+	total *= 100
+	if total != totalFee {
+		rollback = true
+		err = constant.ErrWxpayConfirmTotalFeeNotMatch
+		return
+	}
+	obj := &model.CashCouponOrder{}
+	obj.Status = constant.CashCouponOrderStatusPaidNotUsed
+	argObj.UpdateObject = obj
+	argObj.UpdateNames = []string{"status"}
+	_, err = dao.BatchUpdate(daoObj, argObj)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+	}
+	return
+}
+
+func (service *CashCouponOrder) CancelOrder(payOrderNumber string) (idListStr string, err error) {
+	if payOrderNumber == "" {
+		err = errors.New("订单号为空")
+		return
+	}
+	conn, err := mysql.Get()
+	if err != nil {
+		err = checkErr(err)
+		return
+	}
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+	daoObj := service.GetDaoInstance(conn).(*dao.CashCouponOrder)
+	argObj := daoObj.GetArgInstance().(*arg.CashCouponOrder)
+	argObj.PayOrderNumberEqual = payOrderNumber
+	list, err := dao.Find(daoObj, argObj)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	ids := make([]string, len(list), len(list))
+	for i, v := range list {
+		status := v.(*model.CashCouponOrder).Status
+		ids[i] = v.(*model.CashCouponOrder).Id
+		if status != constant.CashCouponOrderStatusInCart {
+			rollback = true
+			err = constant.ErrWxpayCancelIllegalOrderStatus
+			return
+		}
+	}
+	idListStr = strings.Join(ids, constant.Split4Id)
+	obj := &model.CashCouponOrder{}
+	obj.PayOrderNumber = ""
+	argObj.UpdateObject = obj
+	argObj.UpdateNames = []string{"payOrderNumber"}
+	_, err = dao.BatchUpdate(daoObj, argObj)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	return
 }
 
 func (service *CashCouponOrder) check(obj *model.CashCouponOrder) error {

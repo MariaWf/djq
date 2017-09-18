@@ -78,6 +78,12 @@ func TestUser(c *gin.Context) {
 	t.Execute(c.Writer, values)
 }
 
+func TestShop(c *gin.Context) {
+	values := make(map[string]interface{})
+	t, _ := template.ParseFiles("html/template/shop.html")
+	t.Execute(c.Writer, values)
+}
+
 func GetServerRootUrl(c *gin.Context){
 	result := util.BuildSuccessResult(config.Get("server_root_url"))
 	c.JSON(http.StatusOK, result)

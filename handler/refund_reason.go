@@ -12,6 +12,17 @@ import (
 	"strings"
 )
 
+func RefundReasonList4Ui(c *gin.Context) {
+	argObj := &arg.RefundReason{}
+	argObj.NotIncludeHide = true
+	argObj.OrderBy = "priority desc"
+
+	serviceObj := &service.RefundReason{}
+	argObj.DisplayNames = []string{"id", "priority", "hide", "description"}
+	result := service.ResultList(serviceObj, argObj)
+	c.JSON(http.StatusOK, result)
+}
+
 func RefundReasonList(c *gin.Context) {
 	argObj := &arg.RefundReason{}
 	err := c.Bind(argObj)

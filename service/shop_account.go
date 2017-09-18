@@ -9,6 +9,7 @@ import (
 	"log"
 	"mimi/djq/dao/arg"
 	"mimi/djq/db/mysql"
+	"math/rand"
 )
 
 type ShopAccount struct {
@@ -17,6 +18,43 @@ type ShopAccount struct {
 func (service *ShopAccount) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
 	return &dao.ShopAccount{conn}
 }
+
+func (service *ShopAccount) GetMoney(shopAccountId string) (money int, err error) {
+	if shopAccountId == "" {
+		err = errors.New("未知商户")
+	}
+	conn, err := mysql.Get()
+	if err != nil {
+		err = checkErr(err)
+		return
+	}
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+	daoObj := service.GetDaoInstance(conn).(*dao.ShopAccount)
+	shopAccountO, err := dao.Get(daoObj, shopAccountId)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	shopAccount := shopAccountO.(*model.ShopAccount)
+	if shopAccount.MoneyChance < 1 {
+		rollback = true
+		err = errors.New("抽红包机会为0")
+		return
+	}
+	money = rand.Intn(10)
+	shopAccount.MoneyChance = shopAccount.MoneyChance - 1
+	shopAccount.TotalMoney = shopAccount.TotalMoney + money
+	_, err = dao.Update(daoObj, shopAccount, "moneyChance", "totalMoney")
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	return
+}
+
 func (service *ShopAccount) CheckLogin(obj *model.ShopAccount) (*model.ShopAccount, error) {
 	if obj == nil {
 		return nil, ErrObjectEmpty
@@ -138,9 +176,9 @@ func (service *ShopAccount) Update(obj *model.ShopAccount) (*model.ShopAccount, 
 	}
 
 	if obj.Password != "" {
-		_, err = dao.Update(daoObj, obj,  "name", "description", "moneyChance", "totalMoney", "locked")
-	}else{
-		_, err = dao.Update(daoObj, obj,  "name", "password","description", "moneyChance", "totalMoney", "locked")
+		_, err = dao.Update(daoObj, obj, "name", "description", "moneyChance", "totalMoney", "locked")
+	} else {
+		_, err = dao.Update(daoObj, obj, "name", "password", "description", "moneyChance", "totalMoney", "locked")
 	}
 
 	if err != nil {

@@ -17,8 +17,37 @@ import (
 	"strconv"
 )
 
+func CashCouponOrderComplete4Si(c *gin.Context) {
+	id := c.PostForm("id")
+	sn, err := session.GetSi(c.Writer, c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	shopAccountId, err := sn.Get(session.SessionNameSiShopAccountId)
+	if err != nil || shopAccountId == "" {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	serviceObj := &service.CashCouponOrder{}
+	err = serviceObj.Complete(shopAccountId,id)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult("")
+	c.JSON(http.StatusOK, result)
+}
+
 func CashCouponOrderPost4Ui(c *gin.Context) {
-	cashCouponIds := c.PostForm("cashCouponIds")
+	cashCouponIds := c.PostForm("ids")
+	if strings.TrimSpace(cashCouponIds) == ""{
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("未知代金券"))
+		return
+	}
 	list, err := putInCartAction(c, strings.Split(cashCouponIds, constant.Split4Id)...)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
@@ -28,7 +57,11 @@ func CashCouponOrderPost4Ui(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 func CashCouponOrderActionBuyFromCashCoupon4Ui(c *gin.Context) {
-	cashCouponIds := c.PostForm("cashCouponIds")
+	cashCouponIds := c.PostForm("ids")
+	if strings.TrimSpace(cashCouponIds) == ""{
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("未知代金券"))
+		return
+	}
 	list, err := putInCartAction(c, strings.Split(cashCouponIds, constant.Split4Id)...)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
@@ -57,7 +90,6 @@ func CashCouponOrderActionBuyFromCashCouponOrder4Ui(c *gin.Context) {
 }
 
 func putInCartAction(c *gin.Context, ids ... string) (list []*model.CashCouponOrder, err error) {
-	//ids := strings.Split(cashCouponIds, constant.Split4Id)
 	if len(ids) == 0 {
 		err = errors.New("未知代金券")
 		return
@@ -86,7 +118,6 @@ func putInCartAction(c *gin.Context, ids ... string) (list []*model.CashCouponOr
 }
 
 func buyAction(c *gin.Context, ids ... string) (params wxpay.Params, err error) {
-	//ids := strings.Split(cashCouponOrderIds, constant.Split4Id)
 	idList := make([]string, 0, len(ids))
 	for _, v := range ids {
 		if strings.TrimSpace(v) == "" {

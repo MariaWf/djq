@@ -9,6 +9,14 @@ import (
 
 var ErrNameIsEmpty = errors.New("缓存名称为空")
 
+const(
+	CacheNameWxpayPayOrderNumberCancel = "wxpay:payOrderNumber:Cancel:"
+	CacheNameWxpayErrorPayOrderNumberCancel = "wxpay:error:payOrderNumber:Cancel:"
+
+	CacheNameWxpayPayOrderNumberConfirm = "wxpay:payOrderNumber:Confirm:"
+	CacheNameWxpayErrorPayOrderNumberConfirm = "wxpay:error:payOrderNumber:Confirm:"
+)
+
 func Get(name string) (string, error) {
 	conn := redis.Get()
 	if exist, err := conn.Exists(GetKey(name)).Result(); err != nil {

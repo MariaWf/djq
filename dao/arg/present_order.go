@@ -12,6 +12,10 @@ type PresentOrder struct {
 	OrderBy        string
 	IdsIn          []string
 
+	UserIdEqual    string
+	NumberEqual    string  `form:"keyword" json:"keyword"`
+	StatusEqual    string `form:"status" json:"status"`
+
 	PageSize       int `form:"pageSize" json:"pageSize"`
 	TargetPage     int `form:"targetPage" json:"targetPage"`
 
@@ -103,12 +107,33 @@ func (arg *PresentOrder) getCountConditions() (string, []interface{}) {
 		sql += " name like ?"
 		params = append(params, "%" + arg.NameLike + "%")
 	}
+	if arg.NumberEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " number = ?"
+		params = append(params, arg.NumberEqual)
+	}
 	if arg.NameEqual != "" {
 		if sql != "" {
 			sql += " and"
 		}
 		sql += " name = ?"
 		params = append(params, arg.NameEqual)
+	}
+	if arg.UserIdEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " user_id = ?"
+		params = append(params, arg.UserIdEqual)
+	}
+	if arg.StatusEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " status = ?"
+		params = append(params, arg.StatusEqual)
 	}
 	if len(params) != 0 {
 		sql = " where" + sql

@@ -33,6 +33,9 @@ const (
 	CashCouponOrderStatusInCart int = iota
 
 	//已购买未使用
+	CashCouponOrderStatusPaying
+
+	//已购买未使用
 	CashCouponOrderStatusPaidNotUsed
 
 	//已使用
@@ -77,6 +80,13 @@ var (
 	ErrUpload = errors.New("上传失败")
 	ErrUploadUnknownType = errors.New("未知文件类型")
 	ErrUploadImageSupport = errors.New("只支持jpg;png;gif;jpeg格式")
+)
+
+var(
+	ErrWxpayConfirmIllegalOrderStatus = errors.New("支付确认，非法订单状态")
+	ErrWxpayConfirmTotalFeeNotMatch = errors.New("支付确认，金额不符")
+
+	ErrWxpayCancelIllegalOrderStatus = errors.New("支付取消，非法订单状态")
 )
 
 var UploadImageSupport = []string{".jpg", ".png", ".gif", ".jpeg"}

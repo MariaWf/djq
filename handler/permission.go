@@ -258,6 +258,10 @@ func PermissionCashCouponOrderD(c *gin.Context) {
 	checkPermission(c, "cashCouponOrder_d")
 }
 
+func PermissionRefundCU(c *gin.Context) {
+	checkPermissionOr(c, "refund_c","refund_u")
+}
+
 func PermissionRefundC(c *gin.Context) {
 	checkPermission(c, "refund_c")
 }

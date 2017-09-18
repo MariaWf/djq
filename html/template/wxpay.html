@@ -15,6 +15,7 @@
 <button type="button" onclick="query()">查询</button>
 <button type="button" onclick="wxLogin()">微信登录</button>
 <button type="button" onclick="testOpen()">测试</button>
+<button type="button" onclick="downloadBill()">下载账单</button>
 
 
 
@@ -71,6 +72,27 @@
         }else{
             alert(getCookie("uiUserOpenId"))
         }
+    }
+    function downloadBill(){
+        $.ajax({
+            type: 'GET',
+            url: "/open/wxpay/downloadBill",
+            dataType: "json",
+            data:{billDate:$("#v1").val()},
+            success: function (data) {
+                if (data.status == 1) {
+                    config = data.result
+                    alert(config)
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (data) {
+                alert("downloadBill失败");
+            },
+            complete: function () {
+            }
+        });
     }
     function testOpen(){
         self.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx520c15f417810387&redirect_uri=https%3A%2F%2Fchong.qq.com%2Fphp%2Findex.php%3Fd%3D%26c%3DwxAdapter%26m%3DmobileDeal%26showwxpaytitle%3D1%26vb2ctag%3D4_2030_5_1194_60&response_type=code&scope=snsapi_base&state=123#wechat_redirect'
@@ -178,7 +200,7 @@
                 }
             },
             error: function (data) {
-                alert("Post失败");
+                alert("getConfig失败");
             },
             complete: function () {
             }
@@ -187,8 +209,8 @@
     function buy() {
         $.ajax({
             type: 'POST',
-            url: "/ui/cashCouponOrderAction/buy",
-            data: {name: "mimi"},
+            url: "/ui/cashCouponOrderAction/buyFromCashCoupon",
+            data: {cashCouponIds: $("#v1").val()},
             dataType: "json",
             success: function (data) {
                 if (data.status == 1) {
@@ -218,7 +240,7 @@
                 }
             },
             error: function (data) {
-                alert("Post失败");
+                alert("Buy失败");
             },
             complete: function () {
             }

@@ -130,6 +130,7 @@ func Begin() {
 	miRefund.POST("/", handler.PermissionRefundC, handler.RefundPost)
 	miRefund.PATCH("/:id", handler.PermissionRefundU, handler.RefundPatch)
 	miRefund.DELETE("/", handler.PermissionRefundD, handler.RefundDelete)
+	miRefund.POST("/refundAction/uploadEvidence",handler.PermissionRefundCU, handler.RefundUploadEvidence)
 
 	miRefundReason := mi.Group("/refundReason")
 	miRefundReason.GET("/", handler.PermissionRefundReasonR, handler.RefundReasonList)
@@ -144,6 +145,11 @@ func Begin() {
 
 	si.GET("/shopAccountAction/self", handler.ShopAccountGetSelf)
 
+	si.GET("/presentOrderOrCashCouponOrder", handler.ShopAccountActionGetPresentOrderOrCashCouponOrder4Si)
+	si.POST("/completePresentOrder", handler.PresentOrderComplete4Si)
+	si.POST("/completeCashCouponOrder", handler.CashCouponOrderComplete4Si)
+	si.POST("/getMoney", handler.ShopAccountGetMoney4Si)
+
 
 	ui := router.Group("/ui", handler.ApiGlobal, handler.UserCheckLogin)
 	ui.POST("/login", handler.UserLogin)
@@ -157,6 +163,19 @@ func Begin() {
 	ui.POST("/cashCouponOrderAction/buyFromCashCoupon",handler.CashCouponOrderActionBuyFromCashCoupon4Ui)
 	ui.POST("/cashCouponOrderAction/buyFromCashCouponOrder", handler.CashCouponOrderActionBuyFromCashCouponOrder4Ui)
 
+
+	ui.GET("/refund",handler.RefundList4Ui)
+
+	ui.GET("/refundReason",handler.RefundReasonList4Ui)
+
+	ui.POST("/refund",handler.RefundPost4Ui)
+	ui.POST("/refundAction/cancel",handler.RefundCancel4Ui)
+	ui.POST("/refundAction/uploadEvidence", handler.RefundUploadEvidence)
+
+	ui.GET("/present",handler.PresentList4Ui)
+
+	ui.GET("/presentOrder",handler.PresentOrderList4Ui)
+	ui.POST("/presentOrder",handler.PresentOrderPost4Ui)
 
 	open := router.Group("/open", handler.ApiGlobal)
 
@@ -181,7 +200,9 @@ func Begin() {
 	wxpay.GET("getOpenId",handler.WxpayGetOpenId)
 
 	wxpay.POST("notify4UnifiedOrder",handler.WxpayNotifyUnifiedOrder)
-	wxpay.POST("notify4refund",handler.WxpayNotifyUnifiedOrder)
+	wxpay.POST("notify4refund",handler.WxpayNotifyRefund)
+
+	wxpay.GET("downloadBill",handler.WxpayDownloadBill)
 
 	// Query string parameters are parsed using the existing underlying request object.
 	// The request responds to a url matching:  /welcome?firstname=Jane&lastname=Doe
@@ -193,6 +214,7 @@ func Begin() {
 	//	c.String(http.StatusOK, "Hello %s %s", firstname, lastname)
 	//})
 	router.Static("/static", "html/assets")
+	router.Static("/html", "html")
 
 	uploadDirectoryHead := config.Get("uploadPath")
 	if uploadDirectoryHead == "" {
@@ -202,9 +224,10 @@ func Begin() {
 
 	router.GET("/", handler.Index2)
 	router.GET("/testUser", handler.TestUser)
+	router.GET("/testShop", handler.TestShop)
 	router.GET("/api", handler.Api)
 	wxpay.GET("/index", handler.Wxpay)
-	//router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "E:/download/wx/MP_verify_IrIxUvnx9Bob0ktY.txt")
+	router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "/home/zhaohao/app/MP_verify_IrIxUvnx9Bob0ktY.txt")
 	//router.GET("/getPublicKey", handler.ApiGlobal,handler.GetPublicKey)
 	//router.GET("/user/:id", handler.UserGet)
 	//router.GET("/user", handler.UserList)
