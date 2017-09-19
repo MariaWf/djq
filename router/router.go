@@ -159,6 +159,7 @@ func Begin() {
 	ui.GET("/cashCouponOrderUnused",handler.CashCouponOrderListUnused4Ui)
 	ui.GET("/cashCouponOrderUsed",handler.CashCouponOrderListUsed4Ui)
 
+	ui.DELETE("/cashCouponOrder",handler.CashCouponOrderDelete4Ui)
 	ui.POST("/cashCouponOrder",handler.CashCouponOrderPost4Ui)
 	ui.POST("/cashCouponOrderAction/buyFromCashCoupon",handler.CashCouponOrderActionBuyFromCashCoupon4Ui)
 	ui.POST("/cashCouponOrderAction/buyFromCashCouponOrder", handler.CashCouponOrderActionBuyFromCashCouponOrder4Ui)

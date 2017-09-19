@@ -12,6 +12,7 @@ import (
 	"log"
 	"math/rand"
 	"strconv"
+	"mimi/djq/aliyun"
 )
 
 func NotFound(c *gin.Context) {
@@ -115,7 +116,8 @@ func GetCaptcha(c *gin.Context){
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrParamException.Error()))
 		return
 	}
-	if !util.MatchMobile(c.PostForm("mobile")){
+	mobile := c.PostForm("mobile")
+	if !util.MatchMobile(mobile){
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrMobileFormat.Error()))
 		return
 	}
@@ -132,7 +134,13 @@ func GetCaptcha(c *gin.Context){
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
 		return
 	}
-	result := util.BuildSuccessResult(captcha)
+	err = aliyun.CaptchaSend(mobile, captcha)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(mobile)
 	c.JSON(http.StatusOK, result)
 }
 

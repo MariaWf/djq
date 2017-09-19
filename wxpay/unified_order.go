@@ -28,7 +28,7 @@ func UnifiedOrder(payOrderNumber string, totalFee int, clientIp string,openId st
 
 	params := make(Params)
 
-	totalFee = 179
+	totalFee = 200
 
 	params.SetString("appid", c.AppId)//公众账号ID	appid	是	String(32)	wxd678efh567hg6787	微信支付分配的公众账号ID（企业号corpid即为此appId）
 	params.SetString("mch_id", c.MchId)//商户号	mch_id	是	String(32)	1230000109	微信支付分配的商户号

@@ -17,7 +17,9 @@
 <button type="button" onclick="testOpen()">测试</button>
 <button type="button" onclick="downloadBill()">下载账单</button>
 
+<select id="cashCouponList">
 
+</select>
 
 </body>
 <script>
@@ -29,6 +31,57 @@
 //    alert(getCookie("uiUserOpenId"))
 //    alert(getCookie("dasdf"))
 
+    function initCashCoupon(){
+        $.ajax({
+            type: 'GET',
+            url: "/open/shop",
+            dataType: "json",
+            success: function (data) {
+                if (data.status == 1) {
+                    for(var i=0;i<data.result.datas.length;i++){
+                        getAndBuildCashCoupon(data.result.datas[i].id)
+                    }
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (data) {
+                alert("获取商家信息失败");
+            },
+            complete: function () {
+            }
+        });
+    }
+    function getAndBuildCashCoupon(shopId){
+        $.ajax({
+            type: 'GET',
+            url: "/open/shop/"+shopId,
+            dataType: "json",
+            success: function (data) {
+                if (data.status == 1) {
+                    if(data.result.cashCouponList){
+                        for(var i=0;i<data.result.cashCouponList.length;i++){
+                            buildCashCouponSelect(data.result.cashCouponList[i])
+                        }
+                    }
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (data) {
+                alert("获取代金券信息失败");
+            },
+            complete: function () {
+            }
+        });
+    }
+    function buildCashCouponSelect(data){
+        str = '<option value="{value}">{name}</option>'
+        str = str.replace(/{value}/,data.id)
+        str = str.replace(/{name}/,data.name)
+        $("#cashCouponList").append(str)
+    }
+    initCashCoupon()
     function GetQueryString(name)
     {
         var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
@@ -206,11 +259,12 @@
             }
         });
     })
+
     function buy() {
         $.ajax({
             type: 'POST',
             url: "/ui/cashCouponOrderAction/buyFromCashCoupon",
-            data: {cashCouponIds: $("#v1").val()},
+            data: {ids: $("#cashCouponList").val()},
             dataType: "json",
             success: function (data) {
                 if (data.status == 1) {

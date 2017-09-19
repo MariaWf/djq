@@ -32,7 +32,7 @@ func CashCouponOrderComplete4Si(c *gin.Context) {
 		return
 	}
 	serviceObj := &service.CashCouponOrder{}
-	err = serviceObj.Complete(shopAccountId,id)
+	err = serviceObj.Complete(shopAccountId, id)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
@@ -44,7 +44,7 @@ func CashCouponOrderComplete4Si(c *gin.Context) {
 
 func CashCouponOrderPost4Ui(c *gin.Context) {
 	cashCouponIds := c.PostForm("ids")
-	if strings.TrimSpace(cashCouponIds) == ""{
+	if strings.TrimSpace(cashCouponIds) == "" {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("未知代金券"))
 		return
 	}
@@ -58,7 +58,7 @@ func CashCouponOrderPost4Ui(c *gin.Context) {
 }
 func CashCouponOrderActionBuyFromCashCoupon4Ui(c *gin.Context) {
 	cashCouponIds := c.PostForm("ids")
-	if strings.TrimSpace(cashCouponIds) == ""{
+	if strings.TrimSpace(cashCouponIds) == "" {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("未知代金券"))
 		return
 	}
@@ -261,6 +261,21 @@ func list4Ui(c *gin.Context, status int, targetPage int) (page *util.PageVO, err
 		}
 	}
 	return
+}
+
+func CashCouponOrderDelete4Ui(c *gin.Context) {
+	if strings.TrimSpace(c.Query("ids")) == "" {
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("未知代金券"))
+		return
+	}
+	ids := strings.Split(c.Query("ids"), constant.Split4Id)
+
+	serviceObj := &service.CashCouponOrder{}
+	argObj := &arg.CashCouponOrder{}
+	argObj.IdsIn = ids
+	argObj.StatusEqual = strconv.Itoa(constant.CashCouponOrderStatusInCart)
+	result := service.ResultBatchDelete(serviceObj, argObj)
+	c.JSON(http.StatusOK, result)
 }
 
 func CashCouponOrderList(c *gin.Context) {
