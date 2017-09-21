@@ -13,6 +13,7 @@ import (
 	"mimi/djq/constant"
 	"strings"
 	"time"
+	"strconv"
 )
 
 type CashCouponOrder struct {
@@ -142,10 +143,17 @@ func (service *CashCouponOrder) BatchAddInCart(userId string, ids ... string) (l
 	return
 }
 
+//创建支付订单，
+// 如果已经创建且在生命周期内重复使用支付订单，
+// 如果不在生命周期内则关闭旧订单重新创建
 func (service *CashCouponOrder) Pay(userId string, openId string, clientIp string, ids ... string) (np wxpay.Params, err error) {
 	np = make(wxpay.Params)
 	if len(ids) == 0 {
 		err = errors.New("未包含代金券订单")
+		return
+	}
+	if len(ids) != 1 {
+		err = errors.New("目前只支持提交单个代金券订单")
 		return
 	}
 	if userId == "" {
@@ -170,7 +178,7 @@ func (service *CashCouponOrder) Pay(userId string, openId string, clientIp strin
 	daoObj := service.GetDaoInstance(conn).(*dao.CashCouponOrder)
 	argObj := daoObj.GetArgInstance().(*arg.CashCouponOrder)
 	argObj.IdsIn = ids
-	//argObj.UserIdEqual = userId
+	argObj.UserIdEqual = userId
 	list, err := dao.Find(daoObj, argObj)
 	if err != nil {
 		rollback = true
@@ -188,41 +196,66 @@ func (service *CashCouponOrder) Pay(userId string, openId string, clientIp strin
 			err = errors.New("代金券订单不属于当前用户")
 			return
 		}
-		if obj.PayOrderNumber != "" || obj.Status != constant.CashCouponOrderStatusInCart {
+		if obj.Status != constant.CashCouponOrderStatusInCart {
 			err = errors.New("代金券订单处于支付状态，避免重复付款请稍后重试")
 			return
+		}
+		if obj.PayOrderNumber != "" {
+			var t time.Time
+			t, err = util.ParseTimeFromDB(obj.PayBegin)
+			if err != nil {
+				rollback = true
+				err = checkErr(err)
+				return
+			}
+			if t.Add(time.Second * 7000).After(time.Now()) {
+				np = buildPayReturnParams(obj.PayOrderNumber, obj.PrepayId)
+				return
+			}
 		}
 		totalFee += obj.Price
 	}
 	totalFee *= 100
 
+	if list[0].(*model.CashCouponOrder).PayOrderNumber != "" {
+		var paid bool
+		paid, err = wxpay.CloseOrderResult(list[0].(*model.CashCouponOrder).PayOrderNumber)
+		if err != nil {
+			rollback = true
+			err = checkErr(err)
+			return
+		}
+		if paid {
+			rollback = true
+			err = errors.New("订单已支付，请勿重复支付")
+			return
+		}
+	}
+
 	payOrderNumber := util.BuildUUID()
 
-	obj := &model.CashCouponOrder{}
-	obj.PayOrderNumber = payOrderNumber
-	obj.PayBegin = util.StringTime4DB(time.Now())
-	obj.Status = constant.CashCouponOrderStatusPaying
-	argObj.UpdateObject = obj
-	argObj.UpdateNames = []string{"payOrderNumber", "payBegin", "status"}
-	_, err = dao.BatchUpdate(daoObj, argObj)
+	params, err := wxpay.UnifiedOrder(payOrderNumber, totalFee, clientIp, openId)
 	if err != nil {
 		rollback = true
 		err = checkErr(err)
 		return
 	}
-
-	params, err := wxpay.UnifiedOrder(payOrderNumber, totalFee, clientIp, openId)
-	if err != nil {
-		err = checkErr(err)
-		return
-	}
 	if params["return_code"] == "SUCCESS" && params["result_code"] == "SUCCESS" {
-		client := wxpay.NewDefaultClient()
-		np.SetString("appId", client.AppId)
-		np.SetString("nonceStr", util.BuildUUID())
-		np.SetString("package", "prepay_id=" + params["prepay_id"])
-		np.SetString("signType", "SHA1")//MD5
-		np.SetString("paySign", wxpay.Signature(np))
+		np = buildPayReturnParams(payOrderNumber, params["prepay_id"])
+		obj := &model.CashCouponOrder{}
+		obj.PayOrderNumber = payOrderNumber
+		obj.PayBegin = util.StringTime4DB(time.Now())
+		obj.PrepayId = params["prepay_id"]
+		//obj.Status = constant.CashCouponOrderStatusPaying
+		argObj.UpdateObject = obj
+		argObj.UpdateNames = []string{"payOrderNumber", "payBegin", "prepayId"}
+		//argObj.UpdateNames = []string{"payOrderNumber", "payBegin", "status"}
+		_, err = dao.BatchUpdate(daoObj, argObj)
+		if err != nil {
+			rollback = true
+			err = checkErr(err)
+			return
+		}
 		return
 	} else {
 		log.Println(params)
@@ -230,54 +263,22 @@ func (service *CashCouponOrder) Pay(userId string, openId string, clientIp strin
 		rollback = true
 		return
 	}
-	//状态改为
-	//totalFee := rand.Intn(100) + 1
-	//fmt.Println(c.Request.RemoteAddr)
-	//fmt.Println(c.Request.Header.Get("Remote_addr"))
-	//clientIp := "211.162.109.98"//c.ClientIP()
-	//fmt.Println(payOrderNumber, totalFee, clientIp)
-	//sn, err := session.GetUi(c.Writer, c.Request)
-	//if err != nil {
-	//	log.Println(err)
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//	return
-	//}
-	//openId, err := sn.Get(session.SessionNameUiUserOpenId)
-	//if err != nil {
-	//	log.Println(err)
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//	return
-	//}
-	//if openId == "" {
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("未知微信openId"))
-	//	return
-	//}
-	//params, err := wxpay.UnifiedOrder(payOrderNumber, totalFee, clientIp, openId)
-	//if err != nil {
-	//	log.Println(err)
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
-	//	return
-	//}
-	//fmt.Println(params)
-	//var result *util.ResultVO
-	//if params["return_code"] == "SUCCESS" && params["result_code"] == "SUCCESS" {
-	//	//nonceStr: '', // 支付签名随机串，不长于 32 位
-	//	//package: '', // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
-	//	//	signType: '', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-	//	//	paySign: '', // 支付签名
-	//	client := wxpay.NewDefaultClient()
-	//	np := make(wxpay.Params)
-	//	np.SetString("appId", client.AppId)
-	//	np.SetString("nonceStr", util.BuildUUID())
-	//	np.SetString("package", "prepay_id=" + params["prepay_id"])
-	//	np.SetString("signType", "SHA1")//MD5
-	//	np.SetString("paySign", wxpay.Signature(np))
-	//	result = util.BuildSuccessResult(np)
-	//} else {
-	//	result = util.BuildFailResult(params["return_msg"] + params["err_code"] + params["err_code_des"])
-	//}
 }
 
+func buildPayReturnParams(payOrderNumber, prepayId string) (np wxpay.Params) {
+	np = make(wxpay.Params)
+	client := wxpay.NewDefaultClient()
+	np.SetString("appId", client.AppId)
+	np.SetString("nonceStr", util.BuildUUID())
+	np.SetString("timeStamp", strconv.FormatInt(time.Now().Unix(), 10))
+	np.SetString("package", "prepay_id=" + prepayId)
+	np.SetString("signType", "MD5")//MD5
+	np.SetString("paySign", client.Sign(np))
+	np.SetString("payOrderNumber", payOrderNumber)
+	return
+}
+
+//确认订单已支付，改变订单状况，若是重复确认则跳过
 func (service *CashCouponOrder) ConfirmOrder(payOrderNumber string, totalFee int) (idListStr string, err error) {
 	if payOrderNumber == "" {
 		err = errors.New("订单号为空")
@@ -305,10 +306,14 @@ func (service *CashCouponOrder) ConfirmOrder(payOrderNumber string, totalFee int
 	}
 	total := 0
 	ids := make([]string, len(list), len(list))
+	paid := false
 	for i, v := range list {
 		total += v.(*model.CashCouponOrder).Price
 		ids[i] = v.(*model.CashCouponOrder).Id
 		status := v.(*model.CashCouponOrder).Status
+		if status == constant.CashCouponOrderStatusPaidNotUsed {
+			paid = true
+		}
 		if status != constant.CashCouponOrderStatusInCart && status != constant.CashCouponOrderStatusPaidNotUsed {
 			rollback = true
 			err = constant.ErrWxpayConfirmIllegalOrderStatus
@@ -316,6 +321,10 @@ func (service *CashCouponOrder) ConfirmOrder(payOrderNumber string, totalFee int
 		}
 	}
 	idListStr = strings.Join(ids, constant.Split4Id)
+	if paid {
+		rollback = true
+		return
+	}
 	total *= 100
 	if total != totalFee {
 		rollback = true
@@ -324,8 +333,9 @@ func (service *CashCouponOrder) ConfirmOrder(payOrderNumber string, totalFee int
 	}
 	obj := &model.CashCouponOrder{}
 	obj.Status = constant.CashCouponOrderStatusPaidNotUsed
+	obj.PayEnd = util.StringTime4DB(time.Now())
 	argObj.UpdateObject = obj
-	argObj.UpdateNames = []string{"status"}
+	argObj.UpdateNames = []string{"status", "payEnd"}
 	_, err = dao.BatchUpdate(daoObj, argObj)
 	if err != nil {
 		rollback = true
@@ -334,6 +344,7 @@ func (service *CashCouponOrder) ConfirmOrder(payOrderNumber string, totalFee int
 	return
 }
 
+//取消订单，先检查支付订单状态，确保安全后重置代金券订单状态
 func (service *CashCouponOrder) CancelOrder(payOrderNumber string) (idListStr string, err error) {
 	if payOrderNumber == "" {
 		err = errors.New("订单号为空")
@@ -356,9 +367,14 @@ func (service *CashCouponOrder) CancelOrder(payOrderNumber string) (idListStr st
 		return
 	}
 	ids := make([]string, len(list), len(list))
+	paid := false
 	for i, v := range list {
 		status := v.(*model.CashCouponOrder).Status
 		ids[i] = v.(*model.CashCouponOrder).Id
+		if status == constant.CashCouponOrderStatusPaidNotUsed {
+			paid = true
+			continue
+		}
 		if status != constant.CashCouponOrderStatusInCart {
 			rollback = true
 			err = constant.ErrWxpayCancelIllegalOrderStatus
@@ -366,15 +382,35 @@ func (service *CashCouponOrder) CancelOrder(payOrderNumber string) (idListStr st
 		}
 	}
 	idListStr = strings.Join(ids, constant.Split4Id)
-	obj := &model.CashCouponOrder{}
-	obj.PayOrderNumber = ""
-	argObj.UpdateObject = obj
-	argObj.UpdateNames = []string{"payOrderNumber"}
-	_, err = dao.BatchUpdate(daoObj, argObj)
+	if paid {
+		rollback = true
+		return
+	}
+	tradeState, _, err := wxpay.OrderQueryResult(payOrderNumber)
 	if err != nil {
 		rollback = true
 		err = checkErr(err)
 		return
+	}
+	switch tradeState {
+	case "SUCCESS", "USERPAYING", "REFUND":
+		rollback = true
+		err = errors.New("非法支付状态_tradeState:" + tradeState + "_payOrderNumber:" + payOrderNumber)
+		return
+	default:
+		obj := &model.CashCouponOrder{}
+		obj.PayOrderNumber = ""
+		obj.PayBegin = util.StringDefaultTime4DB()
+		obj.PayEnd = util.StringDefaultTime4DB()
+		obj.PrepayId = ""
+		argObj.UpdateObject = obj
+		argObj.UpdateNames = []string{"payOrderNumber", "payBegin", "payEnd", "prepayId"}
+		_, err = dao.BatchUpdate(daoObj, argObj)
+		if err != nil {
+			rollback = true
+			err = checkErr(err)
+			return
+		}
 	}
 	return
 }

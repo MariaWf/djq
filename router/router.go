@@ -155,6 +155,8 @@ func Begin() {
 	ui.POST("/login", handler.UserLogin)
 	ui.POST("/logout", handler.UserLogout)
 
+	ui.GET("/userAction/self", handler.UserGet4Ui)
+
 	ui.GET("/cashCouponOrderInCart",handler.CashCouponOrderListInCart4Ui)
 	ui.GET("/cashCouponOrderUnused",handler.CashCouponOrderListUnused4Ui)
 	ui.GET("/cashCouponOrderUsed",handler.CashCouponOrderListUsed4Ui)
@@ -163,6 +165,8 @@ func Begin() {
 	ui.POST("/cashCouponOrder",handler.CashCouponOrderPost4Ui)
 	ui.POST("/cashCouponOrderAction/buyFromCashCoupon",handler.CashCouponOrderActionBuyFromCashCoupon4Ui)
 	ui.POST("/cashCouponOrderAction/buyFromCashCouponOrder", handler.CashCouponOrderActionBuyFromCashCouponOrder4Ui)
+
+	//ui.POST("/cashCouponOrderAction/refreshByPayOrderNumber", handler.CashCouponOrderActionRefreshByPayOrderNumber4Ui)
 
 
 	ui.GET("/refund",handler.RefundList4Ui)
@@ -180,7 +184,6 @@ func Begin() {
 
 	open := router.Group("/open", handler.ApiGlobal)
 
-
 	open.GET("/getServerRootUrl", handler.GetServerRootUrl)
 
 	open.POST("/geetest", handler.GeetestInit)
@@ -193,7 +196,6 @@ func Begin() {
 	open.GET("/shopClassification", handler.ShopClassificationList4Open)
 
 	open.GET("/advertisement", handler.AdvertisementList4Open)
-
 
 	wxpay := open.Group("/wxpay")
 	wxpay.GET("config",handler.WxpayConfig)
@@ -228,7 +230,9 @@ func Begin() {
 	router.GET("/testShop", handler.TestShop)
 	router.GET("/api", handler.Api)
 	wxpay.GET("/index", handler.Wxpay)
-	router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "/home/zhaohao/app/MP_verify_IrIxUvnx9Bob0ktY.txt")
+	//router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "/home/zhaohao/app/MP_verify_IrIxUvnx9Bob0ktY.txt")
+	router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "E:/download/wx/MP_verify_IrIxUvnx9Bob0ktY.txt")
+
 	//router.GET("/getPublicKey", handler.ApiGlobal,handler.GetPublicKey)
 	//router.GET("/user/:id", handler.UserGet)
 	//router.GET("/user", handler.UserList)

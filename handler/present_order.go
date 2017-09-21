@@ -70,8 +70,7 @@ func PresentOrderList4Ui(c *gin.Context) {
 			}
 		}
 	}
-
-	result := util.BuildSuccessResult(list)
+	result := util.BuildSuccessResult(util.BuildDefaultPageVO(list))
 	c.JSON(http.StatusOK, result)
 }
 

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-transform"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta content="yes" name="apple-touch-fullscreen"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <title>商家中心</title>
+    <script>!function (n) {
+      var e = n.document, t = e.documentElement, dpr = 1, scale;
+      var isAndroid = n.navigator.appVersion.match(/android/gi), isIPhone = n.navigator.appVersion.match(/iphone/gi), devicePixelRatio = n.devicePixelRatio;
+      scale = 1 / dpr;
+      var metaEl = e.createElement("meta");
+      var scale = dpr === 1 ? 1 : 0.5;
+      metaEl.setAttribute("name", "viewport");
+      metaEl.setAttribute("content", "initial-scale=" + scale + ", maximum-scale=" + scale + ", minimum-scale=" + scale + ", user-scalable=no");
+      if (t.firstElementChild) {
+        t.firstElementChild.appendChild(metaEl)
+      } else {
+        var wrap = e.createElement("div");
+        wrap.appendChild(metaEl);
+        e.write(wrap.innerHTML)
+      }
+      var i = 640, d = i / 100, rem, o = "orientationchange" in n ? "orientationchange" : "resize", a = function () {
+        var n = t.clientWidth || 320;
+        n > i && (n = i), t.style.fontSize = (rem = n / d) + "px"
+      };
+      n.px2rem = function (px) {
+        var v = parseFloat(px);
+        return v / rem
+      };
+      n.rem2px = function (r) {
+        var v = parseFloat(r);
+        return rem * v
+      };
+      e.addEventListener && (n.addEventListener(o, a, !1), e.addEventListener("DOMContentLoaded", a, !1))
+    }(window);</script>
+	
+    <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?7d900a9988ece76d8ef1" rel="stylesheet">
+	
+</head>
+<body>
+    <div class="main ">
+        <header>
+            <a class="left" href="javascript:void(0)">返回</a>
+            <div class="center">商家中心</div>
+            <a class="right" href="javascript:void(0)">
+                返回首页
+            </a>
+        </header>
+        <div class="admin-info">
+            <span class="admin-name">商家名称</span>
+            <a href="javascript:void(0)" class="admin-logout">退出</a>
+        </div>
+        <div class="voucher-search">
+            <input type="text" placeholder="输入代金券编码/奖品编码" class="js-code"/>
+            <a href="javascript:void(0)" class="voucher-btn">查找</a>
+        </div>
+        <div class="js-search-result"></div>
+        
+        <div class="red-bg-wrapper"><a href="javascript:void(0)" class="red-bg-btn">抽红包（0）</a>累计：0元</div>
+        <div class="red-bg-tip">抽红包说明:***********************</div>
+    </div>
+    <template id="use-voucher-tpl">
+        <div class="use-voucher">
+            <div class="use-voucher-img">
+                <img src="{preImage}" alt="">
+            </div>
+            <a href="javascript:void(0)" class="use-btn" data-id="{id}">消耗代金券</a>
+        </div>
+    </template>
+    <template id="get-award-tpl">
+        <div class="get-award">
+            <div class="get-award-img">
+                <img src="{preImage}" alt="">
+            </div>
+            <div class="get-award-info">
+                <p>{name}</p>
+                <p>手机号码：<span>{phone}</span></p>
+                <a href="javascript:void(0)" class="get-award-btn" data-id="{id}">确认领取</a>
+            </div>
+        </div>
+    </template>
+    <template id="red-bg-tpl"><a href="javascript:void(0)" class="red-bg-btn">抽红包（{moneyChance}）</a>累计：{totalMoney}元</template>
+	
+    <script src="http://djq.tunnel.qydev.com/html/ui/static/vendor/jquery.min.js"></script>
+	
+    <script src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+	
+	
+    <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/admin.js?7d900a9988ece76d8ef1"></script>
+	
+</body>
+</html>

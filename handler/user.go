@@ -137,6 +137,24 @@ func UserCheckLogin(c *gin.Context) {
 	}
 }
 
+func UserGet4Ui(c *gin.Context) {
+	sn, err := session.GetUi(c.Writer, c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	id,err := sn.Get(session.SessionNameUiUserId)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	serviceObj := &service.User{}
+	result := service.ResultGet(serviceObj, id)
+	c.JSON(http.StatusOK, result)
+}
+
 func UserList(c *gin.Context) {
 	argObj := &arg.User{}
 	err := c.Bind(argObj)

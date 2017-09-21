@@ -79,6 +79,29 @@ func CashCouponOrderActionBuyFromCashCoupon4Ui(c *gin.Context) {
 	c.JSON(http.StatusOK, util.BuildSuccessResult(params))
 }
 
+//func CashCouponOrderActionRefreshByPayOrderNumber4Ui(c *gin.Context) {
+//	payOrderNumber := c.PostForm("payOrderNumber")
+//	if payOrderNumber == "" {
+//		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("未知订单编号"))
+//		return
+//	}
+//	tradeState, totalFee, err := wxpay.OrderQueryResult(payOrderNumber)
+//	if err != nil {
+//		log.Println(err)
+//		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+//		return
+//	}
+//	serviceObj := &service.CashCouponOrder{}
+//	var idListStr string
+//	switch tradeState {
+//	case "SUCCESS":
+//		idListStr, err = serviceObj.ConfirmOrder(payOrderNumber, totalFee)
+//	default:
+//		idListStr, err = serviceObj.CancelOrder(payOrderNumber)
+//		cache.Set(cache.CacheNameWxpayPayOrderNumberCancel + payOrderNumber, idListStr, time.Hour * 24 * 7)
+//	}
+//}
+
 func CashCouponOrderActionBuyFromCashCouponOrder4Ui(c *gin.Context) {
 	cashCouponOrderIds := c.PostForm("ids")
 	params, err := buyAction(c, strings.Split(cashCouponOrderIds, constant.Split4Id)...)

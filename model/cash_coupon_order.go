@@ -9,10 +9,11 @@ type CashCouponOrder struct {
 	Price          int `form:"price" json:"price" db:"price" desc:"价格"`
 	RefundAmount   int `form:"refundAmount" json:"refundAmount" db:"refund_amount" desc:"累计退款金额"`
 	PayOrderNumber string `form:"payOrderNumber" json:"payOrderNumber" db:"pay_order_number" desc:"支付订单编码"`
+	PrepayId       string `form:"prepayId" json:"prepayId" db:"prepay_id" desc:"微信预支付ID"`
 	Number         string `form:"number" json:"number" db:"name" desc:"编码"`
 	Status         int    `form:"status" json:"status" db:"status" desc:"状态"`
-	PayBegin     string   `form:"payBegin" json:"payBegin" db:"pay_begin" desc:"支付开始日期" time_format:"2006-01-02" time_utc:"1"`
-	PayEnd     string   `form:"payEnd" json:"payEnd" db:"pay_end" desc:"支付结束日期" time_format:"2006-01-02" time_utc:"1"`
+	PayBegin       string   `form:"payBegin" json:"payBegin" db:"pay_begin" desc:"支付开始日期" time_format:"2006-01-02" time_utc:"1"`
+	PayEnd         string   `form:"payEnd" json:"payEnd" db:"pay_end" desc:"支付结束日期" time_format:"2006-01-02" time_utc:"1"`
 
 	CashCoupon     *CashCoupon `form:"cashCoupon" json:"cashCoupon"  desc:"代金券"`
 }
@@ -30,11 +31,11 @@ func (obj *CashCouponOrder) GetTableName() string {
 }
 
 func (obj *CashCouponOrder) GetDBNames() []string {
-	return []string{"id", "user_id", "cash_coupon_id", "price", "refund_amount", "pay_order_number", "number", "status","pay_begin","pay_end"}
+	return []string{"id", "user_id", "cash_coupon_id", "price", "refund_amount", "pay_order_number", "prepay_id", "number", "status", "pay_begin", "pay_end"}
 }
 
 func (obj *CashCouponOrder) GetMapNames() []string {
-	return []string{"id", "userId", "cashCouponId", "price", "refundAmount", "payOrderNumber", "number", "status","payBegin","payEnd"}
+	return []string{"id", "userId", "cashCouponId", "price", "refundAmount", "payOrderNumber", "prepayId", "number", "status", "payBegin", "payEnd"}
 }
 
 func (obj *CashCouponOrder) GetValue4Map(name string) interface{} {
@@ -45,6 +46,7 @@ func (obj *CashCouponOrder) GetValue4Map(name string) interface{} {
 	case "price": return obj.Price
 	case "refundAmount": return obj.RefundAmount
 	case "payOrderNumber": return obj.PayOrderNumber
+	case "prepayId": return obj.PrepayId
 	case "number": return obj.Number
 	case "status": return obj.Status
 	case "payBegin": return obj.PayBegin
@@ -69,6 +71,7 @@ func (obj *CashCouponOrder) GetPointer4DB(name string) interface{} {
 	case "price": return &obj.Price
 	case "refund_amount": return &obj.RefundAmount
 	case "pay_order_number": return &obj.PayOrderNumber
+	case "prepay_id": return &obj.PrepayId
 	case "number": return &obj.Number
 	case "status": return &obj.Status
 	case "pay_begin": return &obj.PayBegin
@@ -85,6 +88,7 @@ func (obj *CashCouponOrder) GetValue4DB(name string) interface{} {
 	case "price": return obj.Price
 	case "refund_amount": return obj.RefundAmount
 	case "pay_order_number": return obj.PayOrderNumber
+	case "prepay_id": return obj.PrepayId
 	case "number": return obj.Number
 	case "status": return obj.Status
 	case "pay_begin": return obj.PayBegin

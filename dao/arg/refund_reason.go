@@ -10,6 +10,8 @@ type RefundReason struct {
 	OrderBy        string
 	IdsIn          []string
 
+	DescriptionLike string  `form:"keyword" json:"keyword"`
+
 	NotIncludeHide bool
 
 	PageSize       int `form:"pageSize" json:"pageSize"`
@@ -96,6 +98,13 @@ func (arg *RefundReason) SetPageSize(pageSize int) {
 func (arg *RefundReason) getCountConditions() (string, []interface{}) {
 	sql := ""
 	params := make([]interface{}, 0, 9)
+	if arg.DescriptionLike != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " description like ?"
+		params = append(params, "%" + arg.DescriptionLike + "%")
+	}
 	if arg.NotIncludeHide {
 		if sql != "" {
 			sql += " and"

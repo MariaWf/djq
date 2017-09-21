@@ -9,12 +9,14 @@ import (
 
 var ErrNameIsEmpty = errors.New("缓存名称为空")
 
-const(
+const (
 	CacheNameWxpayPayOrderNumberCancel = "wxpay:payOrderNumber:Cancel:"
 	CacheNameWxpayErrorPayOrderNumberCancel = "wxpay:error:payOrderNumber:Cancel:"
 
 	CacheNameWxpayPayOrderNumberConfirm = "wxpay:payOrderNumber:Confirm:"
 	CacheNameWxpayErrorPayOrderNumberConfirm = "wxpay:error:payOrderNumber:Confirm:"
+
+	cacheHead = "cache:"
 )
 
 func Get(name string) (string, error) {
@@ -37,5 +39,33 @@ func GetKey(name string) string {
 	if name == "" {
 		panic(ErrNameIsEmpty)
 	}
-	return "cache:" + name
+	return cacheHead + name
+}
+
+func FindKeys(pattern string) ([]string, error) {
+	conn := redis.Get()
+	keys, err := conn.Keys(GetKey(pattern)).Result()
+	if err != nil {
+		return keys, err
+	}
+	newKeys := make([]string, len(keys), len(keys))
+	for i, key := range keys {
+		newKeys[i] = strings.TrimLeft( key,cacheHead)
+	}
+	return newKeys, nil
+}
+
+func Expire(name string, expiration time.Duration) (bool, error) {
+	conn := redis.Get()
+	return conn.Expire(GetKey(name), expiration).Result()
+}
+
+func GetExpire(name string) (time.Duration, error){
+	conn := redis.Get()
+	return conn.TTL(GetKey(name)).Result()
+}
+
+func Del(name string) (int64, error) {
+	conn := redis.Get()
+	return conn.Del(GetKey(name)).Result()
 }

@@ -15,6 +15,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"strconv"
+	"crypto/md5"
 )
 
 
@@ -186,4 +187,30 @@ func Signature(params Params) string {
 	sum := sha1.Sum(buf.Bytes())
 	str := hex.EncodeToString(sum[:])
 	return strings.ToLower(str)
+}
+
+// 生成签名
+func Signature4Pay(params Params) string {
+	var keys = make([]string, 0, len(params))
+	for k, _ := range params {
+		if k != "sign" {
+			keys = append(keys, k)
+		}
+	}
+	sort.Strings(keys)
+
+	var buf bytes.Buffer
+	for i, k := range keys {
+		if len(params.GetString(k)) > 0 {
+			buf.WriteString(k)
+			buf.WriteString(`=`)
+			buf.WriteString(params.GetString(k))
+			if i < len(keys) - 1 {
+				buf.WriteString(`&`)
+			}
+		}
+	}
+	sum := md5.Sum(buf.Bytes())
+	str := hex.EncodeToString(sum[:])
+	return strings.ToUpper(str)
 }

@@ -14,10 +14,16 @@ func (t JSONTime) MarshalJSON() ([]byte, error) {
 	return []byte(stamp), nil
 }
 
-func StringTime4DB(source time.Time) string{
+func StringTime4DB(source time.Time) string {
 	return source.Format("2006-01-02 15:04:05")
 }
 
-func StringDefaultTime4DB() string{
-	return "0000-00-00 00-00-00"
+func StringDefaultTime4DB() string {
+	//return "1970-01-01 00:00:00"
+	return "1970-01-01 08:00:01"
+	//return "0000-00-00 00:00:00"
+}
+
+func ParseTimeFromDB(source string) (time.Time, error) {
+	return time.Parse("2006-01-02 15:04:05", source)
 }

@@ -32,8 +32,8 @@ const (
 	//被选中（购物车）
 	CashCouponOrderStatusInCart int = iota
 
-	//已购买未使用
-	CashCouponOrderStatusPaying
+	//正在支付
+	//CashCouponOrderStatusPaying
 
 	//已购买未使用
 	CashCouponOrderStatusPaidNotUsed
@@ -60,6 +60,8 @@ const (
 
 	//未使用退款成功（每天一个固定时间统一自动处理）
 	RefundStatusNotUsedRefundSuccess
+	//未使用退款失败
+	RefundStatusNotUsedRefundFail
 	//未使用退款撤销
 	RefundStatusNotUsedRefundCancel
 	//已使用待退款

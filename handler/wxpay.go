@@ -16,8 +16,6 @@ import (
 	"github.com/pkg/errors"
 	"mimi/djq/service"
 	"strconv"
-	"mimi/djq/cache"
-	"time"
 	"io"
 )
 
@@ -103,15 +101,14 @@ func WxpayNotifyRefund(c *gin.Context) {
 }
 
 func WxpayDownloadBill(c *gin.Context) {
-	w,err := wxpay.DownloadBill(c.Query("billDate"))
+	w, err := wxpay.DownloadBill(c.Query("billDate"))
 	if err != nil {
 		panic(err)
 	}
-	c.JSON(http.StatusOK,util.BuildSuccessResult(w))
+	c.JSON(http.StatusOK, util.BuildSuccessResult(w))
 }
 
-
-func Notify4unified_order(r io.Reader)  io.Reader{
+func Notify4unified_order(r io.Reader) io.Reader {
 	var err error
 	client := wxpay.NewDefaultClient()
 	if config.Get("running_state") == "test" {
@@ -121,15 +118,16 @@ func Notify4unified_order(r io.Reader)  io.Reader{
 		}
 	}
 	params := client.Decode(r)
+	fmt.Println(params)
 	p2 := make(wxpay.Params)
-	if client.CheckSign(params) {
-		p2.SetString("return_code", "FAIL")
-		p2.SetString("return_msg", "签名失败")
-	} else  if params["return_code"] == "FAIL" {
+	if params["return_code"] == "FAIL" {
 		log.Println(params)
 		p2.SetString("return_code", "FAIL")
 		p2.SetString("return_msg", "接收失败")
-	}else {
+	} else if !client.CheckSign(params) {
+		p2.SetString("return_code", "FAIL")
+		p2.SetString("return_msg", "签名失败")
+	} else {
 		payOrderNumber := params["out_trade_no"]
 		//timeEnd := params["time_end"]
 		totalFeeStr := params["total_fee"]
@@ -141,19 +139,21 @@ func Notify4unified_order(r io.Reader)  io.Reader{
 			p2.SetString("return_code", "FAIL")
 			p2.SetString("return_msg", "参数格式校验错误")
 		} else if params["result_code"] == "FAIL" {
-			serviceObj := &service.CashCouponOrder{}
-			idListStr, err := serviceObj.CancelOrder(payOrderNumber)
-			if err != nil {
-				err = errors.Wrap(err, payOrderNumber)
-				log.Println(err)
-				cache.Set(cache.CacheNameWxpayErrorPayOrderNumberCancel + payOrderNumber, err.Error(), time.Hour * 24 * 7)
-				p2.SetString("return_code", "FAIL")
-				p2.SetString("return_msg", "系统异常")
-			}else{
-				p2.SetString("return_code", "SUCCESS")
-				p2.SetString("return_msg", "")
-			}
-			cache.Set(cache.CacheNameWxpayPayOrderNumberCancel + payOrderNumber, idListStr, time.Hour * 24 * 7)
+			p2.SetString("return_code", "SUCCESS")
+			p2.SetString("return_msg", "")
+			//serviceObj := &service.CashCouponOrder{}
+			//_, err := serviceObj.CancelOrder(payOrderNumber)
+			//if err != nil {
+			//	err = errors.Wrap(err, payOrderNumber)
+			//	log.Println(err)
+			//	//cache.Set(cache.CacheNameWxpayErrorPayOrderNumberCancel + payOrderNumber, err.Error(), time.Hour * 24 * 7)
+			//	p2.SetString("return_code", "FAIL")
+			//	p2.SetString("return_msg", "系统异常")
+			//} else {
+			//	p2.SetString("return_code", "SUCCESS")
+			//	p2.SetString("return_msg", "")
+			//}
+			////cache.Set(cache.CacheNameWxpayPayOrderNumberCancel + payOrderNumber, idListStr, time.Hour * 24 * 7)
 		} else {
 			totalFee, err := strconv.Atoi(totalFeeStr)
 			if err != nil {
@@ -161,25 +161,26 @@ func Notify4unified_order(r io.Reader)  io.Reader{
 				p2.SetString("return_msg", "参数格式校验错误")
 			} else {
 				serviceObj := &service.CashCouponOrder{}
-				idListStr,err := serviceObj.ConfirmOrder(payOrderNumber, totalFee)
+				_, err := serviceObj.ConfirmOrder(payOrderNumber, totalFee)
 				if err != nil {
 					err = errors.Wrap(err, payOrderNumber + "_" + strconv.Itoa(totalFee))
 					log.Println(err)
-					cache.Set(cache.CacheNameWxpayErrorPayOrderNumberConfirm + payOrderNumber, err.Error(), time.Hour * 24 * 7)
+					//cache.Set(cache.CacheNameWxpayErrorPayOrderNumberConfirm + payOrderNumber, err.Error(), time.Hour * 24 * 7)
 					p2.SetString("return_code", "FAIL")
 					p2.SetString("return_msg", "系统异常")
 				} else {
 					p2.SetString("return_code", "SUCCESS")
 					p2.SetString("return_msg", "")
 				}
-				cache.Set(cache.CacheNameWxpayPayOrderNumberConfirm + payOrderNumber, idListStr, time.Hour * 24 * 7)
+				//cache.Set(cache.CacheNameWxpayPayOrderNumberConfirm + payOrderNumber, idListStr, time.Hour * 24 * 7)
 			}
 		}
 	}
+	fmt.Println(p2)
 	return client.Encode(p2)
 }
 
-func Notify4refund(r io.Reader)  io.Reader{
+func Notify4refund(r io.Reader) io.Reader {
 	var err error
 	client := wxpay.NewDefaultClient()
 	if config.Get("running_state") == "test" {
@@ -190,59 +191,62 @@ func Notify4refund(r io.Reader)  io.Reader{
 	}
 	params := client.Decode(r)
 	p2 := make(wxpay.Params)
-	if client.CheckSign(params) {
-		p2.SetString("return_code", "FAIL")
-		p2.SetString("return_msg", "签名失败")
-	} else if params["return_code"] == "FAIL" {
-		log.Println(params)
+	if params["return_code"] == "FAIL" {
 		p2.SetString("return_code", "FAIL")
 		p2.SetString("return_msg", "接收失败")
-	} else{
-		payOrderNumber := params["out_trade_no"]
-		//timeEnd := params["time_end"]
-		totalFeeStr := params["total_fee"]
-		cashFeeStr := params["cash_fee"]
-		appId := params["appid"]
-		mchId := params["mch_id"]
+		//} else if !client.CheckSign(params) {
+		//	p2.SetString("return_code", "FAIL")
+		//	p2.SetString("return_msg", "签名失败")
 
-		if client.AppId != appId || client.MchId != mchId || totalFeeStr != cashFeeStr || payOrderNumber == "" {
+	} else {
+		reqInfo := params["req_info"]
+
+		newP, err := client.Aes256EcbDecrypt(reqInfo)
+		if err != nil {
+			log.Println(err)
 			p2.SetString("return_code", "FAIL")
-			p2.SetString("return_msg", "参数格式校验错误")
-		} else if params["result_code"] == "FAIL" {
-			serviceObj := &service.CashCouponOrder{}
-			idListStr, err := serviceObj.CancelOrder(payOrderNumber)
-			if err != nil {
-				err = errors.Wrap(err, payOrderNumber)
-				log.Println(err)
-				cache.Set(cache.CacheNameWxpayErrorPayOrderNumberCancel + payOrderNumber, err.Error(), time.Hour * 24 * 7)
-				p2.SetString("return_code", "FAIL")
-				p2.SetString("return_msg", "系统异常")
-			}else{
-				p2.SetString("return_code", "SUCCESS")
-				p2.SetString("return_msg", "")
-			}
-			cache.Set(cache.CacheNameWxpayPayOrderNumberCancel + payOrderNumber, idListStr, time.Hour * 24 * 7)
+			p2.SetString("return_msg", "解密失败")
 		} else {
-			totalFee, err := strconv.Atoi(totalFeeStr)
-			if err != nil {
+			appId := params["appid"]
+			mchId := params["mch_id"]
+			payOrderNumber := newP["out_trade_no"]
+			refundOrderNumber := newP["out_refund_no"]
+			settlementRefundFeeStr := newP["settlement_refund_fee"]
+			refundFeeStr := newP["refund_fee"]
+
+			if client.AppId != appId || client.MchId != mchId || settlementRefundFeeStr != refundFeeStr || refundOrderNumber == "" || payOrderNumber == "" {
 				p2.SetString("return_code", "FAIL")
 				p2.SetString("return_msg", "参数格式校验错误")
-			} else {
-				serviceObj := &service.CashCouponOrder{}
-				idListStr,err := serviceObj.ConfirmOrder(payOrderNumber, totalFee)
+			} else if params["refund_status"] == "SUCCESS" {
+				serviceObj := &service.Refund{}
+				err = serviceObj.ConfirmByRefundOrderNumber(refundOrderNumber)
 				if err != nil {
-					err = errors.Wrap(err, payOrderNumber + "_" + strconv.Itoa(totalFee))
 					log.Println(err)
-					cache.Set(cache.CacheNameWxpayErrorPayOrderNumberConfirm + payOrderNumber, err.Error(), time.Hour * 24 * 7)
 					p2.SetString("return_code", "FAIL")
 					p2.SetString("return_msg", "系统异常")
 				} else {
 					p2.SetString("return_code", "SUCCESS")
 					p2.SetString("return_msg", "")
 				}
-				cache.Set(cache.CacheNameWxpayPayOrderNumberConfirm + payOrderNumber, idListStr, time.Hour * 24 * 7)
+			} else {
+				serviceObj := &service.Refund{}
+				err = serviceObj.FailCloseByRefundOrderNumber(refundOrderNumber)
+				if err != nil {
+					log.Println(err)
+					p2.SetString("return_code", "FAIL")
+					p2.SetString("return_msg", "系统异常")
+				} else {
+					p2.SetString("return_code", "SUCCESS")
+					p2.SetString("return_msg", "")
+				}
+				p2.SetString("return_code", "SUCCESS")
+				p2.SetString("return_msg", "")
 			}
 		}
+	}
+	if p2.GetString("return_code") != "SUCCESS" {
+		log.Println(params)
+		log.Println(p2.GetString("return_msg"))
 	}
 	return client.Encode(p2)
 }

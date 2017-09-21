@@ -1,4 +1,5 @@
 package wxpay
+
 import (
 	"bytes"
 	"crypto/md5"
@@ -15,6 +16,9 @@ import (
 	"time"
 	"mimi/djq/config"
 	"fmt"
+	"crypto/aes"
+	"crypto/cipher"
+	"encoding/base64"
 )
 
 const bodyType = "application/xml; charset=utf-8"
@@ -24,15 +28,15 @@ type Client struct {
 	stdClient *http.Client
 	tlsClient *http.Client
 
-	AppId  string
-	MchId  string
-	ApiKey string
+	AppId     string
+	MchId     string
+	ApiKey    string
 }
 
 // 实例化API客户端
 func NewDefaultClient() *Client {
-	appId  := config.Get("wxpay_appid") // 微信公众平台应用ID
-	mchId  := config.Get("wxpay_mch_id") // 微信支付商户平台商户号
+	appId := config.Get("wxpay_appid") // 微信公众平台应用ID
+	mchId := config.Get("wxpay_mch_id") // 微信支付商户平台商户号
 	apiKey := config.Get("wxpay_key") // 微信支付商户平台API密钥
 	return &Client{
 		stdClient: &http.Client{},
@@ -90,7 +94,7 @@ func (c *Client) WithCert(certFile, keyFile, rootcaFile string) error {
 
 // 发送请求
 func (c *Client) Post(url string, params Params, tls bool) (Params, error) {
-	fmt.Println(url,params)
+	fmt.Println(url, params)
 	var httpc *http.Client
 	if tls {
 		if c.tlsClient == nil {
@@ -152,7 +156,7 @@ func (c *Client) Encode(params Params) io.Reader {
 
 // 验证签名
 func (c *Client) CheckSign(params Params) bool {
-	return params.GetString("sign") == c.Sign(params)
+	return strings.TrimSpace(params.GetString("sign")) == strings.TrimSpace(c.Sign(params))
 }
 
 // 生成签名
@@ -181,4 +185,43 @@ func (c *Client) Sign(params Params) string {
 	str := hex.EncodeToString(sum[:])
 
 	return strings.ToUpper(str)
+}
+
+// 解密退款结果信息
+func (c *Client) Aes256EcbDecrypt(str string) (Params, error) {
+	sum := md5.Sum([]byte(c.ApiKey))
+	key := hex.EncodeToString(sum[:])
+	key = strings.ToLower(key)
+	bs, err := base64.StdEncoding.DecodeString(str)
+	bb, err := myDecode(bs, key)
+	if err != nil {
+		return nil, err
+	}
+	return c.Decode(bytes.NewReader(bb)), nil
+}
+
+func myEncode(txt, key string) (dest []byte, err error) {
+	dest = make([]byte, (len(txt) / len(key) + 1) * len(key))
+
+	aesCipher, err := aes.NewCipher([]byte(key))
+	if err != nil {
+		return
+	}
+	encrypter := cipher.NewECBEncrypter(aesCipher)
+
+	encrypter.CryptBlocks(dest, []byte(txt))
+	return
+}
+
+func myDecode(bs []byte, key string) (txt []byte, err error) {
+
+	keyBytes := []byte(key)
+	block, err := aes.NewCipher(keyBytes) //选择加密算法
+	if err != nil {
+		return
+	}
+	blockModel := cipher.NewECBDecrypter(block)
+	txt = make([]byte, len(bs))
+	blockModel.CryptBlocks(txt, bs)
+	return
 }

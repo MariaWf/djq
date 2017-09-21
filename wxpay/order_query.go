@@ -4,6 +4,8 @@ import (
 	"mimi/djq/config"
 	"mimi/djq/util"
 	"github.com/pkg/errors"
+	"log"
+	"strconv"
 )
 
 func OrderQuery(payOrderNumber string) (Params, error) {
@@ -27,85 +29,42 @@ func OrderQuery(payOrderNumber string) (Params, error) {
 	params := make(Params)
 
 	//字段名	变量名	必填	类型	示例值	描述
-	params.SetString("appid",c.AppId)//公众账号ID	appid	是	String(32)	wxd678efh567hg6787	微信支付分配的公众账号ID（企业号corpid即为此appId）
-	params.SetString("mch_id",c.MchId)//商户号	mch_id	是	String(32)	1230000109	微信支付分配的商户号
+	params.SetString("appid", c.AppId)//公众账号ID	appid	是	String(32)	wxd678efh567hg6787	微信支付分配的公众账号ID（企业号corpid即为此appId）
+	params.SetString("mch_id", c.MchId)//商户号	mch_id	是	String(32)	1230000109	微信支付分配的商户号
 	//微信订单号	transaction_id	二选一	String(32)	1009660380201506130728806387	微信的订单号，建议优先使用
-	params.SetString("out_trade_no",payOrderNumber)//商户订单号	out_trade_no	String(32)	20150806125346	商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一。 详见商户订单号
-	params.SetString("nonce_str",util.BuildUUID())//随机字符串	nonce_str	是	String(32)	C380BEC2BFD727A4B6845133519F3AD6	随机字符串，不长于32位。推荐随机数生成算法
+	params.SetString("out_trade_no", payOrderNumber)//商户订单号	out_trade_no	String(32)	20150806125346	商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一。 详见商户订单号
+	params.SetString("nonce_str", util.BuildUUID())//随机字符串	nonce_str	是	String(32)	C380BEC2BFD727A4B6845133519F3AD6	随机字符串，不长于32位。推荐随机数生成算法
 	params.SetString("sign_type", "MD5")//签名类型	sign_type	否	String(32)	HMAC-SHA256	签名类型，目前支持HMAC-SHA256和MD5，默认为MD5
 	params.SetString("sign", c.Sign(params))//签名	sign	是	String(32)	5K8264ILTKCH16CQ2502SI8ZNMTM67VS	通过签名算法计算得出的签名值，详见签名生成算法
 
 	return c.Post(url, params, false)
 }
 
-func OrderQueryResult(payOrderNumber string)(err error){
-	_,err = OrderQuery(payOrderNumber)
-	if err!=nil{
+func OrderQueryResult(payOrderNumber string) (tradeState string, totalFee int, err error) {
+	params, err := OrderQuery(payOrderNumber)
+	if err != nil {
 		return
 	}
 	client := NewDefaultClient()
-	if config.Get("running_state") == "test" {
-		client.ApiKey, err = GetSignKey()
-		if err != nil {
-			panic(errors.Wrap(err, "获取测试API_KEY失败"))
+	if params["return_code"] == "FAIL" {
+		err = errors.New("查询订单失败")
+		log.Println(errors.Wrap(err, params["return_msg"]))
+	} else if !client.CheckSign(params) {
+		err = errors.New("查询订单失败")
+		log.Println(params, errors.Wrap(err, "校验签名不匹配"))
+	} else if params["result_code"] == "FAIL" {
+		err = errors.New("查询订单失败")
+		log.Println(params, errors.Wrap(err, params["err_code_des"]))
+	} else {
+		tradeState = params["trade_state"]
+		if tradeState == "SUCCESS" {
+			totalFee, err = strconv.Atoi(params["total_fee"])
+			if err != nil {
+				log.Println(params, err)
+			}
 		}
 	}
 	return
-
-	//if client.CheckSign(params) {
-	//	p2.SetString("return_code", "FAIL")
-	//	p2.SetString("return_msg", "签名失败")
-	//} else  if params["return_code"] == "FAIL" {
-	//	log.Println(params)
-	//	p2.SetString("return_code", "FAIL")
-	//	p2.SetString("return_msg", "接收失败")
-	//}else {
-	//	payOrderNumber := params["out_trade_no"]
-	//	//timeEnd := params["time_end"]
-	//	totalFeeStr := params["total_fee"]
-	//	cashFeeStr := params["cash_fee"]
-	//	appId := params["appid"]
-	//	mchId := params["mch_id"]
-	//
-	//	if client.AppId != appId || client.MchId != mchId || totalFeeStr != cashFeeStr || payOrderNumber == "" {
-	//		p2.SetString("return_code", "FAIL")
-	//		p2.SetString("return_msg", "参数格式校验错误")
-	//	} else if params["result_code"] == "FAIL" {
-	//		serviceObj := &service.CashCouponOrder{}
-	//		idListStr, err := serviceObj.CancelOrder(payOrderNumber)
-	//		if err != nil {
-	//			err = errors.Wrap(err, payOrderNumber)
-	//			log.Println(err)
-	//			cache.Set(cache.CacheNameWxpayErrorPayOrderNumberCancel + payOrderNumber, err.Error(), time.Hour * 24 * 7)
-	//			p2.SetString("return_code", "FAIL")
-	//			p2.SetString("return_msg", "系统异常")
-	//		}else{
-	//			p2.SetString("return_code", "SUCCESS")
-	//			p2.SetString("return_msg", "")
-	//		}
-	//		cache.Set(cache.CacheNameWxpayPayOrderNumberCancel + payOrderNumber, idListStr, time.Hour * 24 * 7)
-	//	} else {
-	//		totalFee, err := strconv.Atoi(totalFeeStr)
-	//		if err != nil {
-	//			p2.SetString("return_code", "FAIL")
-	//			p2.SetString("return_msg", "参数格式校验错误")
-	//		} else {
-	//			serviceObj := &service.CashCouponOrder{}
-	//			idListStr,err := serviceObj.ConfirmOrder(payOrderNumber, totalFee)
-	//			if err != nil {
-	//				err = errors.Wrap(err, payOrderNumber + "_" + strconv.Itoa(totalFee))
-	//				log.Println(err)
-	//				cache.Set(cache.CacheNameWxpayErrorPayOrderNumberConfirm + payOrderNumber, err.Error(), time.Hour * 24 * 7)
-	//				p2.SetString("return_code", "FAIL")
-	//				p2.SetString("return_msg", "系统异常")
-	//			} else {
-	//				p2.SetString("return_code", "SUCCESS")
-	//				p2.SetString("return_msg", "")
-	//			}
-	//			cache.Set(cache.CacheNameWxpayPayOrderNumberConfirm + payOrderNumber, idListStr, time.Hour * 24 * 7)
-	//		}
-	//	}
-	//}
 }
 
 //应用场景

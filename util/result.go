@@ -67,3 +67,11 @@ func BuildPageVO(targetPage int, pageSize int, total int, datas interface{}) *Pa
 	}
 	return &PageVO{targetPage, pageSize, total, totalPage, datas}
 }
+
+func BuildDefaultPageVO(datas interface{}) *PageVO {
+	totalPage := 1
+	if len(datas.([]interface{})) == 0{
+		totalPage = 0
+	}
+	return &PageVO{BeginPage, MaxPageSize, len(datas.([]interface{})), totalPage, datas}
+}

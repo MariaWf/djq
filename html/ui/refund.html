@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-transform"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta content="yes" name="apple-touch-fullscreen"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <title>申请退款</title>
+    <script>!function (n) {
+      var e = n.document, t = e.documentElement, dpr = 1, scale;
+      var isAndroid = n.navigator.appVersion.match(/android/gi), isIPhone = n.navigator.appVersion.match(/iphone/gi), devicePixelRatio = n.devicePixelRatio;
+      scale = 1 / dpr;
+      var metaEl = e.createElement("meta");
+      var scale = dpr === 1 ? 1 : 0.5;
+      metaEl.setAttribute("name", "viewport");
+      metaEl.setAttribute("content", "initial-scale=" + scale + ", maximum-scale=" + scale + ", minimum-scale=" + scale + ", user-scalable=no");
+      if (t.firstElementChild) {
+        t.firstElementChild.appendChild(metaEl)
+      } else {
+        var wrap = e.createElement("div");
+        wrap.appendChild(metaEl);
+        e.write(wrap.innerHTML)
+      }
+      var i = 640, d = i / 100, rem, o = "orientationchange" in n ? "orientationchange" : "resize", a = function () {
+        var n = t.clientWidth || 320;
+        n > i && (n = i), t.style.fontSize = (rem = n / d) + "px"
+      };
+      n.px2rem = function (px) {
+        var v = parseFloat(px);
+        return v / rem
+      };
+      n.rem2px = function (r) {
+        var v = parseFloat(r);
+        return rem * v
+      };
+      e.addEventListener && (n.addEventListener(o, a, !1), e.addEventListener("DOMContentLoaded", a, !1))
+    }(window);</script>
+	
+    <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?7d900a9988ece76d8ef1" rel="stylesheet">
+	
+</head>
+<body>
+    <div class="main refund-page">
+        <header>
+            <a class="left" href="javascript:void(0)">返回</a>
+            <div class="center">申请退款</div>
+            <a class="right" href="javascript:void(0)">
+                返回首页
+            </a>
+        </header>
+        <div class="refund-wrapper"></div>
+    </div>
+    <template id="refund-tpl">
+        <div class="refund">
+            <div class="refund-logo">
+                <img src="{preImage}" alt="">
+            </div>
+            <p>{name}</p>
+            <div class="refund-info clear">
+                <div class="refund-info-code">编码：<span>{number}</span></div>
+                <div class="refund-up-date">有效期：<span>{expiryDate}</span></div>
+            </div>
+            <div class="refund-info clear">
+                <div class="refund-upload">
+                    <input type="file" class="js-file"/>
+                    <a href="javascript:void(0)">上传凭证</a>
+                </div>
+                <div class="refund-hint">说明：<span>*************</span></div>
+            </div>
+            <div class="refund-upload-img">
+                <img src="" alt="">
+            </div>
+            <div class="js-reason-wrapper">
+            
+            </div>
+            <textarea class="js-text" name="reason" cols="30" rows="10"></textarea>
+            <div style="text-align: center">
+                <a href="javascript:void(0)" class="refund-btn">提交申请</a>
+            </div>
+        </div>
+    </template>
+    <template id="reason-tpl">
+        <div class="radio-box">
+            <label><input type="radio" name="reason" value="{id}" data-desc="{description}"/>{description}</label>
+        </div>
+    </template>
+	
+    <script src="http://djq.tunnel.qydev.com/html/ui/static/vendor/jquery.min.js"></script>
+	
+    <script src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+	
+	
+    <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/refund.js?7d900a9988ece76d8ef1"></script>
+	
+</body>
+</html>

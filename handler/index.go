@@ -141,6 +141,7 @@ func GetCaptcha(c *gin.Context){
 		return
 	}
 	result := util.BuildSuccessResult(mobile)
+	//result := util.BuildSuccessResult(captcha)
 	c.JSON(http.StatusOK, result)
 }
 

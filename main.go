@@ -14,6 +14,7 @@ import (
 	"time"
 	"strconv"
 	"math/rand"
+	"mimi/djq/task"
 )
 
 func main() {
@@ -25,7 +26,13 @@ func main() {
 	if config.Get("buildTestData") == "true" {
 		initTestData()
 	}
+	//beginTask()
 	router.Begin()
+}
+
+func beginTask(){
+	go task.CheckPayingOrder()
+	go task.CheckRefundingOrder()
 }
 
 func initLog() {

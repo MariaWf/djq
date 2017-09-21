@@ -22,7 +22,7 @@ func RefundList4Ui(c *gin.Context) {
 		return
 	}
 	userId, err := sn.Get(session.SessionNameUiUserId)
-	if err != nil || userId == ""{
+	if err != nil || userId == "" {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
 		return
@@ -79,7 +79,16 @@ func RefundPost4Ui(c *gin.Context) {
 	}
 
 	serviceObj := &service.Refund{}
-	result := service.ResultAdd(serviceObj, obj)
+	obj.Common = ""
+	obj.RefundOrderNumber = ""
+	_,err = serviceObj.Add(obj)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(obj)
+	//result := service.ResultAdd(serviceObj, obj)
 	c.JSON(http.StatusOK, result)
 }
 func RefundCancel4Ui(c *gin.Context) {
@@ -153,7 +162,14 @@ func RefundPost(c *gin.Context) {
 	}
 
 	serviceObj := &service.Refund{}
-	result := service.ResultAdd(serviceObj, obj)
+	_, err = serviceObj.Add(obj)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(obj)
+	//result := service.ResultAdd(serviceObj, obj)
 	c.JSON(http.StatusOK, result)
 }
 
@@ -180,8 +196,6 @@ func RefundDelete(c *gin.Context) {
 	result := service.ResultBatchDelete(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }
-
-
 
 func RefundUploadEvidence(c *gin.Context) {
 	commonUploadImage(c, "evidence")

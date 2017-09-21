@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta http-equiv="Cache-Control" content="no-transform"/>
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+  <meta name="format-detection" content="telephone=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta content="yes" name="apple-touch-fullscreen"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+  <title>首页</title>
+  <script>!function (n) {
+    var e = n.document, t = e.documentElement, dpr = 1, scale;
+    var isAndroid = n.navigator.appVersion.match(/android/gi), isIPhone = n.navigator.appVersion.match(/iphone/gi), devicePixelRatio = n.devicePixelRatio;
+    scale = 1 / dpr;
+    var metaEl = e.createElement("meta");
+    var scale = dpr === 1 ? 1 : 0.5;
+    metaEl.setAttribute("name", "viewport");
+    metaEl.setAttribute("content", "initial-scale=" + scale + ", maximum-scale=" + scale + ", minimum-scale=" + scale + ", user-scalable=no");
+    if (t.firstElementChild) {
+      t.firstElementChild.appendChild(metaEl)
+    } else {
+      var wrap = e.createElement("div");
+      wrap.appendChild(metaEl);
+      e.write(wrap.innerHTML)
+    }
+    var i = 640, d = i / 100, rem, o = "orientationchange" in n ? "orientationchange" : "resize", a = function () {
+      var n = t.clientWidth || 320;
+      n > i && (n = i), t.style.fontSize = (rem = n / d) + "px"
+    };
+    n.px2rem = function (px) {
+      var v = parseFloat(px);
+      return v / rem
+    };
+    n.rem2px = function (r) {
+      var v = parseFloat(r);
+      return rem * v
+    };
+    e.addEventListener && (n.addEventListener(o, a, !1), e.addEventListener("DOMContentLoaded", a, !1))
+  }(window);</script>
+	
+  <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?7d900a9988ece76d8ef1" rel="stylesheet">
+	
+  <link rel="stylesheet" href="http://djq.tunnel.qydev.com/html/ui/static/css/swiper.css">
+</head>
+<body>
+  <div class="main">
+  
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <img src="" alt=""/>
+        </div>
+      </div>
+      <!-- Add Pagination -->
+      <div class="swiper-pagination"></div>
+    </div>
+    <div class="nav-wrapper">
+      <ul class="avg-6">
+        <li>
+          <a href="">
+            <img src="http://djq.tunnel.qydev.com/html/ui/static/img/anli.png" alt="">
+            <p>装修案例</p>
+          </a>
+        </li>
+        <li>
+          <a href="">
+            <img src="http://djq.tunnel.qydev.com/html/ui/static/img/baojia.png" alt="">
+            <p>报价</p>
+          </a>
+        </li>
+        <li>
+          <a href="">
+            <img src="http://djq.tunnel.qydev.com/html/ui/static/img/baojiantu.png" alt="">
+            <p>报建图</p>
+          </a>
+        </li>
+        <li>
+          <a href="">
+            <img src="http://djq.tunnel.qydev.com/html/ui/static/img/zhibo.png" alt="">
+            <p>工地直播</p>
+          </a>
+        </li>
+        <li>
+          <a href="">
+            <img src="http://djq.tunnel.qydev.com/html/ui/static/img/xuetang.png" alt="">
+            <p>装修学堂</p>
+          </a>
+        </li>
+        <li>
+          <a href="">
+            <img src="http://djq.tunnel.qydev.com/html/ui/static/img/gongsi.png" alt="">
+            <p>装修公司</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="content mrg-top-10">
+      <div class="line-head">
+        <div class="line"></div>
+        <span class="title">商家类别</span>
+        <div class="line"></div>
+      </div>
+      <div class="menu-wrapper">
+        <ul class="avg-6"></ul>
+      </div>
+    </div>
+    <div class="content mrg-top-10">
+      <div class="line-head">
+        <div class="line"></div>
+        <span class="title">商家列表</span>
+        <div class="line"></div>
+      </div>
+      <div class="shops-wrapper">
+      </div>
+    </div>
+    <div class="fixed-menu">
+      <a href="javascript:void(0)" class="js-user">个人</a>
+      <a href="javascript:void(0)" class="js-cart">购物车</a>
+    </div>
+    <footer><p>© www.h0758.net</p></footer>
+    <div class="fixed-footer"><span>咨询热线：13534995499</span></div>
+  </div>
+  <template id="shop-tpl">
+    <a class="shop" href="{detail}">
+      <div class="shop-logo">
+        <img src="" class="_air_img" data-air-img="{preImage}" alt="">
+      </div>
+      <div class="shop-info clear">
+        <div class="shop-name">{name}</div>
+        <div class="shop-desc">
+          <div class="shop-txt">累计优惠次数:<span>{moneyChance}</span>次</div>
+          <div class="shop-txt">累计优惠金额:<span>{totalMoney}</span>元</div>
+        </div>
+      </div>
+    </a>
+  </template>
+  <template id="menu-tpl">
+    <li><a href="javascript:void(0)" data-id="{id}">{name}</a></li>
+  </template>
+  <template id="gg-tpl">
+    <div class="swiper-slide"><a href="{link}"><img src="" class="_air_img" data-air-img="{image}" alt=""></a></div>
+  </template>
+  
+  <script src="http://djq.tunnel.qydev.com/html/ui/static/vendor/jquery.min.js"></script>
+  
+  <script src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+  
+  <script src="http://djq.tunnel.qydev.com/html/ui/static/vendor/swiper.min.js"></script>
+  
+  <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/index.js?7d900a9988ece76d8ef1"></script>
+  
+</body>
+</html>

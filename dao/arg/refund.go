@@ -2,22 +2,29 @@ package arg
 
 import (
 	"mimi/djq/model"
+	"mimi/djq/util"
 )
 
 type Refund struct {
-	IdEqual              string
-	IncludeDeleted       bool
-	OrderBy              string
-	IdsIn                []string
-	CashCouponOrderIdsIn []string
+	IdEqual                string
+	IncludeDeleted         bool
+	OrderBy                string
+	IdsIn                  []string
+	CashCouponOrderIdsIn   []string
 
-	PageSize             int `form:"pageSize" json:"pageSize"`
-	TargetPage           int `form:"targetPage" json:"targetPage"`
+	StatusEqual            string
+	StatusIn               []int
+	RefundBeginLT          string
+	RefundOrderNumberEqual string
+	RefundOrderNumberLike  string `form:"keyword" json:"keyword"`
 
-	DisplayNames         []string
+	PageSize               int `form:"pageSize" json:"pageSize"`
+	TargetPage             int `form:"targetPage" json:"targetPage"`
 
-	UpdateObject         interface{}
-	UpdateNames          []string
+	DisplayNames           []string
+
+	UpdateObject           interface{}
+	UpdateNames            []string
 }
 
 func (arg *Refund) GetDisplayNames() []string {
@@ -108,6 +115,50 @@ func (arg *Refund) getCountConditions() (string, []interface{}) {
 			params = append(params, id)
 		}
 		sql += ")"
+	}
+	if arg.StatusIn != nil && len(arg.StatusIn) != 0 {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " status in ("
+		for i, status := range arg.StatusIn {
+			if i != 0 {
+				sql += ","
+			}
+			sql += "?"
+			params = append(params, status)
+		}
+		sql += ")"
+	}
+	if arg.RefundBeginLT != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " refund_begin < ?"
+		params = append(params, arg.RefundBeginLT)
+		sql += " and refund_begin != ?"
+		params = append(params, util.StringDefaultTime4DB())
+	}
+	if arg.RefundOrderNumberLike != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " refund_order_number like ?"
+		params = append(params, "%" + arg.RefundOrderNumberLike + "%")
+	}
+	if arg.RefundOrderNumberEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " refund_order_number = ?"
+		params = append(params, arg.RefundOrderNumberEqual)
+	}
+	if arg.StatusEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " status = ?"
+		params = append(params, arg.StatusEqual)
 	}
 	if len(params) != 0 {
 		sql = " where" + sql

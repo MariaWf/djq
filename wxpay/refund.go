@@ -48,7 +48,7 @@ func Refund(payOrderNumber string, totalFee int, refundOrderNumber string,refund
 	params.SetString("out_trade_no",payOrderNumber)//商户订单号	out_trade_no	String(32)	1217752501201407033233368018	商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一。
 	params.SetString("out_refund_no",refundOrderNumber)//商户退款单号	out_refund_no	是	String(64)	1217752501201407033233368018	商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@ ，同一退款单号多次请求只退一笔。
 	params.SetString("total_fee",strconv.Itoa(totalFee))//订单金额	total_fee	是	Int	100	订单总金额，单位为分，只能为整数，详见支付金额
-	params.SetString("total_fee",strconv.Itoa(refundFee))//退款金额	refund_fee	是	Int	100	退款总金额，订单总金额，单位为分，只能为整数，详见支付金额
+	params.SetString("refund_fee",strconv.Itoa(refundFee))//退款金额	refund_fee	是	Int	100	退款总金额，订单总金额，单位为分，只能为整数，详见支付金额
 	params.SetString("refund_fee_type","CNY")//货币种类	refund_fee_type	否	String(8)	CNY	货币类型，符合ISO 4217标准的三位字母代码，默认人民币：CNY，其他值列表详见货币类型
 	params.SetString("refund_desc","")//退款原因	refund_desc	否	String(80)	商品已售完	若商户传入，会在下发给用户的退款消息中体现退款原因
 	//退款资金来源	refund_account	否	String(30)	REFUND_SOURCE_RECHARGE_FUNDS
@@ -59,6 +59,25 @@ func Refund(payOrderNumber string, totalFee int, refundOrderNumber string,refund
 
 	return c.Post(url, params, true)
 
+}
+
+func RefundResult(payOrderNumber string, totalFee int, refundOrderNumber string,refundFee int) (err error) {
+	params, err := Refund(payOrderNumber,totalFee,refundOrderNumber,refundFee)
+	if err != nil {
+		return
+	}
+	client := NewDefaultClient()
+	if params["return_code"] == "FAIL" {
+		err = errors.New("退款失败")
+		log.Println(errors.Wrap(err, params["return_msg"]))
+	} else if !client.CheckSign(params) {
+		err = errors.New("退款失败")
+		log.Println(params, errors.Wrap(err, "校验签名不匹配"))
+	} else if params["result_code"] == "FAIL" {
+		err = errors.New("退款失败")
+		log.Println(params, errors.Wrap(err, params["err_code_des"]))
+	}
+	return
 }
 //应用场景
 //当交易发生之后一段时间内，由于买家或者卖家的原因需要退款时，卖家可以通过退款接口将支付款退还给买家，微信支付将在收到退款请求并且验证成功之后，按照退款规则将支付款按原路退到买家帐号上。

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-transform"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta content="yes" name="apple-touch-fullscreen"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <title>登录</title>
+    <script>!function (n) {
+      var e = n.document, t = e.documentElement, dpr = 1, scale;
+      var isAndroid = n.navigator.appVersion.match(/android/gi), isIPhone = n.navigator.appVersion.match(/iphone/gi), devicePixelRatio = n.devicePixelRatio;
+      scale = 1 / dpr;
+      var metaEl = e.createElement("meta");
+      var scale = dpr === 1 ? 1 : 0.5;
+      metaEl.setAttribute("name", "viewport");
+      metaEl.setAttribute("content", "initial-scale=" + scale + ", maximum-scale=" + scale + ", minimum-scale=" + scale + ", user-scalable=no");
+      if (t.firstElementChild) {
+        t.firstElementChild.appendChild(metaEl)
+      } else {
+        var wrap = e.createElement("div");
+        wrap.appendChild(metaEl);
+        e.write(wrap.innerHTML)
+      }
+      var i = 640, d = i / 100, rem, o = "orientationchange" in n ? "orientationchange" : "resize", a = function () {
+        var n = t.clientWidth || 320;
+        n > i && (n = i), t.style.fontSize = (rem = n / d) + "px"
+      };
+      n.px2rem = function (px) {
+        var v = parseFloat(px);
+        return v / rem
+      };
+      n.rem2px = function (r) {
+        var v = parseFloat(r);
+        return rem * v
+      };
+      e.addEventListener && (n.addEventListener(o, a, !1), e.addEventListener("DOMContentLoaded", a, !1))
+    }(window);</script>
+	
+    <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?7d900a9988ece76d8ef1" rel="stylesheet">
+	
+</head>
+<body>
+    <div class="main">
+        <header>
+            <a class="left" href="javascript:void(0)">返回</a>
+            <div class="center">登录</div>
+            <a class="right" href="javascript:void(0)">
+                返回首页
+            </a>
+        </header>
+        <form action="" class="login-form">
+            <input type="text" value="" class="js-phone" placeholder="请输入手机号码">
+            <div class="error-block"></div>
+            <div class="code-wrapper">
+                <input type="text" class="js-code" placeholder="请输入验证码">
+                <div class="error-block"></div>
+                <a href ="javascript:void(0)" class="js-verification">获取验证码</a>
+            </div>
+            <div id="popup-captcha" style="margin: 22px 0"></div>
+            <a href="javascript:void(0)" class="login">登录</a>
+        </form>
+    </div>
+	
+    <script src="http://djq.tunnel.qydev.com/html/ui/static/vendor/jquery.min.js"></script>
+	
+    <script src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+	
+    <script src="./static/vendor/gt.js"></script>
+	
+    <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/ulogin.js?7d900a9988ece76d8ef1"></script>
+	
+</body>
+</html>

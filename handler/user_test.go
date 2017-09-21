@@ -10,7 +10,7 @@ import (
 func TestUserGet(t *testing.T) {
 	user := &model.User{}
 	user.Id = "id1"
-	user.Name = "name1"
+	//user.Name = "name1"
 	result := util.BuildSuccessResult(user)
 	//result := &ResultVO2{}
 	result.Msg = "msg"

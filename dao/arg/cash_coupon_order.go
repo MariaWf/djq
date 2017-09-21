@@ -2,6 +2,7 @@ package arg
 
 import (
 	"mimi/djq/model"
+	"mimi/djq/util"
 )
 
 type CashCouponOrder struct {
@@ -15,6 +16,7 @@ type CashCouponOrder struct {
 	StatusEqual         string `form:"status" json:"status"`
 
 	PayBeginGT          string
+	PayBeginLT          string
 
 	PayOrderNumberEqual string `form:"payOrderNumber" json:"payOrderNumber"`
 
@@ -129,6 +131,15 @@ func (arg *CashCouponOrder) getCountConditions() (string, []interface{}) {
 		}
 		sql += " status = ?"
 		params = append(params, arg.StatusEqual)
+	}
+	if arg.PayBeginLT != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " pay_begin < ?"
+		params = append(params, arg.PayBeginLT)
+		sql += " and pay_begin != ?"
+		params = append(params, util.StringDefaultTime4DB())
 	}
 	if arg.PayBeginGT != "" {
 		if sql != "" {

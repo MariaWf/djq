@@ -10,6 +10,7 @@ import (
 	"mimi/djq/constant"
 	"mimi/djq/dao/arg"
 	"math/rand"
+	"mimi/djq/util"
 )
 
 type PresentOrder struct {
@@ -18,7 +19,7 @@ type PresentOrder struct {
 func (service *PresentOrder) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
 	return &dao.PresentOrder{conn}
 }
-func (service *PresentOrder) Complete( id string) (err error) {
+func (service *PresentOrder) Complete(id string) (err error) {
 	if id == "" {
 		err = errors.New("未知礼品订单")
 	}
@@ -145,6 +146,9 @@ func (service *PresentOrder) Random(userId, presentIds string) (id string, err e
 		err = errors.New("抽奖异常，请于管理员联系")
 		return
 	}
+	if len(presentList) < 10 {
+		weightTotal = weightTotal + (10 - len(presentList)) * 10
+	}
 	randomWeight := rand.Intn(weightTotal)
 	for _, v := range presentList {
 		p := v.(*model.Present)
@@ -163,7 +167,7 @@ func (service *PresentOrder) Random(userId, presentIds string) (id string, err e
 			}
 		}
 	}
-	if id == "" {
+	if id == "" && len(presentList) == 10 {
 		for _, v := range presentList {
 			p := v.(*model.Present)
 			if (p.Stock - p.Requirement > 0) {
@@ -178,6 +182,18 @@ func (service *PresentOrder) Random(userId, presentIds string) (id string, err e
 				break
 			}
 		}
+	}
+	daoPresentOrder := &dao.PresentOrder{conn}
+	presentOrder := &model.PresentOrder{}
+	presentOrder.PresentId = id
+	presentOrder.Number = util.BuildPresentOrderNumber()
+	presentOrder.UserId = userId
+	presentOrder.Status = constant.PresentOrderStatusWaiting2Receive
+	_, err = dao.Add(daoPresentOrder, presentOrder)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
 	}
 	return
 }

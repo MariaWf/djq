@@ -9,7 +9,7 @@ import (
 type Present struct {
 	IdEqual          string
 	IncludeDeleted   bool
-	NameLike         string
+	NameLike         string `form:"keyword" json:"keyword"`
 	NameEqual        string
 	OrderBy          string
 	IdsIn            []string
