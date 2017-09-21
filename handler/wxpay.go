@@ -194,9 +194,6 @@ func Notify4refund(r io.Reader) io.Reader {
 	if params["return_code"] == "FAIL" {
 		p2.SetString("return_code", "FAIL")
 		p2.SetString("return_msg", "接收失败")
-		//} else if !client.CheckSign(params) {
-		//	p2.SetString("return_code", "FAIL")
-		//	p2.SetString("return_msg", "签名失败")
 
 	} else {
 		reqInfo := params["req_info"]
@@ -217,7 +214,7 @@ func Notify4refund(r io.Reader) io.Reader {
 			if client.AppId != appId || client.MchId != mchId || settlementRefundFeeStr != refundFeeStr || refundOrderNumber == "" || payOrderNumber == "" {
 				p2.SetString("return_code", "FAIL")
 				p2.SetString("return_msg", "参数格式校验错误")
-			} else if params["refund_status"] == "SUCCESS" {
+			} else if newP["refund_status"] == "SUCCESS" {
 				serviceObj := &service.Refund{}
 				err = serviceObj.ConfirmByRefundOrderNumber(refundOrderNumber)
 				if err != nil {

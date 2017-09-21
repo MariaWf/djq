@@ -10,6 +10,7 @@ import (
 	"mimi/djq/db/mysql"
 	"mimi/djq/model"
 	"mimi/djq/util"
+	"mimi/djq/wxpay"
 )
 
 func TestCheckPayingOrder(t *testing.T) {
@@ -71,4 +72,16 @@ func TestParseTimeFromDB2(t *testing.T) {
 	}else{
 		t.Log(obj.PayBegin)
 	}
+}
+
+
+func TestCheckRefund(t *testing.T){
+	refundOrderNumber := "fd2f984b84694cc4a3448984056e2831"
+	refundState, _, err := wxpay.RefundQueryResult(refundOrderNumber)
+	if err != nil {
+		t.Error(err)
+	}else{
+		t.Log(refundState)
+	}
+
 }

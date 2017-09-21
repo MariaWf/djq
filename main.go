@@ -26,7 +26,9 @@ func main() {
 	if config.Get("buildTestData") == "true" {
 		initTestData()
 	}
-	//beginTask()
+	if "true" == config.Get("task_run") {
+		beginTask()
+	}
 	router.Begin()
 }
 
