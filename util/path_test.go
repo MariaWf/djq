@@ -3,6 +3,7 @@ package util
 import (
 	"testing"
 	"strconv"
+	"fmt"
 )
 
 func TestAppend(t *testing.T) {
@@ -21,6 +22,11 @@ func TestAppend(t *testing.T) {
 	}else{
 		t.Log(num)
 	}
+}
+
+func TestScanf(t *testing.T){
+	t.Log(fmt.Sprintf("oldRefundAmount:%v_refundAmount:%v_totalFee:%v",1, 2,3))
+
 }
 
 func test() (path string){

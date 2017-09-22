@@ -83,5 +83,5 @@ func AdvertisementDelete(c *gin.Context) {
 }
 
 func AdvertisementUploadImage(c *gin.Context) {
-	commonUploadImage(c, "advertisement")
+	commentUploadImage(c, "advertisement")
 }

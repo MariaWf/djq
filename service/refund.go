@@ -12,6 +12,9 @@ import (
 	"time"
 	"mimi/djq/wxpay"
 	"mimi/djq/dao/arg"
+	"log"
+	"fmt"
+	"mimi/djq/config"
 )
 
 type Refund struct {
@@ -76,7 +79,7 @@ func (service *Refund) Add(obj *model.Refund) (refund *model.Refund, err error) 
 		}
 	default:
 		rollback = true
-		err = errors.New("代金券订单不符合退款状态_status:" + strconv.Itoa(cashCouponOrder.Status)+"_cashCouponOrderId:"+cashCouponOrder.Id)
+		err = errors.New("代金券订单不符合退款状态_status:" + strconv.Itoa(cashCouponOrder.Status) + "_cashCouponOrderId:" + cashCouponOrder.Id)
 		return
 	}
 	if obj.RefundAmount + cashCouponOrder.RefundAmount > cashCouponOrder.Price {
@@ -95,24 +98,35 @@ func (service *Refund) Add(obj *model.Refund) (refund *model.Refund, err error) 
 		err = checkErr(err)
 		return
 	}
-	if obj.Status == constant.RefundStatusNotUsedRefunding {
-		err = send2Wxpay(obj, conn, &rollback)
+	if config.Get("task_run") != "true" {
+		if obj.Status == constant.RefundStatusNotUsedRefunding {
+			err = send2Wxpay(obj, obj.Comment, obj.RefundAmount, conn, &rollback)
+		}
 	}
 	return
 }
 
-func send2Wxpay(refund *model.Refund, conn *sql.Tx, rollback *bool) (err error) {
+func send2Wxpay(refund *model.Refund, comment string, refundAmount int, conn *sql.Tx, rollback *bool) (err error) {
 	//退款申请处理
 	daoObj := &dao.Refund{conn}
 	if refund.Status != constant.RefundStatusNotUsedRefunding && refund.Status != constant.RefundStatusUsedRefunding {
 		*rollback = true
-		err = errors.New("退款申请状态异常" + strconv.Itoa(refund.Status))
+		err = errors.New("退款申请状态异常")
+		log.Println(errors.Wrap(err, fmt.Sprintf("Status:%v", refund.Status)))
+		return
+	}
+	if refund.RefundOrderNumber != "" {
+		*rollback = true
+		err = errors.New("已经进行退款流程_refundOrderNumber:" + refund.RefundOrderNumber)
+		log.Println(errors.Wrap(err, fmt.Sprintf("refundOrderNumber:%v", refund.RefundOrderNumber)))
 		return
 	}
 	refund.RefundBegin = util.StringTime4DB(time.Now())
 	refund.RefundEnd = util.StringDefaultTime4DB()
 	refund.RefundOrderNumber = util.BuildUUID()
-	_, err = dao.Update(daoObj, refund, "refundBegin", "refundEnd", "refundOrderNumber")
+	refund.RefundAmount = refundAmount
+	refund.Comment = comment
+	_, err = dao.Update(daoObj, refund, "refundBegin", "refundEnd", "refundOrderNumber", "refundAmount", "comment")
 	if err != nil {
 		*rollback = true
 		err = checkErr(err)
@@ -137,8 +151,16 @@ func send2Wxpay(refund *model.Refund, conn *sql.Tx, rollback *bool) (err error) 
 		return
 	}
 	totalFee := 0
+	oldRefundAmount := 0
 	for _, obj := range list {
 		totalFee += obj.(*model.CashCouponOrder).Price
+		oldRefundAmount += obj.(*model.CashCouponOrder).RefundAmount
+	}
+	if refund.RefundAmount + oldRefundAmount > totalFee {
+		*rollback = true
+		err = errors.New("退款累计金额超出订单总金额")
+		log.Println(errors.Wrap(err, fmt.Sprintf("oldRefundAmount:%v_refundAmount:%v_totalFee:%v", oldRefundAmount, refund.RefundAmount, totalFee)))
+		return
 	}
 	//调用微信退款
 	err = wxpay.RefundResult(cashCouponOrder.PayOrderNumber, totalFee * 100, refund.RefundOrderNumber, refund.RefundAmount * 100)
@@ -151,9 +173,12 @@ func send2Wxpay(refund *model.Refund, conn *sql.Tx, rollback *bool) (err error) 
 }
 
 //同意退款并发送微信退款请求，生成退款编码
-func (service *Refund) Agree(id string) (err error) {
+func (service *Refund) Agree(id string, comment string, refundAmount int) (err error) {
 	if id == "" {
 		err = ErrIdEmpty
+		return
+	}
+	if err = util.MatchLenWithErr(comment, 0, 200, "平台意见"); err != nil {
 		return
 	}
 	conn, err := mysql.Get()
@@ -172,7 +197,66 @@ func (service *Refund) Agree(id string) (err error) {
 		return
 	}
 	refund := obj.(*model.Refund)
-	err = send2Wxpay(refund, conn, &rollback)
+	if refund.Status != constant.RefundStatusNotUsedRefunding && refund.Status != constant.RefundStatusUsedRefunding {
+		rollback = true
+		err = errors.New("退款申请状态异常")
+		log.Println(errors.Wrap(err, fmt.Sprintf("Status:%v", refund.Status)))
+		return
+	}
+	if refund.RefundOrderNumber != "" {
+		rollback = true
+		err = errors.New("已经进行退款流程_refundOrderNumber:" + refund.RefundOrderNumber)
+		log.Println(errors.Wrap(err, fmt.Sprintf("refundOrderNumber:%v", refund.RefundOrderNumber)))
+		return
+	}
+	refund.RefundBegin = util.StringTime4DB(time.Now())
+	refund.RefundEnd = util.StringDefaultTime4DB()
+	refund.RefundOrderNumber = util.BuildUUID()
+	refund.RefundAmount = refundAmount
+	refund.Comment = comment
+	_, err = dao.Update(daoObj, refund, "refundBegin", "refundEnd", "refundOrderNumber", "refundAmount", "comment")
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+
+	//代金券订单处理
+	daoCashCouponOrder := &dao.CashCouponOrder{conn}
+	cashCouponOrderO, err := dao.Get(daoCashCouponOrder, refund.CashCouponOrderId)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	cashCouponOrder := cashCouponOrderO.(*model.CashCouponOrder)
+	argCashCouponOrder := &arg.CashCouponOrder{}
+	argCashCouponOrder.PayOrderNumberEqual = cashCouponOrder.PayOrderNumber
+	list, err := dao.Find(daoCashCouponOrder, argCashCouponOrder)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	totalFee := 0
+	oldRefundAmount := 0
+	for _, obj := range list {
+		totalFee += obj.(*model.CashCouponOrder).Price
+		oldRefundAmount += obj.(*model.CashCouponOrder).RefundAmount
+	}
+	if refund.RefundAmount + oldRefundAmount > totalFee {
+		rollback = true
+		err = errors.New("退款累计金额超出订单总金额")
+		log.Println(errors.Wrap(err, fmt.Sprintf("oldRefundAmount:%v_refundAmount:%v_totalFee:%v", oldRefundAmount, refund.RefundAmount, totalFee)))
+		return
+	}
+	//调用微信退款
+	err = wxpay.RefundResult(cashCouponOrder.PayOrderNumber, totalFee * 100, refund.RefundOrderNumber, refund.RefundAmount * 100)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
 	return
 	//if refund.Status != constant.RefundStatusNotUsedRefunding && refund.Status != constant.RefundStatusUsedRefunding {
 	//	rollback = true
@@ -218,6 +302,67 @@ func (service *Refund) Agree(id string) (err error) {
 	//	return
 	//}
 	//return
+}
+
+
+//拒绝退款,恢复退款关联的代金券订单状态
+func (service *Refund) Reject(id string, comment string) (err error) {
+	if id == "" {
+		err = ErrIdEmpty
+		return
+	}
+	if err = util.MatchLenWithErr(comment, 0, 200, "平台意见"); err != nil {
+		return
+	}
+	conn, err := mysql.Get()
+	if err != nil {
+		err = checkErr(err)
+		return
+	}
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+	//退款申请处理
+	daoObj := service.GetDaoInstance(conn).(*dao.Refund)
+	obj, err := dao.Get(daoObj, id)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	refund := obj.(*model.Refund)
+	if refund.RefundOrderNumber != "" {
+		rollback = true
+		err = errors.New("已进入汇款阶段，不能撤回")
+		log.Println(errors.Wrap(err, fmt.Sprintf("RefundOrderNumber:%v", refund.RefundOrderNumber)))
+		return
+	}
+	if refund.Status != constant.RefundStatusNotUsedRefunding && refund.Status != constant.RefundStatusUsedRefunding {
+		rollback = true
+		err = errors.New("退款申请状态异常" + strconv.Itoa(refund.Status))
+		log.Println(errors.Wrap(err, fmt.Sprintf("Status:%v", refund.Status)))
+		return
+	}
+
+	switch refund.Status {
+	case constant.RefundStatusNotUsedRefunding:
+		refund.Status = constant.RefundStatusNotUsedRefundFail
+	case constant.RefundStatusUsedRefunding:
+		refund.Status = constant.RefundStatusUsedRefundFail
+	default:
+		rollback = true
+		err = errors.New("退款申请状态异常")
+		log.Println(errors.Wrap(err, fmt.Sprintf("Status:%v", refund.Status)))
+		return
+	}
+	refund.Comment = comment
+	_, err = dao.Update(daoObj, refund, "status", "comment")
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	err = rollbackCashCouponOrderWithFailCloseOrCancel(refund.CashCouponOrderId, conn, &rollback)
+	return
 }
 
 //以退款失败的方式关闭退款,恢复退款关联的代金券订单状态
@@ -294,7 +439,8 @@ func rollbackCashCouponOrderWithFailCloseOrCancel(cashCouponOrderId string, conn
 		}
 	default:
 		*rollback = true
-		err = errors.New("代金券订单状态异常" + strconv.Itoa(cashCouponOrder.Status))
+		err = errors.New("代金券订单状态异常")
+		log.Println(errors.Wrap(err, fmt.Sprintf("Status:%v", cashCouponOrder.Status)))
 		return
 	}
 	_, err = dao.Update(daoCashCouponOrder, cashCouponOrder, "status")
@@ -380,12 +526,14 @@ func confirmAction(refund *model.Refund, conn *sql.Tx, rollback *bool) (err erro
 		return
 	default:
 		*rollback = true
-		err = errors.New("退款申请状态异常" + strconv.Itoa(refund.Status))
+		err = errors.New("退款申请状态异常")
+		log.Println(errors.Wrap(err, fmt.Sprintf("Status:%v", refund.Status)))
 		return
 	}
 	if refund.RefundOrderNumber == "" {
 		*rollback = true
 		err = errors.New("未知退款编号")
+		log.Println(errors.Wrap(err, fmt.Sprintf("refundId:%v", refund.Id)))
 		return
 	}
 	refund.RefundEnd = util.StringTime4DB(time.Now())
@@ -408,7 +556,8 @@ func confirmAction(refund *model.Refund, conn *sql.Tx, rollback *bool) (err erro
 	cashCouponOrder.RefundAmount = refund.RefundAmount + cashCouponOrder.RefundAmount
 	if cashCouponOrder.RefundAmount > cashCouponOrder.Price {
 		*rollback = true
-		err = errors.New("退款总额超出订单金额_退款总额：" + strconv.Itoa(cashCouponOrder.RefundAmount) + "_订单金额：" + strconv.Itoa(cashCouponOrder.Price))
+		err = errors.New("退款总额超出订单金额")
+		log.Println(errors.Wrap(err, fmt.Sprintf("退款总额：%v_订单金额：%v", cashCouponOrder.RefundAmount, cashCouponOrder.Price)))
 		return
 	}
 	switch cashCouponOrder.Status {
@@ -419,6 +568,7 @@ func confirmAction(refund *model.Refund, conn *sql.Tx, rollback *bool) (err erro
 	default:
 		*rollback = true
 		err = errors.New("代金券订单不符合退款状态" + strconv.Itoa(cashCouponOrder.Status))
+		log.Println(errors.Wrap(err, fmt.Sprintf("cashCouponOrder.Status：%v", cashCouponOrder.Status)))
 		return
 	}
 	_, err = dao.Update(daoCashCouponOrder, cashCouponOrder, "refundAmount", "status")
@@ -567,7 +717,7 @@ func (service *Refund) check(obj *model.Refund) error {
 	if obj == nil {
 		return ErrObjectEmpty
 	}
-	//if obj.Common == "" {
+	//if obj.Comment == "" {
 	//	return errors.New("图片不能为空")
 	//}
 	if obj.RefundAmount < 1 {
@@ -579,7 +729,7 @@ func (service *Refund) check(obj *model.Refund) error {
 	if err := util.MatchLenWithErr(obj.Evidence, 0, 200, "退款凭证"); err != nil {
 		return err
 	}
-	if err := util.MatchLenWithErr(obj.Common, 0, 200, "平台意见"); err != nil {
+	if err := util.MatchLenWithErr(obj.Comment, 0, 200, "平台意见"); err != nil {
 		return err
 	}
 	return nil

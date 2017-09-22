@@ -12,6 +12,7 @@ type PresentOrder struct {
 	Status    int           `form:"status" json:"status" db:"status" desc:"状态"`
 
 	Present   *Present   `form:"present" json:"present"  desc:"礼品"`
+	User      *User   `form:"user" json:"user"  desc:"用户"`
 }
 
 func (obj *PresentOrder) GetId() string {

@@ -20,6 +20,7 @@ func (service *ShopAccount) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
 }
 
 func (service *ShopAccount) GetMoney(shopAccountId string) (money int, err error) {
+	//mimi_todo 接上微信发红包接口
 	if shopAccountId == "" {
 		err = errors.New("未知商户")
 	}
@@ -176,9 +177,9 @@ func (service *ShopAccount) Update(obj *model.ShopAccount) (*model.ShopAccount, 
 	}
 
 	if obj.Password != "" {
-		_, err = dao.Update(daoObj, obj, "name", "description", "moneyChance", "totalMoney", "locked")
-	} else {
 		_, err = dao.Update(daoObj, obj, "name", "password", "description", "moneyChance", "totalMoney", "locked")
+	} else {
+		_, err = dao.Update(daoObj, obj, "name", "description", "moneyChance", "totalMoney", "locked")
 	}
 
 	if err != nil {

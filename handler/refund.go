@@ -12,6 +12,7 @@ import (
 	"strings"
 	"mimi/djq/session"
 	"strconv"
+	"github.com/influxdata/influxdb/pkg/slices"
 )
 
 func RefundList4Ui(c *gin.Context) {
@@ -30,7 +31,6 @@ func RefundList4Ui(c *gin.Context) {
 	serviceCashCouponOrder := &service.CashCouponOrder{}
 	argCashCouponOrder := &arg.CashCouponOrder{}
 	argCashCouponOrder.UserIdEqual = userId
-	argCashCouponOrder.DisplayNames = []string{"id"}
 	cashCouponOrderList, err := service.Find(serviceCashCouponOrder, argCashCouponOrder)
 	if err != nil {
 		log.Println(err)
@@ -50,8 +50,57 @@ func RefundList4Ui(c *gin.Context) {
 	}
 	if len(cashCouponOrderList) > 0 {
 		cashCouponOrderIds := make([]string, len(cashCouponOrderList), len(cashCouponOrderList))
-		for i, v := range cashCouponOrderList {
-			cashCouponOrderIds[i] = v.(*model.CashCouponOrder).Id
+		list := make([]*model.CashCouponOrder, len(cashCouponOrderList), len(cashCouponOrderList))
+		cashCouponIds := make([]string, 0, len(list))
+		for i, cashCouponOrder := range cashCouponOrderList {
+			list[i] = cashCouponOrder.(*model.CashCouponOrder)
+			if !slices.Exists(cashCouponIds, list[i].CashCouponId) {
+				cashCouponIds = append(cashCouponIds, list[i].CashCouponId)
+			}
+			cashCouponOrderIds[i] = list[i].Id
+		}
+		serviceCashCoupon := &service.CashCoupon{}
+		argCashCoupon := &arg.CashCoupon{}
+		argCashCoupon.IdsIn = cashCouponIds
+		var cashCouponList []interface{}
+		cashCouponList, err = service.Find(serviceCashCoupon, argCashCoupon)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+
+		shopIds := make([]string, 0, len(list))
+		for _, v := range cashCouponList {
+			shopIds = append(shopIds, v.(*model.CashCoupon).ShopId)
+		}
+		if len(shopIds) > 0 {
+			serviceShop := &service.Shop{}
+			argShop := &arg.Shop{}
+			argShop.IdsIn = shopIds
+			var shopList []interface{}
+			shopList, err = service.Find(serviceShop, argShop)
+			if err != nil {
+				log.Println(err)
+				c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+				return
+			}
+			for _, v1 := range cashCouponList {
+				for _, v2 := range shopList {
+					if v1.(*model.CashCoupon).ShopId == v2.(*model.Shop).Id {
+						v1.(*model.CashCoupon).Shop = v2.(*model.Shop)
+						break;
+					}
+				}
+			}
+		}
+		for _, v1 := range list {
+			for _, v2 := range cashCouponList {
+				if v1.CashCouponId == v2.(*model.CashCoupon).Id {
+					v1.CashCoupon = v2.(*model.CashCoupon)
+					break;
+				}
+			}
 		}
 		argObj := &arg.Refund{}
 		argObj.TargetPage = targetPage
@@ -61,7 +110,29 @@ func RefundList4Ui(c *gin.Context) {
 
 		serviceObj := &service.Refund{}
 		argObj.DisplayNames = []string{"id", "cashCouponOrderId", "evidence", "reason", "comment", "refundAmount", "status"}
-		result = service.ResultList(serviceObj, argObj)
+		objList, err := service.Find(serviceObj, argObj)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+		for _, refund := range objList {
+			for _, cashCouponOrder := range list {
+				if refund.(*model.Refund).CashCouponOrderId == cashCouponOrder.Id {
+					refund.(*model.Refund).CashCouponOrder = cashCouponOrder
+					break;
+				}
+			}
+
+		}
+		count,err := service.Count(serviceObj,argObj)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+		//result = util.BuildSuccessResult(objList)
+		result = util.BuildSuccessResult(util.BuildPageVO(targetPage, pageSize, count, objList))
 	} else {
 		result = util.BuildSuccessResult(util.BuildPageVO(targetPage, pageSize, 0, nil))
 	}
@@ -79,9 +150,9 @@ func RefundPost4Ui(c *gin.Context) {
 	}
 
 	serviceObj := &service.Refund{}
-	obj.Common = ""
+	obj.Comment = ""
 	obj.RefundOrderNumber = ""
-	_,err = serviceObj.Add(obj)
+	_, err = serviceObj.Add(obj)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
@@ -91,6 +162,7 @@ func RefundPost4Ui(c *gin.Context) {
 	//result := service.ResultAdd(serviceObj, obj)
 	c.JSON(http.StatusOK, result)
 }
+
 func RefundCancel4Ui(c *gin.Context) {
 	id := c.PostForm("id")
 	if id == "" {
@@ -102,7 +174,7 @@ func RefundCancel4Ui(c *gin.Context) {
 	status, err := serviceObj.Cancel(id)
 	if err != nil {
 		log.Println(err)
-		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
 	result := util.BuildSuccessResult(status)
@@ -165,11 +237,51 @@ func RefundPost(c *gin.Context) {
 	_, err = serviceObj.Add(obj)
 	if err != nil {
 		log.Println(err)
-		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
 	result := util.BuildSuccessResult(obj)
 	//result := service.ResultAdd(serviceObj, obj)
+	c.JSON(http.StatusOK, result)
+}
+
+func RefundAgree(c *gin.Context) {
+	obj := &model.Refund{}
+	err := c.Bind(obj)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+		return
+	}
+
+	serviceObj := &service.Refund{}
+	err = serviceObj.Agree(obj.Id, obj.Comment, obj.RefundAmount)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult("")
+	c.JSON(http.StatusOK, result)
+}
+
+func RefundReject(c *gin.Context) {
+	obj := &model.Refund{}
+	err := c.Bind(obj)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+		return
+	}
+
+	serviceObj := &service.Refund{}
+	err = serviceObj.Reject(obj.Id, obj.Comment)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult("")
 	c.JSON(http.StatusOK, result)
 }
 
@@ -198,5 +310,5 @@ func RefundDelete(c *gin.Context) {
 }
 
 func RefundUploadEvidence(c *gin.Context) {
-	commonUploadImage(c, "evidence")
+	commentUploadImage(c, "evidence")
 }

@@ -16,6 +16,7 @@ type CashCouponOrder struct {
 	PayEnd         string   `form:"payEnd" json:"payEnd" db:"pay_end" desc:"支付结束日期" time_format:"2006-01-02" time_utc:"1"`
 
 	CashCoupon     *CashCoupon `form:"cashCoupon" json:"cashCoupon"  desc:"代金券"`
+	User           *User `form:"user" json:"user"  desc:"用户"`
 }
 
 func (obj *CashCouponOrder) GetId() string {

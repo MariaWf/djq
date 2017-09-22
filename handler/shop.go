@@ -175,9 +175,9 @@ func ShopDelete(c *gin.Context) {
 }
 
 func ShopUploadPreImage(c *gin.Context) {
-	commonUploadImage(c, "shop/preImage")
+	commentUploadImage(c, "shop/preImage")
 }
 
 func ShopUploadLogo(c *gin.Context) {
-	commonUploadImage(c, "shop/logo")
+	commentUploadImage(c, "shop/logo")
 }

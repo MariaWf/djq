@@ -131,6 +131,8 @@ func Begin() {
 	miRefund.PATCH("/:id", handler.PermissionRefundU, handler.RefundPatch)
 	miRefund.DELETE("/", handler.PermissionRefundD, handler.RefundDelete)
 	miRefund.POST("/refundAction/uploadEvidence",handler.PermissionRefundCU, handler.RefundUploadEvidence)
+	miRefund.POST("/refundAction/agree",handler.PermissionRefundU, handler.RefundAgree)
+	miRefund.POST("/refundAction/reject",handler.PermissionRefundU, handler.RefundReject)
 
 	miRefundReason := mi.Group("/refundReason")
 	miRefundReason.GET("/", handler.PermissionRefundReasonR, handler.RefundReasonList)

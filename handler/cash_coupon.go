@@ -73,5 +73,5 @@ func CashCouponDelete(c *gin.Context) {
 }
 
 func CashCouponUploadImage(c *gin.Context) {
-	commonUploadImage(c, "cashCoupon")
+	commentUploadImage(c, "cashCoupon")
 }

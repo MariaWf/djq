@@ -33,8 +33,9 @@ func main() {
 }
 
 func beginTask(){
-	go task.CheckPayingOrder()
-	go task.CheckRefundingOrder()
+	//go task.CheckPayingOrder()
+	//go task.CheckRefundingOrder()
+	go task.AgreeNotUsedRefunding()
 }
 
 func initLog() {
@@ -571,7 +572,7 @@ func initTestRefund(cashCouponOrder *model.CashCouponOrder) {
 
 	//for i := 0; i < 3; i++ {
 	//	obj := &model.Refund{}
-	//	obj.Common = "平台意见" + strconv.Itoa(rand.Intn(1000))
+	//	obj.Comment = "平台意见" + strconv.Itoa(rand.Intn(1000))
 	//	obj.CashCouponOrderId = cashCouponOrder.GetId()
 	//	obj.Evidence = "https://www.baidu.com/img/bd_logo1.png"
 	//	obj.Reason = refundReasonList[rand.Intn(len(refundReasonList))].(*model.RefundReason).Description
@@ -587,7 +588,7 @@ func initTestRefund(cashCouponOrder *model.CashCouponOrder) {
 
 func buildTestRefundModel(refundReasonList []interface{}, cashCouponOrder *model.CashCouponOrder) *model.Refund {
 	obj := &model.Refund{}
-	obj.Common = "平台意见" + strconv.Itoa(rand.Intn(1000))
+	obj.Comment = "平台意见" + strconv.Itoa(rand.Intn(1000))
 	obj.CashCouponOrderId = cashCouponOrder.GetId()
 	obj.Evidence = "https://www.baidu.com/img/bd_logo1.png"
 	obj.Reason = refundReasonList[rand.Intn(len(refundReasonList))].(*model.RefundReason).Description

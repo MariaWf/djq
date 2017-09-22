@@ -18,6 +18,7 @@
     <button type="button" id="loginBtn">登录</button>
     <button type="button" onclick="logout()">登出</button>
     <div id="popup-captcha"></div>
+    <button type="button" onclick="postTest()">post</button>
 </form>
 <br/>
 <textarea id="resultMsg" style="width:600px;height:400px"></textarea>
@@ -157,5 +158,29 @@
             return null;
     }
 
+    function postTest() {
+        $.ajax({
+            type: 'POST',
+            url: "/si/getMoney",
+            data: {name: "mimi"},
+            async: true,
+            cache: false,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.status == 1) {
+                    alert(data.result)
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (data) {
+                alert("Post失败");
+            },
+            complete: function () {
+            }
+        });
+    }
 </script>
 </html>

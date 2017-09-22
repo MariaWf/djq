@@ -84,5 +84,5 @@ func PresentDelete(c *gin.Context) {
 }
 
 func PresentUploadImage(c *gin.Context) {
-	commonUploadImage(c, "present")
+	commentUploadImage(c, "present")
 }

@@ -15,6 +15,8 @@ type CashCoupon struct {
 	Expired        bool `form:"expired" json:"expired" db:"expired" desc:"已过期"`
 	Hide           bool   `form:"hide" json:"hide" db:"hide" desc:"隐藏"`
 	Priority       int    `form:"priority" json:"priority" db:"priority" desc:"优先权重"`
+
+	Shop           *Shop `form:"shop" json:"shop" `
 }
 
 func (obj *CashCoupon) GetId() string {
@@ -30,12 +32,12 @@ func (obj *CashCoupon) GetTableName() string {
 }
 
 func (obj *CashCoupon) GetDBNames() []string {
-	return []string{"id", "shop_id", "name", "pre_image","price", "discount_amount", "expiry_date", "expired", "hide", "priority"}
+	return []string{"id", "shop_id", "name", "pre_image", "price", "discount_amount", "expiry_date", "expired", "hide", "priority"}
 
 }
 
 func (obj *CashCoupon) GetMapNames() []string {
-	return []string{"id", "shopId", "name", "preImage","price", "discountAmount", "expiryDate", "expired", "hide", "priority"}
+	return []string{"id", "shopId", "name", "preImage", "price", "discountAmount", "expiryDate", "expired", "hide", "priority"}
 }
 
 func (obj *CashCoupon) GetValue4Map(name string) interface{} {

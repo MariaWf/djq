@@ -5,11 +5,6 @@ import (
 	"strings"
 )
 
-//id varchar(64) not null primary key,
-//name varchar(32) not null default '',
-//description varchar(200) not null default '',
-//del_flag tinyint(1) default false
-
 type Role struct {
 	Id                string        `form:"id" json:"id" db:"id" desc:"id"`
 	Name              string        `form:"name" json:"name" db:"name" desc:"名称"`

@@ -191,7 +191,7 @@ func CashCouponOrderListInCart4Ui(c *gin.Context) {
 	if err != nil {
 		targetPage = util.BeginPage
 	}
-	list, err := list4Ui(c, constant.CashCouponOrderStatusInCart, targetPage)
+	list, err := listCashCouponOrder4Ui(c, constant.CashCouponOrderStatusInCart, targetPage)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
@@ -205,7 +205,7 @@ func CashCouponOrderListUnused4Ui(c *gin.Context) {
 	if err != nil {
 		targetPage = util.BeginPage
 	}
-	list, err := list4Ui(c, constant.CashCouponOrderStatusPaidNotUsed, targetPage)
+	list, err := listCashCouponOrder4Ui(c, constant.CashCouponOrderStatusPaidNotUsed, targetPage)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
@@ -219,7 +219,7 @@ func CashCouponOrderListUsed4Ui(c *gin.Context) {
 	if err != nil {
 		targetPage = util.BeginPage
 	}
-	list, err := list4Ui(c, constant.CashCouponOrderStatusUsed, targetPage)
+	list, err := listCashCouponOrder4Ui(c, constant.CashCouponOrderStatusUsed, targetPage)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
@@ -227,7 +227,7 @@ func CashCouponOrderListUsed4Ui(c *gin.Context) {
 	c.JSON(http.StatusOK, util.BuildSuccessResult(list))
 }
 
-func list4Ui(c *gin.Context, status int, targetPage int) (page *util.PageVO, err error) {
+func listCashCouponOrder4Ui(c *gin.Context, status int, targetPage int) (page *util.PageVO, err error) {
 	sn, err := session.GetUi(c.Writer, c.Request)
 	if err != nil {
 		log.Println(err)
@@ -273,6 +273,31 @@ func list4Ui(c *gin.Context, status int, targetPage int) (page *util.PageVO, err
 			log.Println(err)
 			err = ErrUnknown
 			return
+		}
+
+		shopIds := make([]string, 0, len(list))
+		for _, v := range cashCouponList {
+			shopIds = append(shopIds, v.(*model.CashCoupon).ShopId)
+		}
+		if len(shopIds) > 0 {
+			serviceShop := &service.Shop{}
+			argShop := &arg.Shop{}
+			argShop.IdsIn = shopIds
+			var shopList []interface{}
+			shopList, err = service.Find(serviceShop, argShop)
+			if err != nil {
+				log.Println(err)
+				c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+				return
+			}
+			for _, v1 := range cashCouponList {
+				for _, v2 := range shopList {
+					if v1.(*model.CashCoupon).ShopId == v2.(*model.Shop).Id {
+						v1.(*model.CashCoupon).Shop = v2.(*model.Shop)
+						break;
+					}
+				}
+			}
 		}
 		for _, v1 := range list {
 			for _, v2 := range cashCouponList {

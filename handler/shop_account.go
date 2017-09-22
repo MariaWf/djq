@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"strings"
 	"mimi/djq/session"
-	"strconv"
 )
 
 func ShopAccountLogin(c *gin.Context) {
@@ -161,7 +160,7 @@ func ShopAccountActionGetPresentOrderOrCashCouponOrder4Si(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
 		return
 	}
-	number := c.PostForm("number")
+	number := c.Query("number")
 	if number == "" {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("编号不能为空"))
 		return
@@ -172,7 +171,7 @@ func ShopAccountActionGetPresentOrderOrCashCouponOrder4Si(c *gin.Context) {
 		argCashCouponOrder := &arg.CashCouponOrder{}
 		argCashCouponOrder.NumberEqual = number
 		argCashCouponOrder.PageSize = 1
-		argCashCouponOrder.StatusEqual = strconv.Itoa(constant.CashCouponOrderStatusPaidNotUsed)
+		//argCashCouponOrder.StatusEqual = strconv.Itoa(constant.CashCouponOrderStatusPaidNotUsed)
 		list, err := service.Find(serviceCashCouponOrder, argCashCouponOrder)
 		if err != nil {
 			log.Println(err)
@@ -180,11 +179,20 @@ func ShopAccountActionGetPresentOrderOrCashCouponOrder4Si(c *gin.Context) {
 			return
 		}
 		if len(list) == 0 {
-			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("找不到匹配代金券"))
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("找不到匹配代金券订单"))
+			return
+		}
+		cashCouponOrder := list[0].(*model.CashCouponOrder)
+		if cashCouponOrder.Status == constant.CashCouponOrderStatusUsed {
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("代金券订单已消费"))
+			return
+		}
+		if cashCouponOrder.Status != constant.CashCouponOrderStatusPaidNotUsed {
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("代金券订单并非处于可消费状态"))
 			return
 		}
 		serviceCashCoupon := &service.CashCoupon{}
-		cashCoupon, err := service.Get(serviceCashCoupon, list[0].(*model.CashCouponOrder).CashCouponId)
+		cashCoupon, err := service.Get(serviceCashCoupon,cashCouponOrder.CashCouponId)
 		if err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
@@ -197,17 +205,26 @@ func ShopAccountActionGetPresentOrderOrCashCouponOrder4Si(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
 			return
 		}
-		if cashCoupon.(*model.CashCoupon).ShopId == obj.(*model.ShopAccount).ShopId {
+		if cashCoupon.(*model.CashCoupon).ShopId != obj.(*model.ShopAccount).ShopId {
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("代金券不属于本店"))
 			return
 		}
-		result = util.BuildSuccessResult(list[0])
+		cashCouponOrder.CashCoupon = cashCoupon.(*model.CashCoupon)
+		serviceUser := &service.User{}
+		user,err := service.Get(serviceUser,cashCouponOrder.UserId)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+		cashCouponOrder.User = user.(*model.User)
+		result = util.BuildSuccessResult(cashCouponOrder)
 	} else if strings.Index(number, "P") == 0 {
 		servicePresentOrder := &service.PresentOrder{}
 		argPresentOrder := &arg.PresentOrder{}
 		argPresentOrder.NumberEqual = number
 		argPresentOrder.PageSize = 1
-		argPresentOrder.StatusEqual = strconv.Itoa(constant.PresentOrderStatusWaiting2Receive)
+		//argPresentOrder.StatusEqual = strconv.Itoa(constant.PresentOrderStatusWaiting2Receive)
 		list, err := service.Find(servicePresentOrder, argPresentOrder)
 		if err != nil {
 			log.Println(err)
@@ -219,6 +236,10 @@ func ShopAccountActionGetPresentOrderOrCashCouponOrder4Si(c *gin.Context) {
 			return
 		}
 		presentOrder := list[0].(*model.PresentOrder)
+		if presentOrder.Status == constant.PresentOrderStatusReceived {
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("奖品已被领取"))
+			return
+		}
 		servciePresent := &service.Present{}
 		present, err := service.Get(servciePresent, presentOrder.PresentId)
 		if err != nil {
@@ -227,6 +248,14 @@ func ShopAccountActionGetPresentOrderOrCashCouponOrder4Si(c *gin.Context) {
 			return
 		}
 		presentOrder.Present = present.(*model.Present)
+		serviceUser := &service.User{}
+		user,err := service.Get(serviceUser,presentOrder.UserId)
+		if err != nil {
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+		presentOrder.User = user.(*model.User)
 		result = util.BuildSuccessResult(presentOrder)
 	} else {
 		result = util.BuildFailResult("无法识别编号")
