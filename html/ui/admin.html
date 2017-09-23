@@ -39,7 +39,7 @@
       e.addEventListener && (n.addEventListener(o, a, !1), e.addEventListener("DOMContentLoaded", a, !1))
     }(window);</script>
 	
-    <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?7d900a9988ece76d8ef1" rel="stylesheet">
+    <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?bd08bd4caafd61ffd525" rel="stylesheet">
 	
 </head>
 <body>
@@ -56,7 +56,10 @@
             <a href="javascript:void(0)" class="admin-logout">退出</a>
         </div>
         <div class="voucher-search">
-            <input type="text" placeholder="输入代金券编码/奖品编码" class="js-code"/>
+            <form target="frameFile" id="search_from">
+                <input type="text" placeholder="输入代金券编码/奖品编码" class="js-code"/>
+                <iframe name='frameFile' style="display: none;"></iframe>
+            </form>
             <a href="javascript:void(0)" class="voucher-btn">查找</a>
         </div>
         <div class="js-search-result"></div>
@@ -67,7 +70,7 @@
     <template id="use-voucher-tpl">
         <div class="use-voucher">
             <div class="use-voucher-img">
-                <img src="{preImage}" alt="">
+                <img src="{cashCoupon.preImage}" alt="">
             </div>
             <a href="javascript:void(0)" class="use-btn" data-id="{id}">消耗代金券</a>
         </div>
@@ -75,7 +78,7 @@
     <template id="get-award-tpl">
         <div class="get-award">
             <div class="get-award-img">
-                <img src="{preImage}" alt="">
+                <img src="{present.image}" alt="">
             </div>
             <div class="get-award-info">
                 <p>{name}</p>
@@ -84,14 +87,14 @@
             </div>
         </div>
     </template>
-    <template id="red-bg-tpl"><a href="javascript:void(0)" class="red-bg-btn">抽红包（{moneyChance}）</a>累计：{totalMoney}元</template>
+    <template id="red-bg-tpl"><a href="javascript:void(0)" class="red-bg-btn" data-chance="{moneyChance}">抽红包（<span class="js-chance">{moneyChance}</span>）</a>累计：<span class="js-total">{totalMoney}</span>元</template>
 	
     <script src="http://djq.tunnel.qydev.com/html/ui/static/vendor/jquery.min.js"></script>
 	
     <script src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 	
 	
-    <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/admin.js?7d900a9988ece76d8ef1"></script>
+    <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/admin.js?bd08bd4caafd61ffd525"></script>
 	
 </body>
 </html>

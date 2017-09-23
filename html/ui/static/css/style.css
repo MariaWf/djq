@@ -557,7 +557,7 @@ h6 {
 */
 @media only screen and (min-width: 280px) {
   html {
-    font-size: 38.88888889px;
+    font-size: 43.75px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -567,7 +567,7 @@ h6 {
   }*/
 @media only screen and (min-width: 320px) {
   html {
-    font-size: 44.44444444px;
+    font-size: 50px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -577,7 +577,7 @@ h6 {
   }*/
 @media only screen and (min-width: 360px) {
   html {
-    font-size: 50px;
+    font-size: 56.25px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -587,7 +587,7 @@ h6 {
   }*/
 @media only screen and (min-width: 400px) {
   html {
-    font-size: 55.55555556px;
+    font-size: 62.5px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -597,7 +597,7 @@ h6 {
   }*/
 @media only screen and (min-width: 440px) {
   html {
-    font-size: 61.11111111px;
+    font-size: 68.75px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -607,7 +607,7 @@ h6 {
   }*/
 @media only screen and (min-width: 480px) {
   html {
-    font-size: 66.66666667px;
+    font-size: 75px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -617,7 +617,7 @@ h6 {
   }*/
 @media only screen and (min-width: 520px) {
   html {
-    font-size: 72.22222222px;
+    font-size: 81.25px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -627,7 +627,7 @@ h6 {
   }*/
 @media only screen and (min-width: 560px) {
   html {
-    font-size: 77.77777778px;
+    font-size: 87.5px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -637,7 +637,7 @@ h6 {
   }*/
 @media only screen and (min-width: 600px) {
   html {
-    font-size: 83.33333333px;
+    font-size: 93.75px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -647,7 +647,7 @@ h6 {
   }*/
 @media only screen and (min-width: 640px) {
   html {
-    font-size: 88.88888889px;
+    font-size: 100px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -657,7 +657,7 @@ h6 {
   }*/
 @media only screen and (min-width: 680px) {
   html {
-    font-size: 94.44444444px;
+    font-size: 106.25px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -667,7 +667,7 @@ h6 {
   }*/
 @media only screen and (min-width: 720px) {
   html {
-    font-size: 100px;
+    font-size: 112.5px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -677,7 +677,7 @@ h6 {
   }*/
 @media only screen and (min-width: 760px) {
   html {
-    font-size: 105.55555556px;
+    font-size: 118.75px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -687,7 +687,7 @@ h6 {
   }*/
 @media only screen and (min-width: 800px) {
   html {
-    font-size: 111.11111111px;
+    font-size: 125px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -697,7 +697,7 @@ h6 {
   }*/
 @media only screen and (min-width: 840px) {
   html {
-    font-size: 116.66666667px;
+    font-size: 131.25px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -707,7 +707,7 @@ h6 {
   }*/
 @media only screen and (min-width: 880px) {
   html {
-    font-size: 122.22222222px;
+    font-size: 137.5px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -717,7 +717,7 @@ h6 {
   }*/
 @media only screen and (min-width: 920px) {
   html {
-    font-size: 127.77777778px;
+    font-size: 143.75px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -727,7 +727,7 @@ h6 {
   }*/
 @media only screen and (min-width: 960px) {
   html {
-    font-size: 133.33333333px;
+    font-size: 150px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -737,7 +737,7 @@ h6 {
   }*/
 @media only screen and (min-width: 1000px) {
   html {
-    font-size: 138.88888889px;
+    font-size: 156.25px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -747,7 +747,7 @@ h6 {
   }*/
 @media only screen and (min-width: 1040px) {
   html {
-    font-size: 144.44444444px;
+    font-size: 162.5px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -757,7 +757,7 @@ h6 {
   }*/
 @media only screen and (min-width: 1080px) {
   html {
-    font-size: 150px;
+    font-size: 168.75px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -767,7 +767,7 @@ h6 {
   }*/
 @media only screen and (min-width: 1120px) {
   html {
-    font-size: 155.55555556px;
+    font-size: 175px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -777,7 +777,7 @@ h6 {
   }*/
 @media only screen and (min-width: 1160px) {
   html {
-    font-size: 161.11111111px;
+    font-size: 181.25px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -787,7 +787,7 @@ h6 {
   }*/
 @media only screen and (min-width: 1200px) {
   html {
-    font-size: 166.66666667px;
+    font-size: 187.5px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -797,7 +797,7 @@ h6 {
   }*/
 @media only screen and (min-width: 1240px) {
   html {
-    font-size: 172.22222222px;
+    font-size: 193.75px;
   }
 }
 /*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
@@ -806,46 +806,6 @@ h6 {
     }
   }*/
 @media only screen and (min-width: 1280px) {
-  html {
-    font-size: 177.77777778px;
-  }
-}
-/*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
-    html{
-      font-size: @width * @standard-font-size * 2 / @standard-width ;
-    }
-  }*/
-@media only screen and (min-width: 1320px) {
-  html {
-    font-size: 183.33333333px;
-  }
-}
-/*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
-    html{
-      font-size: @width * @standard-font-size * 2 / @standard-width ;
-    }
-  }*/
-@media only screen and (min-width: 1360px) {
-  html {
-    font-size: 188.88888889px;
-  }
-}
-/*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
-    html{
-      font-size: @width * @standard-font-size * 2 / @standard-width ;
-    }
-  }*/
-@media only screen and (min-width: 1400px) {
-  html {
-    font-size: 194.44444444px;
-  }
-}
-/*  @media only screen and (min-width: @width) and (-webkit-min-device-pixel-ratio: 2){
-    html{
-      font-size: @width * @standard-font-size * 2 / @standard-width ;
-    }
-  }*/
-@media only screen and (min-width: 1440px) {
   html {
     font-size: 200px;
   }
@@ -995,6 +955,7 @@ body {
   background: #fff;
 }
 .main {
+  visibility: hidden;
   position: relative;
   max-width: 640px;
   min-height: 100%;
@@ -1110,6 +1071,33 @@ footer p {
   color: #c00;
   border: 1px solid #c00;
 }
+.shopping-btns-wrapper {
+  text-align: right;
+  margin-bottom: 0.2rem;
+}
+.shopping-btns-wrapper div {
+  display: inline-block;
+  text-align: center;
+  margin: 0.15rem;
+}
+.shopping-btns-wrapper div a {
+  display: inline-block;
+  padding: 0 0.2rem;
+  line-height: 0.45rem;
+  border: 1px solid #63b8ff;
+  margin: 0 auto;
+  color: #63b8ff;
+}
+.shopping-btns-wrapper div a.del {
+  color: #c00;
+  border: 1px solid #c00;
+}
+.shop-image-list {
+  font-size: 0;
+}
+.shop-image-list img {
+  height: 3.2rem;
+}
 /*
     首页
 */
@@ -1220,29 +1208,60 @@ footer p {
 /*商户详情图片*/
 .shop-detail-logo {
   display: inline-block;
-  width: 40%;
+  width: 2rem;
   height: 1.2rem;
   overflow: hidden;
 }
 .shopping-logo,
 .shop-logo,
 .voucher-logo,
-refund-logo {
-  height: 3rem;
+.refund-logo {
   overflow: hidden;
 }
 .shopping-logo img,
 .shop-logo img,
 .voucher-logo img,
-refund-logo img {
+.refund-logo img {
   height: 100%;
+}
+.refund-upload-img {
+  width: 100%;
+}
+.refund-upload-img img {
+  display: none;
+}
+.shop-logo {
+  height: 2.9rem;
+}
+.shopping-logo {
+  height: 2.44rem;
+}
+.voucher-logo,
+.refund-logo {
+  height: 2.44rem;
+}
+.use-voucher-img {
+  width: 100%;
+  height: 2.44rem;
+  overflow: hidden;
+}
+.use-voucher-img img {
+  height: 100%;
+}
+.voucher img {
+  width: 90%;
+  height: 36%;
+}
+.vouchers .voucher img {
+  height: 100%;
+  width: 100%;
 }
 .shops {
   padding-top: 0.1rem;
 }
 .shops .shop {
   display: block;
-  margin: 0 5.5% 0.1rem;
+  margin: 0 0.3rem 0.1rem;
   background: #fff;
 }
 .shops .shop-logo {
@@ -1276,6 +1295,9 @@ refund-logo img {
 .shops .shop-txt span {
   color: #c00;
   margin-left: .1rem;
+}
+.award-number span {
+  color: #c00;
 }
 /*
   商家详情
@@ -1316,10 +1338,6 @@ refund-logo img {
   display: block;
   position: relative;
   margin-bottom: .15rem;
-}
-.voucher img {
-  width: 90%;
-  height: 100%;
 }
 .voucher .checkbox {
   position: absolute;
@@ -1479,6 +1497,7 @@ a.del {
   margin-left: 0.1rem;
 }
 .voucher-status {
+  text-align: right;
   cursor: pointer;
 }
 .voucher-status.un-use {
@@ -1572,14 +1591,6 @@ textarea {
   height: 100%;
   opacity: 0;
 }
-.refund-upload-img {
-  display: none;
-  width: 100%;
-  height: 2rem;
-}
-.refund-upload-img.show {
-  display: block;
-}
 /*
     用户中心首页
 */
@@ -1671,6 +1682,9 @@ textarea {
   content: '';
   clear: both;
 }
+.awards-hint {
+  margin: 0.2rem 0;
+}
 .awards {
   padding: 0.15rem;
 }
@@ -1721,6 +1735,19 @@ textarea {
   text-align: center;
   border: 1px solid transparent;
 }
+.present-chance {
+  position: absolute;
+  display: inline-block;
+  top: 0.3rem;
+  right: 0.3rem;
+  border: 1px solid #fff;
+  background: #fff;
+  width: 0.4rem;
+  height: 0.4rem;
+  color: #c00;
+  line-height: 0.4rem;
+  border-radius: 50%;
+}
 /*
     商户中心
 */
@@ -1744,11 +1771,6 @@ textarea {
   background: #fff;
   padding: 0.15rem;
   text-align: center;
-}
-.use-voucher-img {
-  width: 100%;
-  height: 2rem;
-  overflow: hidden;
 }
 .use-btn,
 .get-award-btn,
@@ -1842,6 +1864,9 @@ textarea {
   display: inline-block;
   width: 2rem;
   height: 1.2rem;
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
 }
 .award-img img {
   width: 100%;
@@ -1849,10 +1874,8 @@ textarea {
 }
 .award-info {
   display: inline-block;
-  position: absolute;
+  margin-left: 2.1rem;
   padding: 0.15rem;
-  top: 0;
-  left: 2rem;
 }
 .award-name {
   font-size: 0.25rem;
@@ -1864,9 +1887,6 @@ textarea {
   top: 0.2rem;
   right: 0.15rem;
   text-align: right;
-}
-.award-up-date {
-  margin-top: 0.2rem;
 }
 .award-up-date span {
   color: #c00;

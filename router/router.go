@@ -130,9 +130,12 @@ func Begin() {
 	miRefund.POST("/", handler.PermissionRefundC, handler.RefundPost)
 	miRefund.PATCH("/:id", handler.PermissionRefundU, handler.RefundPatch)
 	miRefund.DELETE("/", handler.PermissionRefundD, handler.RefundDelete)
-	miRefund.POST("/refundAction/uploadEvidence",handler.PermissionRefundCU, handler.RefundUploadEvidence)
-	miRefund.POST("/refundAction/agree",handler.PermissionRefundU, handler.RefundAgree)
-	miRefund.POST("/refundAction/reject",handler.PermissionRefundU, handler.RefundReject)
+	//miRefund.POST("/refundAction/uploadEvidence",handler.PermissionRefundCU, handler.RefundUploadEvidence)
+	//miRefund.POST("/refundAction/agree",handler.PermissionRefundU, handler.RefundAgree)
+	//miRefund.POST("/refundAction/reject",handler.PermissionRefundU, handler.RefundReject)
+	mi.POST("/refundAction/uploadEvidence",handler.PermissionRefundCU, handler.RefundUploadEvidence)
+	mi.POST("/refundAction/agree",handler.PermissionRefundU, handler.RefundAgree)
+	mi.POST("/refundAction/reject",handler.PermissionRefundU, handler.RefundReject)
 
 	miRefundReason := mi.Group("/refundReason")
 	miRefundReason.GET("/", handler.PermissionRefundReasonR, handler.RefundReasonList)
@@ -156,48 +159,36 @@ func Begin() {
 	ui := router.Group("/ui", handler.ApiGlobal, handler.UserCheckLogin)
 	ui.POST("/login", handler.UserLogin)
 	ui.POST("/logout", handler.UserLogout)
-
 	ui.GET("/userAction/self", handler.UserGet4Ui)
 
 	ui.GET("/cashCouponOrderInCart",handler.CashCouponOrderListInCart4Ui)
 	ui.GET("/cashCouponOrderUnused",handler.CashCouponOrderListUnused4Ui)
 	ui.GET("/cashCouponOrderUsed",handler.CashCouponOrderListUsed4Ui)
-
 	ui.DELETE("/cashCouponOrder",handler.CashCouponOrderDelete4Ui)
 	ui.POST("/cashCouponOrder",handler.CashCouponOrderPost4Ui)
 	ui.POST("/cashCouponOrderAction/buyFromCashCoupon",handler.CashCouponOrderActionBuyFromCashCoupon4Ui)
 	ui.POST("/cashCouponOrderAction/buyFromCashCouponOrder", handler.CashCouponOrderActionBuyFromCashCouponOrder4Ui)
-
 	//ui.POST("/cashCouponOrderAction/refreshByPayOrderNumber", handler.CashCouponOrderActionRefreshByPayOrderNumber4Ui)
 
-
 	ui.GET("/refund",handler.RefundList4Ui)
-
 	ui.GET("/refundReason",handler.RefundReasonList4Ui)
-
 	ui.POST("/refund",handler.RefundPost4Ui)
 	ui.POST("/refundAction/cancel",handler.RefundCancel4Ui)
 	ui.POST("/refundAction/uploadEvidence", handler.RefundUploadEvidence)
-
 	ui.GET("/present",handler.PresentList4Ui)
-
 	ui.GET("/presentOrder",handler.PresentOrderList4Ui)
 	ui.POST("/presentOrder",handler.PresentOrderPost4Ui)
 
 	open := router.Group("/open", handler.ApiGlobal)
-
 	open.GET("/getServerRootUrl", handler.GetServerRootUrl)
-
 	open.POST("/geetest", handler.GeetestInit)
 	open.POST("/captcha", handler.GetCaptcha)
-
 	open.GET("/getPublicKey", handler.GetPublicKey)
-
 	open.GET("/shop", handler.ShopList4Open)
 	open.GET("/shop/:id", handler.ShopGet4Open)
 	open.GET("/shopClassification", handler.ShopClassificationList4Open)
-
 	open.GET("/advertisement", handler.AdvertisementList4Open)
+	open.GET("/globalTotalCashCouponPrice", handler.GetTotalCashCouponPrice)
 
 	wxpay := open.Group("/wxpay")
 	wxpay.GET("config",handler.WxpayConfig)
@@ -207,8 +198,7 @@ func Begin() {
 	wxpay.POST("notify4UnifiedOrder",handler.WxpayNotifyUnifiedOrder)
 	wxpay.POST("notify4refund",handler.WxpayNotifyRefund)
 
-	wxpay.GET("downloadBill",handler.WxpayDownloadBill)
-
+	//wxpay.GET("downloadBill",handler.WxpayDownloadBill)
 	// Query string parameters are parsed using the existing underlying request object.
 	// The request responds to a url matching:  /welcome?firstname=Jane&lastname=Doe
 	//router.Static("/", "html/1.0.0")

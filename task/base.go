@@ -2,6 +2,7 @@ package task
 
 import (
 	"time"
+	"log"
 )
 // hour [0,23] -1 代表不使用
 //minute[0,59]
@@ -62,5 +63,12 @@ func goFunc(f interface{}, args... interface{}) {
 		go f.(func(interface{}))(args[0])
 	} else {
 		go f.(func())()
+	}
+}
+
+func checkErr(err error) {
+	if err != nil {
+		log.Println(err)
+		panic(err)
 	}
 }

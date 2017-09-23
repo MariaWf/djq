@@ -16,18 +16,19 @@ import (
 //如果是退款处理中（PROCESSING），继续等待，
 // 其他情况，关闭订单
 func CheckRefundingOrder() {
+	FixTimeIntervalCycle(CheckRefundingOrderAction, time.Minute * 1)
+}
+
+func CheckRefundingOrderAction() {
 	serviceRefund := &service.Refund{}
 	argRefund := &arg.Refund{}
 	argRefund.DisplayNames = []string{"refundOrderNumber", "refundBegin"}
-	argRefund.StatusIn = []int{constant.RefundStatusNotUsedRefunding,constant.RefundStatusUsedRefunding}
+	argRefund.StatusIn = []int{constant.RefundStatusNotUsedRefunding, constant.RefundStatusUsedRefunding}
 	argRefund.RefundBeginLT = util.StringTime4DB(time.Now().Add(time.Minute * -1))
 	list, err := service.Find(serviceRefund, argRefund)
 	var refundOrderNumber string
 	serviceObj := &service.Refund{}
-	if err != nil {
-		log.Println(err)
-		goto nextCycle
-	}
+	checkErr(err)
 	for _, obj := range list {
 		refundOrderNumber = obj.(*model.Refund).RefundOrderNumber
 		refundState, _, err := wxpay.RefundQueryResult(refundOrderNumber)
@@ -53,7 +54,4 @@ func CheckRefundingOrder() {
 			}
 		}
 	}
-	nextCycle:
-	time.Sleep(time.Minute * 1)
-	go CheckRefundingOrder()
 }

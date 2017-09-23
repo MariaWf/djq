@@ -39,7 +39,7 @@
       e.addEventListener && (n.addEventListener(o, a, !1), e.addEventListener("DOMContentLoaded", a, !1))
     }(window);</script>
 	
-    <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?7d900a9988ece76d8ef1" rel="stylesheet">
+    <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?bd08bd4caafd61ffd525" rel="stylesheet">
 	
 </head>
 <body>
@@ -56,16 +56,16 @@
     <template id="refund-tpl">
         <div class="refund">
             <div class="refund-logo">
-                <img src="{preImage}" alt="">
+                <img src="{image}" alt="">
             </div>
             <p>{name}</p>
             <div class="refund-info clear">
                 <div class="refund-info-code">编码：<span>{number}</span></div>
-                <div class="refund-up-date">有效期：<span>{expiryDate}</span></div>
+                <div class="refund-up-date">有效期：<span>{expiry}</span></div>
             </div>
-            <div class="refund-info clear">
+            <div class="refund-info clear" style="display: none">
                 <div class="refund-upload">
-                    <input type="file" class="js-file"/>
+                    <input type="file" class="js-file" accept="image/png, image/jpeg"/>
                     <a href="javascript:void(0)">上传凭证</a>
                 </div>
                 <div class="refund-hint">说明：<span>*************</span></div>
@@ -74,9 +74,11 @@
                 <img src="" alt="">
             </div>
             <div class="js-reason-wrapper">
-            
+                <div class="radio-box">
+                    <label><input type="radio" value='其它' name="reason" />其它</label>
+                </div>
             </div>
-            <textarea class="js-text" name="reason" cols="30" rows="10"></textarea>
+            <textarea placeholder="请输入退款理由" disabled class="js-text" name="reason" cols="30" rows="10"></textarea>
             <div style="text-align: center">
                 <a href="javascript:void(0)" class="refund-btn">提交申请</a>
             </div>
@@ -84,7 +86,7 @@
     </template>
     <template id="reason-tpl">
         <div class="radio-box">
-            <label><input type="radio" name="reason" value="{id}" data-desc="{description}"/>{description}</label>
+            <label><input type="radio" name="reason" value="{description}"/>{description}</label>
         </div>
     </template>
 	
@@ -93,7 +95,7 @@
     <script src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 	
 	
-    <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/refund.js?7d900a9988ece76d8ef1"></script>
+    <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/refund.js?bd08bd4caafd61ffd525"></script>
 	
 </body>
 </html>

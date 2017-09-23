@@ -50,12 +50,6 @@ func TestCloseCanceledOrder(t *testing.T) {
 	fmt.Println(len(list))
 }
 
-func checkErr(err error) {
-	if err != nil {
-		fmt.Println(err)
-	}
-}
-
 func TestParseTimeFromDB2(t *testing.T) {
 	conn, _ := mysql.Get()
 	defer mysql.Rollback(conn)
@@ -86,18 +80,41 @@ func TestCheckRefund(t *testing.T) {
 }
 
 func TestCountCashCoupon(t *testing.T) {
-	CountCashCoupon()
+	v1, err := cache.Get(cache.CacheNameGlobalTotalCashCouponNumber)
+	checkErr(err)
+	v2, err := cache.Get(cache.CacheNameGlobalTotalCashCouponPrice)
+	checkErr(err)
+	t.Log(v1, v2)
+	CountCashCouponAction()
+	v3, err := cache.Get(cache.CacheNameGlobalTotalCashCouponNumber)
+	checkErr(err)
+	v4, err := cache.Get(cache.CacheNameGlobalTotalCashCouponPrice)
+	checkErr(err)
+	t.Log(v3, v4)
+}
+
+func TestCountForPromotionalPartnerAction(t *testing.T) {
+	CountForPromotionalPartnerAction()
 }
 
 func TestFixTimeIntervalCycle(t *testing.T) {
 	fmt.Println(time.Now())
 	FixTimeIntervalCycle(func() {
 		fmt.Println(time.Now())
-	},5*time.Second)
+	}, 5 * time.Second)
 }
 
 func TestFixTimeCycle(t *testing.T) {
 	FixTimeCycle(func() {
 		fmt.Println(time.Now())
 	}, -1, -1, 12)
+}
+
+func TestDiv(t *testing.T) {
+	a := 8
+	b := 6
+	c := 100
+	var r int
+	r = int(float32(c) * float32(a) / float32(b))
+	t.Log(r)
 }

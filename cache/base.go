@@ -16,6 +16,9 @@ const (
 	CacheNameWxpayPayOrderNumberConfirm = "wxpay:payOrderNumber:Confirm:"
 	CacheNameWxpayErrorPayOrderNumberConfirm = "wxpay:error:payOrderNumber:Confirm:"
 
+	CacheNameGlobalTotalCashCouponNumber = "globalTotalCashCouponNumber:"
+	CacheNameGlobalTotalCashCouponPrice = "globalTotalCashCouponPrice:"
+
 	cacheHead = "cache:"
 )
 

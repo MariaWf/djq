@@ -39,7 +39,7 @@
       e.addEventListener && (n.addEventListener(o, a, !1), e.addEventListener("DOMContentLoaded", a, !1))
     }(window);</script>
     
-    <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?7d900a9988ece76d8ef1" rel="stylesheet">
+    <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?bd08bd4caafd61ffd525" rel="stylesheet">
 	
 </head>
 <body>
@@ -52,36 +52,25 @@
             </a>
         </header>
         <div class="awards">
+            <p class="awards-hint">选择要参与抽奖的礼品，最多选择12种:</p>
             <ul class="avg-6"></ul>
         </div>
         <div class="game">
             <ul class="avg-4" id="lottery">
                 <li>
-                    <div class="lottery-unit lottery-unit-0 active"></div>
+                    <div data-index='0' class="lottery-unit lottery-unit-0 active"></div>
                 </li>
                 <li>
-                    <div class="lottery-unit lottery-unit-1"></div>
+                    <div data-index='1' class="lottery-unit lottery-unit-1"></div>
                 </li>
                 <li>
-                    <div class="lottery-unit lottery-unit-2"></div>
+                    <div data-index='2' class="lottery-unit lottery-unit-2"></div>
                 </li>
                 <li>
-                    <div class="lottery-unit lottery-unit-3"></div>
+                    <div data-index='3' class="lottery-unit lottery-unit-3"></div>
                 </li>
                 <li>
-                    <div class="lottery-unit lottery-unit-11"></div>
-                </li>
-                <li>
-                    <div class=""></div>
-                </li>
-                <li>
-                    <div class=""></div>
-                </li>
-                <li>
-                    <div class="lottery-unit lottery-unit-4"></div>
-                </li>
-                <li>
-                    <div class="lottery-unit lottery-unit-10"></div>
+                    <div data-index='11' class="lottery-unit lottery-unit-11"></div>
                 </li>
                 <li>
                     <div class=""></div>
@@ -90,22 +79,34 @@
                     <div class=""></div>
                 </li>
                 <li>
-                    <div class="lottery-unit lottery-unit-5"></div>
+                    <div data-index='4' class="lottery-unit lottery-unit-4"></div>
                 </li>
                 <li>
-                    <div class="lottery-unit lottery-unit-9"></div>
+                    <div data-index='10' class="lottery-unit lottery-unit-10"></div>
                 </li>
                 <li>
-                    <div class="lottery-unit lottery-unit-8"></div>
+                    <div class=""></div>
                 </li>
                 <li>
-                    <div class="lottery-unit lottery-unit-7"></div>
+                    <div class=""></div>
                 </li>
                 <li>
-                    <div class="lottery-unit lottery-unit-6"></div>
+                    <div data-index='5' class="lottery-unit lottery-unit-5"></div>
+                </li>
+                <li>
+                    <div data-index='9' class="lottery-unit lottery-unit-9"></div>
+                </li>
+                <li>
+                    <div data-index='8' class="lottery-unit lottery-unit-8"></div>
+                </li>
+                <li>
+                    <div data-index='7' class="lottery-unit lottery-unit-7"></div>
+                </li>
+                <li>
+                    <div data-index='6' class="lottery-unit lottery-unit-6"></div>
                 </li>
             </ul>
-            <a href="javascript:void(0)" class="game-btn">开始抽奖</a>
+            <a href="javascript:void(0)" class="game-btn">开始抽奖<span class="present-chance">0</span></a>
         </div>
         <div class="award-list">
         </div>
@@ -116,15 +117,17 @@
     <template id="order-tpl">
         <div class="award">
             <div class="award-img">
-                <img src="{image}" alt="">
+                <img src="{present.image}" alt="">
             </div>
             <div class="award-info">
-                <p class="award-name">{name}</p>
-                <p>{address}</p>
+                <p class="award-name">{present.name}</p>
+                <p class="award-number">编码：<span>{number}</span></p>
+                <p class="award-up-date">有效期：<span>{present.expiryDate}</span></p>
+                <p>地址：{present.address}</p>
             </div>
             <div class="award-status">
                 <p>{statusText}</p>
-                <p class="award-up-date">有效期：<span>{expiryDate}</span></p>
+                <!--<p class="award-up-date">有效期：<span>{present.expiryDate}</span></p>-->
             </div>
         </div>
     </template>
@@ -134,7 +137,7 @@
     <script src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 	
 	
-    <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/award.js?7d900a9988ece76d8ef1"></script>
+    <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/award.js?bd08bd4caafd61ffd525"></script>
 	
 </body>
 </html>

@@ -33,9 +33,11 @@ func main() {
 }
 
 func beginTask(){
-	//go task.CheckPayingOrder()
-	//go task.CheckRefundingOrder()
+	go task.CheckPayingOrder()
+	go task.CheckRefundingOrder()
 	go task.AgreeNotUsedRefunding()
+	go task.CountCashCoupon()
+	go task.CountForPromotionalPartner()
 }
 
 func initLog() {

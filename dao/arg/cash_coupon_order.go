@@ -11,9 +11,13 @@ type CashCouponOrder struct {
 	OrderBy             string
 	IdsIn               []string
 	UserIdEqual         string `form:"userId" json:"userId"`
+	UserIdsIn           []string
 
 	NumberEqual         string  `form:"keyword" json:"keyword"`
 	StatusEqual         string `form:"status" json:"status"`
+	StatusIn            []int
+
+	CashCouponIdsIn     []string
 
 	PayBeginGT          string
 	PayBeginLT          string
@@ -131,6 +135,48 @@ func (arg *CashCouponOrder) getCountConditions() (string, []interface{}) {
 		}
 		sql += " status = ?"
 		params = append(params, arg.StatusEqual)
+	}
+	if arg.StatusIn != nil && len(arg.StatusIn) != 0 {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " status in ("
+		for i, status := range arg.StatusIn {
+			if i != 0 {
+				sql += ","
+			}
+			sql += "?"
+			params = append(params, status)
+		}
+		sql += ")"
+	}
+	if arg.UserIdsIn != nil && len(arg.UserIdsIn) != 0 {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " user_id in ("
+		for i, userId := range arg.UserIdsIn {
+			if i != 0 {
+				sql += ","
+			}
+			sql += "?"
+			params = append(params, userId)
+		}
+		sql += ")"
+	}
+	if arg.CashCouponIdsIn != nil && len(arg.CashCouponIdsIn) != 0 {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " cash_coupon_id in ("
+		for i, cashCouponId := range arg.CashCouponIdsIn {
+			if i != 0 {
+				sql += ","
+			}
+			sql += "?"
+			params = append(params, cashCouponId)
+		}
+		sql += ")"
 	}
 	if arg.PayBeginLT != "" {
 		if sql != "" {

@@ -13,6 +13,7 @@ import (
 	"math/rand"
 	"strconv"
 	"mimi/djq/aliyun"
+	"mimi/djq/cache"
 )
 
 func NotFound(c *gin.Context) {
@@ -142,6 +143,17 @@ func GetCaptcha(c *gin.Context){
 	}
 	result := util.BuildSuccessResult(mobile)
 	//result := util.BuildSuccessResult(captcha)
+	c.JSON(http.StatusOK, result)
+}
+
+func GetTotalCashCouponPrice(c *gin.Context){
+	price,err := cache.Get(cache.CacheNameGlobalTotalCashCouponPrice)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(price)
 	c.JSON(http.StatusOK, result)
 }
 

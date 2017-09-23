@@ -39,7 +39,7 @@
       e.addEventListener && (n.addEventListener(o, a, !1), e.addEventListener("DOMContentLoaded", a, !1))
     }(window);</script>
 	
-    <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?7d900a9988ece76d8ef1" rel="stylesheet">
+    <link href="http://djq.tunnel.qydev.com/html/ui/static/css/style.css?bd08bd4caafd61ffd525" rel="stylesheet">
 	
 </head>
 <body>
@@ -55,15 +55,15 @@
     </div>
     <template id="voucher-tpl">
         <div class="voucher" data-id="{id}">
-            <div class="voucher-logo"><img src="" class="_air_img" data-air-img="{preImage}" alt=""></div>
+            <div class="voucher-logo"><img src="" class="_air_img" data-air-img="{cashCouponOrder.cashCoupon.preImage}" alt=""></div>
             <div class="clear">
                 <div class="voucher-left">
-                    <p>{name}</p>
-                    <p>编码：<span>{number}</span></p>
+                    <p>{cashCouponOrder.cashCoupon.shop.name}</p>
+                    <p>编码：<span>{cashCouponOrder.number}</span></p>
                 </div>
                 <div class="voucher-right">
                     <p class="voucher-status">{statusText}</p>
-                    <p class="voucher-up-date">有效期：<span>{expiryDate}</span></p>
+                    <p class="voucher-up-date">有效期：<span>{cashCouponOrder.cashCoupon.expiryDate}</span></p>
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@
     <script src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 	
 	
-    <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/record.js?7d900a9988ece76d8ef1"></script>
+    <script type="text/javascript" src="http://djq.tunnel.qydev.com/html/ui/static/js/record.js?bd08bd4caafd61ffd525"></script>
 	
 </body>
 </html>

@@ -16,6 +16,10 @@ import (
 // 如果支付结果为已支付，确认该订单，
 // 其他情况若且离开始时间超过10分钟，关闭订单
 func CheckPayingOrder() {
+	FixTimeIntervalCycle(CheckPayingOrderAction, time.Minute * 1)
+}
+
+func CheckPayingOrderAction() {
 	serviceCashCouponOrder := &service.CashCouponOrder{}
 	argCashCouponOrder := &arg.CashCouponOrder{}
 	argCashCouponOrder.DisplayNames = []string{"payOrderNumber", "payBegin"}
@@ -24,10 +28,7 @@ func CheckPayingOrder() {
 	list, err := service.Find(serviceCashCouponOrder, argCashCouponOrder)
 	var payOrderNumber string
 	serviceObj := &service.CashCouponOrder{}
-	if err != nil {
-		log.Println(err)
-		goto nextCycle
-	}
+	checkErr(err)
 	for _, obj := range list {
 		payOrderNumber = obj.(*model.CashCouponOrder).PayOrderNumber
 		tradeState, totalFee, err := wxpay.OrderQueryResult(payOrderNumber)
@@ -60,7 +61,4 @@ func CheckPayingOrder() {
 			}
 		}
 	}
-	nextCycle:
-	time.Sleep(time.Minute * 1)
-	go CheckPayingOrder()
 }
