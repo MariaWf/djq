@@ -79,6 +79,15 @@ func WxpayGetOpenId(c *gin.Context) {
 			openId = values["openid"].(string)
 			sn.Set(session.SessionNameUiUserOpenId, openId)
 			http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserOpenId, Value: openId, Path: "/", MaxAge: sn.CookieMaxAge})
+
+			sn2, err := session.GetSi(c.Writer, c.Request)
+			if err != nil {
+				log.Println(err)
+				c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrWxpayGetOpenIdFail.Error()))
+				return
+			}
+			sn2.Set(session.SessionNameSiShopAccountOpenId, openId)
+			http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountOpenId, Value: openId, Path: "/", MaxAge: sn.CookieMaxAge})
 		}
 	}
 	c.JSON(http.StatusOK, util.BuildSuccessResult(openId))
@@ -260,10 +269,10 @@ func WxpayConfig(c *gin.Context) {
 		return
 	}
 	params.SetString("appId", client.AppId)
-	params.SetString("title", "标题mimi")
-	params.SetString("link", "www.baidu.com")
-	params.SetString("desc", "描述mimi")
-	params.SetString("imgUrl", "https://www.baidu.com/img/bd_logo1.png")
+	params.SetString("title", "摩设")
+	params.SetString("link", config.Get("server_root_url"))
+	params.SetString("desc", "摩设共享设计装修平台")
+	params.SetString("imgUrl", util.PathAppend(config.Get("server_root_url"), "html/ui/static/img/", "logo_head_md_square.png"))
 	result := util.BuildSuccessResult(params)
 	c.JSON(http.StatusOK, result)
 }

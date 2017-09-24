@@ -8,7 +8,7 @@ type PromotionalPartner struct {
 	Description string `form:"description" json:"description" db:"description" desc:"描述"`
 	TotalUser   int `form:"totalUser" json:"totalUser" db:"image" desc:"用户数"`
 	TotalPrice  int `form:"totalPrice" json:"totalPrice" db:"name" desc:"收益金额"`
-	TotalPay    int    `form:"priority" json:"totalPay" db:"totalPay" desc:"已提现金额"`
+	TotalPay    int    `form:"totalPay" json:"totalPay" db:"totalPay" desc:"已提现金额"`
 }
 
 func (obj *PromotionalPartner) GetId() string {

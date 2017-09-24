@@ -1,20 +1,43 @@
 package task
 
 import (
-	"time"
 	"mimi/djq/service"
 	"mimi/djq/dao/arg"
 	"mimi/djq/model"
 	"mimi/djq/cache"
 	"mimi/djq/constant"
+	"log"
 )
 
 //每天凌晨3点统计商家代金券消费数据
 func CountCashCoupon() {
+	err := cache.Set(cache.CacheNameCashCouponOrderCounting, "false", 0)
+	if err != nil {
+		log.Println(err)
+	}
 	FixTimeCycle(CountCashCouponAction, 3, 0, 0)
 }
 
 func CountCashCouponAction() {
+	lock.Lock()
+	counting, err := cache.Get(cache.CacheNameCashCouponOrderCounting)
+	if err != nil {
+		lock.Unlock()
+		checkErr(err)
+	}
+	if counting == "true" {
+		lock.Unlock()
+		return
+	}
+	counting = "true"
+	err = cache.Set(cache.CacheNameCashCouponOrderCounting, counting, 0)
+	if err != nil {
+		lock.Unlock()
+		checkErr(err)
+	}
+	lock.Unlock()
+	defer cache.Set(cache.CacheNameCashCouponOrderCounting, "false", 0)
+
 	serviceShop := &service.Shop{}
 	argShop := &arg.Shop{}
 	shopListO, err := service.Find(serviceShop, argShop)
@@ -67,6 +90,6 @@ func CountCashCouponAction() {
 		globalTotalCashCouponNumber += shop.TotalCashCouponNumber
 		globalTotalCashCouponPrice += shop.TotalCashCouponPrice
 	}
-	cache.Set(cache.CacheNameGlobalTotalCashCouponNumber, globalTotalCashCouponNumber, time.Hour * 24 * 350)
-	cache.Set(cache.CacheNameGlobalTotalCashCouponPrice, globalTotalCashCouponPrice, time.Hour * 24 * 350)
+	cache.Set(cache.CacheNameGlobalTotalCashCouponNumber, globalTotalCashCouponNumber, 0)
+	cache.Set(cache.CacheNameGlobalTotalCashCouponPrice, globalTotalCashCouponPrice, 0)
 }

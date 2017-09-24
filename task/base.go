@@ -3,7 +3,11 @@ package task
 import (
 	"time"
 	"log"
+	"sync"
 )
+
+var lock = sync.Mutex{}
+
 // hour [0,23] -1 代表不使用
 //minute[0,59]
 //second[0,59]

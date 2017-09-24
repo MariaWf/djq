@@ -4,6 +4,9 @@ import (
 	"testing"
 	"mimi/djq/util"
 	"math/rand"
+	"net"
+	"fmt"
+	"os"
 )
 
 func TestGetSignKey(t *testing.T) {
@@ -53,5 +56,20 @@ func TestGetSignatureMap(t *testing.T) {
 		t.Error(err)
 	}else{
 		t.Log(obj)
+	}
+}
+
+func TestGetClientIp(t *testing.T){
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	for _, addr := range addrs {
+		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				fmt.Println(ipnet.IP.String())
+			}
+		}
 	}
 }

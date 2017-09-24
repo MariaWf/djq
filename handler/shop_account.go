@@ -136,8 +136,14 @@ func ShopAccountGetMoney4Si(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
 		return
 	}
+	openId, err := sn.Get(session.SessionNameSiShopAccountOpenId)
+	if err != nil || shopAccountId == "" {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
 	serviceObj := &service.ShopAccount{}
-	money, err := serviceObj.GetMoney(shopAccountId)
+	money, err := serviceObj.GetMoney(shopAccountId,openId)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))

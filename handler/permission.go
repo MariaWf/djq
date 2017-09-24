@@ -294,6 +294,24 @@ func PermissionRefundReasonD(c *gin.Context) {
 	checkPermission(c, "refundReason_d")
 }
 
+
+func PermissionIndexContactWayManage(c *gin.Context) {
+	checkPermission(c, "indexContactWay_manage")
+}
+
+func PermissionPromotionalPartnerManage(c *gin.Context) {
+	checkPermission(c, "promotionalPartner_manage")
+}
+
+func PermissionShopAccountRedPackManage(c *gin.Context) {
+	checkPermission(c, "shopAccountRedPack_manage")
+}
+
+func PermissionCashCouponOrderCountManage(c *gin.Context) {
+	checkPermission(c, "cashCouponOrderCount_manage")
+}
+
+
 //func PermissionCashCouponC(c *gin.Context) {
 //	checkPermission(c, "cashCoupon_c")
 //}

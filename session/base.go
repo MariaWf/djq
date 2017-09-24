@@ -22,6 +22,7 @@ const (
 
 	SessionNameSiShopAccountId = "siShopAccountId"
 	SessionNameSiShopAccountName = "siShopAccountName"
+	SessionNameSiShopAccountOpenId = "siShopAccountOpenId"
 )
 
 func GetMi(w http.ResponseWriter, r *http.Request) (*Session, error) {

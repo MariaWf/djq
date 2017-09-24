@@ -37,7 +37,7 @@ func GetPermissionList() []*Permission {
 		{"cashCoupon_r", "查看代金券信息", "查看代金券信息"},
 		{"cashCoupon_u", "更新代金券信息", "更新代金券信息"},
 		{"cashCoupon_d", "删除代金券信息", "删除代金券信息"},
-		
+
 		{"promotionalPartner_c", "添加推广伙伴信息", "添加推广伙伴信息"},
 		{"promotionalPartner_r", "查看推广伙伴信息", "查看推广伙伴信息"},
 		{"promotionalPartner_u", "更新推广伙伴信息", "更新推广伙伴信息"},
@@ -71,5 +71,11 @@ func GetPermissionList() []*Permission {
 		{"refundReason_c", "添加退款理由信息", "添加退款理由信息"},
 		{"refundReason_r", "查看退款理由信息", "查看退款理由信息"},
 		{"refundReason_u", "更新退款理由信息", "更新退款理由信息"},
-		{"refundReason_d", "删除退款理由信息", "删除退款理由信息"}}
+		{"refundReason_d", "删除退款理由信息", "删除退款理由信息"},
+
+		{"indexContactWay_manage", "联系方式维护", "联系方式维护"},
+		{"promotionalPartner_manage", "合作伙伴维护", "合作伙伴维护"},
+		{"shopAccountRedPack_manage", "商家账号红包维护", "商家账号红包维护"},
+		{"cashCouponOrderCount_manage", "代金券订单统计维护", "代金券订单统计维护"}}
+
 }

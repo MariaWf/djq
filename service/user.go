@@ -18,6 +18,46 @@ func (service *User) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
 	return &dao.User{conn}
 }
 
+func (service *User) SharedActionResponse(id string) (err error) {
+	if id == ""{
+		err = ErrIdEmpty
+		log.Println(err)
+		return
+	}
+	conn, err := mysql.Get()
+	if err != nil {
+		err = checkErr(err)
+		log.Println(err)
+		return
+	}
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+	daoObj := service.GetDaoInstance(conn)
+	userO,err := dao.Get(daoObj,id)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		log.Println(err)
+		return
+	}
+	user := userO.(*model.User)
+	if user.Shared{
+		rollback = true
+		return
+	}else{
+		user.Shared = true
+		user.PresentChance = user.PresentChance+1
+		_,err = dao.Update(daoObj,user,"shared","presentChance")
+		if err != nil {
+			rollback = true
+			err = checkErr(err)
+			log.Println(err)
+			return
+		}
+	}
+	return
+}
+
 func (service *User) Register(obj *model.User) (user *model.User, err error) {
 	user = obj
 	if obj == nil {

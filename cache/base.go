@@ -10,14 +10,22 @@ import (
 var ErrNameIsEmpty = errors.New("缓存名称为空")
 
 const (
-	CacheNameWxpayPayOrderNumberCancel = "wxpay:payOrderNumber:Cancel:"
-	CacheNameWxpayErrorPayOrderNumberCancel = "wxpay:error:payOrderNumber:Cancel:"
-
-	CacheNameWxpayPayOrderNumberConfirm = "wxpay:payOrderNumber:Confirm:"
-	CacheNameWxpayErrorPayOrderNumberConfirm = "wxpay:error:payOrderNumber:Confirm:"
-
 	CacheNameGlobalTotalCashCouponNumber = "globalTotalCashCouponNumber:"
 	CacheNameGlobalTotalCashCouponPrice = "globalTotalCashCouponPrice:"
+	CacheNameGlobalTotalCashCouponPriceHide = "globalTotalCashCouponPriceHide:"
+	CacheNameCashCouponOrderCounting = "cashCouponOrderCounting"
+
+	CacheNameShopRedPackHide = "shopRedPackHide:"
+	CacheNamePromotionalPartnerRate = "promotionalPartnerRate:"
+
+	CacheNamePromotionalPartnerCounting = "promotionalPartnerCounting:"
+
+	CacheNameIndexContactWayNumber = "contactIndexWayNumber:"
+	CacheNameIndexContactWayHide = "contactIndexWayHide:"
+
+	CacheNameCheckingRefundingOrder = "checkingRefundingOrder:"
+	CacheNameCheckingPayingOrder = "checkingPayingOrder:"
+	CacheNameAgreeingNotUsedRefunding = "agreeingNotUsedRefunding:"
 
 	cacheHead = "cache:"
 )
@@ -53,7 +61,7 @@ func FindKeys(pattern string) ([]string, error) {
 	}
 	newKeys := make([]string, len(keys), len(keys))
 	for i, key := range keys {
-		newKeys[i] = strings.TrimLeft( key,cacheHead)
+		newKeys[i] = strings.TrimLeft(key, cacheHead)
 	}
 	return newKeys, nil
 }
@@ -63,7 +71,7 @@ func Expire(name string, expiration time.Duration) (bool, error) {
 	return conn.Expire(GetKey(name), expiration).Result()
 }
 
-func GetExpire(name string) (time.Duration, error){
+func GetExpire(name string) (time.Duration, error) {
 	conn := redis.Get()
 	return conn.TTL(GetKey(name)).Result()
 }

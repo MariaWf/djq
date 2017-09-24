@@ -8,14 +8,38 @@ import (
 	"mimi/djq/constant"
 	"log"
 	"mimi/djq/model"
+	"mimi/djq/cache"
 )
 
 //定时自动同意未使用代金券订单的退款申请
 func AgreeNotUsedRefunding() {
+	err := cache.Set(cache.CacheNameAgreeingNotUsedRefunding, "false", 0)
+	if err != nil {
+		log.Println(err)
+	}
 	FixTimeIntervalCycle(AgreeNotUsedRefundingAction, time.Minute * 30)
 }
 
 func AgreeNotUsedRefundingAction() {
+	lock.Lock()
+	counting, err := cache.Get(cache.CacheNameAgreeingNotUsedRefunding)
+	if err != nil {
+		lock.Unlock()
+		checkErr(err)
+	}
+	if counting == "true" {
+		lock.Unlock()
+		return
+	}
+	counting = "true"
+	err = cache.Set(cache.CacheNameAgreeingNotUsedRefunding, counting, 0)
+	if err != nil {
+		lock.Unlock()
+		checkErr(err)
+	}
+	lock.Unlock()
+	defer cache.Set(cache.CacheNameAgreeingNotUsedRefunding, "false", 0)
+
 	serviceRefund := &service.Refund{}
 	argRefund := &arg.Refund{}
 	argRefund.StatusEqual = strconv.Itoa(constant.RefundStatusNotUsedRefunding)

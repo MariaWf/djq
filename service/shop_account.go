@@ -10,6 +10,7 @@ import (
 	"mimi/djq/dao/arg"
 	"mimi/djq/db/mysql"
 	"math/rand"
+	"mimi/djq/wxpay"
 )
 
 type ShopAccount struct {
@@ -19,10 +20,14 @@ func (service *ShopAccount) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
 	return &dao.ShopAccount{conn}
 }
 
-func (service *ShopAccount) GetMoney(shopAccountId string) (money int, err error) {
+func (service *ShopAccount) GetMoney(shopAccountId, openId string) (money int, err error) {
 	//mimi_todo 接上微信发红包接口
 	if shopAccountId == "" {
 		err = errors.New("未知商户")
+	}
+	if openId == "" {
+		err = errors.New("未知微信openId")
+		return
 	}
 	conn, err := mysql.Get()
 	if err != nil {
@@ -48,6 +53,12 @@ func (service *ShopAccount) GetMoney(shopAccountId string) (money int, err error
 	shopAccount.MoneyChance = shopAccount.MoneyChance - 1
 	shopAccount.TotalMoney = shopAccount.TotalMoney + money
 	_, err = dao.Update(daoObj, shopAccount, "moneyChance", "totalMoney")
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	err = wxpay.SendRedPackResult(openId,money)
 	if err != nil {
 		rollback = true
 		err = checkErr(err)

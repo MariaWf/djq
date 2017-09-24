@@ -93,6 +93,15 @@ func TestCountCashCoupon(t *testing.T) {
 	t.Log(v3, v4)
 }
 
+func TestCountCashCoupon2(t *testing.T) {
+	cache.Set(cache.CacheNameCashCouponOrderCounting, "false", 0)
+	for i:=0;i<10;i++{
+		go CountCashCouponAction()
+		//time.Sleep(1*time.Second)
+	}
+	time.Sleep(10*time.Second)
+}
+
 func TestCountForPromotionalPartnerAction(t *testing.T) {
 	CountForPromotionalPartnerAction()
 }

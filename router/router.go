@@ -144,6 +144,22 @@ func Begin() {
 	miRefundReason.PATCH("/:id", handler.PermissionRefundReasonU, handler.RefundReasonPatch)
 	miRefundReason.DELETE("/", handler.PermissionRefundReasonD, handler.RefundReasonDelete)
 
+
+	mi.GET("/shopAccountAction/maintenanceStatusGet", handler.PermissionShopAccountRedPackManage, handler.ShopAccountActionMaintenanceStatusGet)
+	mi.POST("/shopAccountAction/maintenanceStatusPost", handler.PermissionShopAccountRedPackManage, handler.ShopAccountActionMaintenanceStatusPost)
+
+	mi.GET("/promotionalPartnerAction/maintenanceStatusGet", handler.PermissionPromotionalPartnerManage, handler.PromotionalPartnerActionMaintenanceStatusGet)
+	mi.POST("/promotionalPartnerAction/maintenanceStatusPost", handler.PermissionPromotionalPartnerManage, handler.PromotionalPartnerActionMaintenanceStatusPost)
+	mi.POST("/promotionalPartnerAction/countNow", handler.PermissionPromotionalPartnerManage, handler.PromotionalPartnerActionCountNow)
+
+	mi.GET("/indexContactWayAction/maintenanceStatusGet", handler.PermissionIndexContactWayManage, handler.IndexContactWayActionMaintenanceStatusGet)
+	mi.POST("/indexContactWayAction/maintenanceStatusPost", handler.PermissionIndexContactWayManage, handler.IndexContactWayActionMaintenanceStatusPost)
+
+	mi.GET("/cashCouponOrderAction/maintenanceStatusGet", handler.PermissionCashCouponOrderCountManage, handler.CashCouponOrderActionMaintenanceStatusGet)
+	mi.POST("/cashCouponOrderAction/maintenanceStatusPost", handler.PermissionCashCouponOrderCountManage, handler.CashCouponOrderActionMaintenanceStatusPost)
+	mi.POST("/cashCouponOrderAction/countNow", handler.PermissionCashCouponOrderCountManage, handler.CashCouponOrderActionCountNow)
+
+
 	si := router.Group("/si", handler.ApiGlobal, handler.ShopAccountCheckLogin)
 	si.POST("/login", handler.ShopAccountLogin)
 	si.POST("/logout", handler.ShopAccountLogout)
@@ -189,6 +205,13 @@ func Begin() {
 	open.GET("/shopClassification", handler.ShopClassificationList4Open)
 	open.GET("/advertisement", handler.AdvertisementList4Open)
 	open.GET("/globalTotalCashCouponPrice", handler.GetTotalCashCouponPrice)
+
+	open.GET("/shopAccountAction/maintenanceStatusGet", handler.ShopAccountActionMaintenanceStatusGet)
+	open.GET("/indexContactWayAction/maintenanceStatusGet", handler.IndexContactWayActionMaintenanceStatusGet)
+	open.GET("/cashCouponOrderAction/maintenanceStatusGet", handler.CashCouponOrderActionMaintenanceStatusGet)
+	//open.GET("/promotionalPartnerAction/MaintenanceStatusGet", handler.PromotionalPartnerActionMaintenanceStatusGet)
+
+	open.POST("/shareTimelineResponse",handler.UserActionShareTimelineResponse)
 
 	wxpay := open.Group("/wxpay")
 	wxpay.GET("config",handler.WxpayConfig)

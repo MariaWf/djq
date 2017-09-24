@@ -137,6 +137,34 @@ func UserCheckLogin(c *gin.Context) {
 	}
 }
 
+func UserActionShareTimelineResponse(c *gin.Context) {
+	sn, err := session.GetUi(c.Writer, c.Request)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	id, err := sn.Get(session.SessionNameUiUserId)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	serviceObj := &service.User{}
+	if id==""{
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("未知用户"))
+		return
+	}
+	err = serviceObj.SharedActionResponse(id)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
+		return
+	}
+	result := util.BuildSuccessResult("")
+	c.JSON(http.StatusOK, result)
+}
+
 func UserGet4Ui(c *gin.Context) {
 	sn, err := session.GetUi(c.Writer, c.Request)
 	if err != nil {
@@ -144,7 +172,7 @@ func UserGet4Ui(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	id,err := sn.Get(session.SessionNameUiUserId)
+	id, err := sn.Get(session.SessionNameUiUserId)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))

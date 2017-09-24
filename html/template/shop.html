@@ -19,6 +19,8 @@
     <button type="button" onclick="logout()">登出</button>
     <div id="popup-captcha"></div>
     <button type="button" onclick="postTest()">post</button>
+    <button type="button" onclick="wxLogin()">微信登录</button>
+    <button type="button" onclick="getRedPack()">收红包</button>
 </form>
 <br/>
 <textarea id="resultMsg" style="width:600px;height:400px"></textarea>
@@ -28,6 +30,71 @@
     alert(getCookie("siShopAccountId"))
     var gt_server_status;
     var user_id;
+
+    var appId = ""
+    var targetUrl = window.location.href
+    if (targetUrl.indexOf("?")!=-1){
+        targetUrl = targetUrl.substring(0,targetUrl.indexOf("?"))
+    }
+    $(function () {
+        $.ajax({
+            type: 'get',
+            url: "/open/wxpay/config",
+            dataType: "json",
+            success: function (data) {
+                if (data.status == 1) {
+                    config = data.result
+                    appId = config.appId
+                }
+            }
+        })
+    })
+
+    function wxLogin(){
+        if (appId == ""){
+            return
+        }
+        if (getCookie("siUserOpenId") == null){
+            url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid={appId}&redirect_uri={targetUrl}&response_type=code&scope=snsapi_base&state=123#wechat_redirect'
+            url = url.replace(/{appId}/, appId)
+            url = url.replace(/{targetUrl}/, encodeURIComponent(targetUrl))
+            window.location.href = url
+        }else{
+            alert(getCookie("siUserOpenId"))
+        }
+    }
+
+    function getOpenId(){
+        code = GetQueryString("code")
+        if (code!=null){
+            $.ajax({
+                type: 'GET',
+                url: "/open/wxpay/getOpenId",
+                dataType: "json",
+                data: {code: code},
+                success: function (data) {
+                    if (data.status == 1) {
+                        openId = data.result
+//                        alert(openId+"_"+getCookie("uiUserOpenId"))
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error: function (data) {
+                    alert("获取微信OPENID失败");
+                },
+                complete: function () {
+                }
+            });
+        }
+    }
+    getOpenId()
+    function GetQueryString(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]); return null;
+    }
     var handlerPopup = function (captchaObj) {
         $("#loginBtn").click(function () {
             var validate = captchaObj.getValidate();
@@ -157,8 +224,32 @@
         else
             return null;
     }
-
     function postTest() {
+        $.ajax({
+            type: 'POST',
+            url: "/si/getMoney",
+            data: {name: "mimi"},
+            async: true,
+            cache: false,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.status == 1) {
+                    alert(data.result)
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (data) {
+                alert("Post失败");
+            },
+            complete: function () {
+            }
+        });
+    }
+
+    function getRedPack() {
         $.ajax({
             type: 'POST',
             url: "/si/getMoney",
