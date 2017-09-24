@@ -73,6 +73,7 @@ func ShopAccountLogout(c *gin.Context) {
 	}
 	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountId, Value: "", Path: "/", MaxAge: -1})
 	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountName, Value: "", Path: "/", MaxAge: -1})
+	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountOpenId, Value: "", Path: "/", MaxAge: -1})
 	result := util.BuildSuccessResult(nil)
 	c.JSON(http.StatusOK, result)
 }

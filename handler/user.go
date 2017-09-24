@@ -113,6 +113,8 @@ func UserLogout(c *gin.Context) {
 	}
 	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserId, Value: "", Path: "/", MaxAge: -1})
 	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserMobile, Value: "", Path: "/", MaxAge: -1})
+	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserOpenId, Value: "", Path: "/", MaxAge: -1})
+
 	result := util.BuildSuccessResult(nil)
 	c.JSON(http.StatusOK, result)
 }
