@@ -13,6 +13,7 @@ type Present struct {
 	Requirement int           `form:"requirement" json:"requirement" db:"requirement" desc:"需求"`
 	Weight      int           `form:"weight" json:"weight" db:"weight" desc:"抽奖权重"`
 	ExpiryDate  string        `form:"expiryDate" json:"expiryDate" db:"expiry_date" desc:"有效时间"`
+	Expired     bool          `form:"expired" json:"expired" db:"expired" desc:"已过期"`
 	Hide        bool          `form:"hide" json:"hide" db:"hide" desc:"隐藏"`
 }
 
@@ -29,11 +30,11 @@ func (obj *Present) GetTableName() string {
 }
 
 func (obj *Present) GetDBNames() []string {
-	return []string{"id", "name", "image", "address", "stock", "requirement", "weight", "expiry_date", "hide"}
+	return []string{"id", "name", "image", "address", "stock", "requirement", "weight", "expiry_date","expired", "hide"}
 }
 
 func (obj *Present) GetMapNames() []string {
-	return []string{"id", "name", "image", "address", "stock", "requirement", "weight", "expiryDate", "hide"}
+	return []string{"id", "name", "image", "address", "stock", "requirement", "weight", "expiryDate","expired", "hide"}
 }
 
 func (obj *Present) GetValue4Map(name string) interface{} {
@@ -46,6 +47,7 @@ func (obj *Present) GetValue4Map(name string) interface{} {
 	case "requirement": return obj.Requirement
 	case "weight": return obj.Weight
 	case "expiryDate": return obj.ExpiryDate
+	case "expired": return obj.Expired
 	case "hide": return obj.Hide
 	}
 	panic(errors.New("对象present属性[" + name + "]不存在"))
@@ -69,6 +71,7 @@ func (obj *Present) GetPointer4DB(name string) interface{} {
 	case "requirement": return &obj.Requirement
 	case "weight": return &obj.Weight
 	case "expiry_date": return &obj.ExpiryDate
+	case "expired": return &obj.Expired
 	case "hide": return &obj.Hide
 	}
 	panic(errors.New("对象present属性[" + name + "]不存在"))
@@ -84,6 +87,7 @@ func (obj *Present) GetValue4DB(name string) interface{} {
 	case "requirement": return obj.Requirement
 	case "weight": return obj.Weight
 	case "expiry_date": return obj.ExpiryDate
+	case "expired": return obj.Expired
 	case "hide": return obj.Hide
 	}
 	panic(errors.New("对象present属性[" + name + "]不存在"))

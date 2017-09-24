@@ -53,6 +53,11 @@ func (service *PresentOrder) Complete(id string) (err error) {
 		return
 	}
 	present := presentO.(*model.Present)
+	if present.Expired{
+		rollback = true
+		err = errors.New("礼品已过期")
+		return
+	}
 	if present.Stock < 1 || present.Requirement < 1 {
 		rollback = true
 		err = errors.New("礼品存货异常")

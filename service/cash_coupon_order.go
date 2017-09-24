@@ -74,6 +74,11 @@ func (service *CashCouponOrder) Complete(shopAccountId, id string) (err error) {
 		err = errors.New("代金券不属于本店")
 		return
 	}
+	if cashCoupon.Expired{
+		rollback = true
+		err = errors.New("代金券已过期")
+		return
+	}
 	cashCouponOrder.Status = constant.CashCouponOrderStatusUsed
 	_, err = dao.Update(daoObj, cashCouponOrder, "status")
 	if err != nil {

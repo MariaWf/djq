@@ -12,6 +12,7 @@ type Advertisement struct {
 	OrderBy        string
 	IdsIn          []string
 
+	HideEqual      string `form:"hide" json:"hide"`
 	NotIncludeHide bool
 
 	PageSize       int `form:"pageSize" json:"pageSize"`
@@ -118,6 +119,13 @@ func (arg *Advertisement) getCountConditions() (string, []interface{}) {
 		}
 		sql += " hide = ?"
 		params = append(params, false)
+	}
+	if arg.HideEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " hide = ?"
+		params = append(params, arg.HideEqual == "true")
 	}
 	if len(params) != 0 {
 		sql = " where" + sql

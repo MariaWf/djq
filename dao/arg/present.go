@@ -16,8 +16,13 @@ type Present struct {
 
 	Enough           bool
 	NotIncludeHide   bool
+	HideEqual        string `form:"hide" json:"hide"`
+
 	OverExpiryDate   bool
 	BeforeExpiryDate bool
+	ExpiredOnly      bool
+	UnexpiredOnly    bool
+	ExpiredEqual     string `form:"expired" json:"expired"`
 
 	PageSize         int `form:"pageSize" json:"pageSize"`
 	TargetPage       int `form:"targetPage" json:"targetPage"`
@@ -117,6 +122,20 @@ func (arg *Present) getCountConditions() (string, []interface{}) {
 		sql += " name = ?"
 		params = append(params, arg.NameEqual)
 	}
+	if arg.ExpiredEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " expired = ?"
+		params = append(params, arg.ExpiredEqual == "true")
+	}
+	if arg.ExpiredOnly || arg.UnexpiredOnly {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " expired = ?"
+		params = append(params, arg.ExpiredOnly)
+	}
 	if arg.OverExpiryDate {
 		if sql != "" {
 			sql += " and"
@@ -138,7 +157,14 @@ func (arg *Present) getCountConditions() (string, []interface{}) {
 		sql += " hide = ?"
 		params = append(params, false)
 	}
-	if arg.Enough{
+	if arg.HideEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " hide = ?"
+		params = append(params, arg.HideEqual == "true")
+	}
+	if arg.Enough {
 		if sql != "" {
 			sql += " and"
 		}

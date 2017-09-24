@@ -6,6 +6,8 @@ import (
 	"mimi/djq/dao"
 	"mimi/djq/model"
 	"mimi/djq/util"
+	"mimi/djq/dao/arg"
+	"mimi/djq/db/mysql"
 )
 
 type Present struct {
@@ -15,6 +17,30 @@ func (service *Present) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
 	return &dao.Present{conn}
 }
 
+func (service *Present) RefreshExpired() (err error) {
+	conn, err := mysql.Get()
+	if err != nil {
+		err = checkErr(err)
+		return
+	}
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+
+	daoObj := service.GetDaoInstance(conn).(*dao.Present)
+	present := &model.Present{}
+	present.Expired = true
+	argPresent := &arg.Present{}
+	argPresent.OverExpiryDate = true
+	argPresent.UpdateNames = []string{"expired"}
+	argPresent.UpdateObject = present
+	_, err = dao.BatchUpdate(daoObj, argPresent)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	return
+}
 func (service *Present) check(obj *model.Present) error {
 	if obj == nil {
 		return ErrObjectEmpty

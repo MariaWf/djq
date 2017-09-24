@@ -12,6 +12,7 @@ type Admin struct {
 	OrderBy        string
 	IdsIn          []string
 	IdsNotIn       []string
+	LockedEqual    string `form:"locked" json:"locked"`
 	LockedOnly     bool
 	UnlockedOnly   bool
 	KeywordLike    string `form:"keyword" json:"keyword"`
@@ -137,6 +138,13 @@ func (arg *Admin) getCountConditions() (string, []interface{}) {
 		}
 		sql += " locked = ?"
 		params = append(params, arg.LockedOnly)
+	}
+	if arg.LockedEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " locked = ?"
+		params = append(params, arg.LockedEqual == "true")
 	}
 	if arg.IdsNotIn != nil && len(arg.IdsNotIn) != 0 {
 		if sql != "" {

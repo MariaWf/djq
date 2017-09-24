@@ -6,6 +6,8 @@ import (
 	"mimi/djq/dao"
 	"mimi/djq/model"
 	"mimi/djq/util"
+	"mimi/djq/dao/arg"
+	"mimi/djq/db/mysql"
 )
 
 type CashCoupon struct {
@@ -13,6 +15,48 @@ type CashCoupon struct {
 
 func (service *CashCoupon) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
 	return &dao.CashCoupon{conn}
+}
+
+func (service *CashCoupon) RefreshExpired() (err error) {
+	conn, err := mysql.Get()
+	if err != nil {
+		err = checkErr(err)
+		return
+	}
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+
+	daoObj := service.GetDaoInstance(conn).(*dao.CashCoupon)
+	cashCoupon := &model.CashCoupon{}
+	cashCoupon.Expired = true
+	argCashCoupon := &arg.CashCoupon{}
+	argCashCoupon.OverExpiryDate = true
+	argCashCoupon.UpdateNames = []string{"expired"}
+	argCashCoupon.UpdateObject = cashCoupon
+	_, err = dao.BatchUpdate(daoObj, argCashCoupon)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	return
+	//cashCouponListO,err := dao.Find(daoObj,argCashCoupon)
+	//if err != nil {
+	//	rollback = true
+	//	err = checkErr(err)
+	//	return
+	//}
+	//cashCouponIds := make([]string,len(cashCouponListO),len(cashCouponListO))
+	//for i,v:=range cashCouponListO{
+	//	cashCouponIds[i] = v.(*model.CashCoupon).Id
+	//}
+	//
+	//daoCashCouponOrder := &dao.CashCouponOrder{}
+	//argCashCouponOrder := &arg.CashCouponOrder{}
+	//argCashCouponOrder.CashCouponIdsIn = cashCouponIds
+	//argCashCouponOrder.NotComplete = true
+	//cashCouponOrder := &model.CashCouponOrder{}
+	//cashCouponOrderListO,err := dao.BatchUpdate(daoCashCouponOrder,argCashCouponOrder)
 }
 
 func (service *CashCoupon) check(obj *model.CashCoupon) error {

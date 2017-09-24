@@ -169,6 +169,7 @@ stock int(8) not null default 0,
 requirement int(8) not null default 0,
 weight int(8) not null default 1,
 expiry_date timestamp DEFAULT CURRENT_TIMESTAMP,
+expired tinyint(1) default false,
 hide tinyint(1) default false,
 del_flag tinyint(1) default false
 )default charset=utf8;

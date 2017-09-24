@@ -14,6 +14,7 @@ type User struct {
 	IdsIn                     []string
 	LockedOnly                bool
 	UnlockedOnly              bool
+	LockedEqual               string `form:"locked" json:"locked"`
 
 	PageSize                  int `form:"pageSize" json:"pageSize"`
 	TargetPage                int `form:"targetPage" json:"targetPage"`
@@ -119,6 +120,13 @@ func (arg *User) getCountConditions() (string, []interface{}) {
 		}
 		sql += " mobile like ?"
 		params = append(params, "%" + arg.KeywordLike + "%")
+	}
+	if arg.LockedEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " locked = ?"
+		params = append(params, arg.LockedEqual == "true")
 	}
 	if arg.LockedOnly || arg.UnlockedOnly {
 		if sql != "" {

@@ -13,8 +13,9 @@ type ShopAccount struct {
 	IdsIn          []string
 	LockedOnly     bool
 	UnlockedOnly   bool
+	LockedEqual    string `form:"locked" json:"locked"`
 
-	PasswordEqual string
+	PasswordEqual  string
 	ShopIdEqual    string `form:"shopId" json:"shopId"`
 
 	PageSize       int `form:"pageSize" json:"pageSize"`
@@ -128,6 +129,13 @@ func (arg *ShopAccount) getCountConditions() (string, []interface{}) {
 		}
 		sql += " password = ?"
 		params = append(params, arg.PasswordEqual)
+	}
+	if arg.LockedEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " locked = ?"
+		params = append(params, arg.LockedEqual == "true")
 	}
 	if arg.LockedOnly || arg.UnlockedOnly {
 		if sql != "" {

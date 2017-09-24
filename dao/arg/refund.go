@@ -12,7 +12,7 @@ type Refund struct {
 	IdsIn                  []string
 	CashCouponOrderIdsIn   []string
 
-	StatusEqual            string
+	StatusEqual            string `form:"status" json:"status"`
 	StatusIn               []int
 	RefundBeginLT          string
 	RefundOrderNumberEqual string

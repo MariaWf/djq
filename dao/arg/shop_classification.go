@@ -13,6 +13,7 @@ type ShopClassification struct {
 	IdsIn          []string
 
 	NotIncludeHide bool
+	HideEqual      string `form:"hide" json:"hide"`
 
 	PageSize       int `form:"pageSize" json:"pageSize"`
 	TargetPage     int `form:"targetPage" json:"targetPage"`
@@ -111,6 +112,13 @@ func (arg *ShopClassification) getCountConditions() (string, []interface{}) {
 		}
 		sql += " name = ?"
 		params = append(params, arg.NameEqual)
+	}
+	if arg.HideEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " hide = ?"
+		params = append(params, arg.HideEqual == "true")
 	}
 	if arg.NotIncludeHide {
 		if sql != "" {

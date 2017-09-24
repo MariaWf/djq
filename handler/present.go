@@ -15,7 +15,7 @@ import (
 func PresentList4Ui(c *gin.Context) {
 	argObj := &arg.Present{}
 	argObj.NotIncludeHide = true
-	argObj.BeforeExpiryDate = true
+	argObj.UnexpiredOnly = true
 	argObj.OrderBy = "name"
 	argObj.Enough = true
 	serviceObj := &service.Present{}

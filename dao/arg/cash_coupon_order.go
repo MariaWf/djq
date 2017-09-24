@@ -18,6 +18,7 @@ type CashCouponOrder struct {
 	StatusIn            []int
 
 	CashCouponIdsIn     []string
+	NotComplete         bool
 
 	PayBeginGT          string
 	PayBeginLT          string
@@ -149,6 +150,12 @@ func (arg *CashCouponOrder) getCountConditions() (string, []interface{}) {
 			params = append(params, status)
 		}
 		sql += ")"
+	}
+	if arg.NotComplete {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " price > refund_amount"
 	}
 	if arg.UserIdsIn != nil && len(arg.UserIdsIn) != 0 {
 		if sql != "" {

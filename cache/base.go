@@ -10,22 +10,24 @@ import (
 var ErrNameIsEmpty = errors.New("缓存名称为空")
 
 const (
-	CacheNameGlobalTotalCashCouponNumber = "globalTotalCashCouponNumber:"
-	CacheNameGlobalTotalCashCouponPrice = "globalTotalCashCouponPrice:"
-	CacheNameGlobalTotalCashCouponPriceHide = "globalTotalCashCouponPriceHide:"
+	CacheNameGlobalTotalCashCouponNumber = "globalTotalCashCouponNumber"
+	CacheNameGlobalTotalCashCouponPrice = "globalTotalCashCouponPrice"
+	CacheNameGlobalTotalCashCouponPriceHide = "globalTotalCashCouponPriceHide"
 	CacheNameCashCouponOrderCounting = "cashCouponOrderCounting"
 
-	CacheNameShopRedPackHide = "shopRedPackHide:"
-	CacheNamePromotionalPartnerRate = "promotionalPartnerRate:"
+	CacheNameShopRedPackHide = "shopRedPackHide"
+	CacheNamePromotionalPartnerRate = "promotionalPartnerRate"
 
-	CacheNamePromotionalPartnerCounting = "promotionalPartnerCounting:"
+	CacheNamePromotionalPartnerCounting = "promotionalPartnerCounting"
 
-	CacheNameIndexContactWayNumber = "contactIndexWayNumber:"
-	CacheNameIndexContactWayHide = "contactIndexWayHide:"
+	CacheNameIndexContactWayNumber = "contactIndexWayNumber"
+	CacheNameIndexContactWayHide = "contactIndexWayHide"
 
-	CacheNameCheckingRefundingOrder = "checkingRefundingOrder:"
-	CacheNameCheckingPayingOrder = "checkingPayingOrder:"
-	CacheNameAgreeingNotUsedRefunding = "agreeingNotUsedRefunding:"
+	CacheNameCheckingRefundingOrder = "checkingRefundingOrder"
+	CacheNameCheckingPayingOrder = "checkingPayingOrder"
+	CacheNameAgreeingNotUsedRefunding = "agreeingNotUsedRefunding"
+	CacheNameCheckingExpiredCashCoupon = "checkingExpiredCashCoupon"
+	CacheNameCheckingExpiredPresent = "checkingExpiredPresent"
 
 	cacheHead = "cache:"
 )

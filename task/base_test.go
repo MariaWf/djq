@@ -127,3 +127,13 @@ func TestDiv(t *testing.T) {
 	r = int(float32(c) * float32(a) / float32(b))
 	t.Log(r)
 }
+
+func TestAll(t *testing.T){
+	AgreeNotUsedRefundingAction()
+	CheckExpiredCashCouponAction()
+	CheckExpiredPresentAction()
+	CheckPayingOrderAction()
+	CheckRefundingOrderAction()
+	CountCashCouponAction()
+	CountForPromotionalPartnerAction()
+}

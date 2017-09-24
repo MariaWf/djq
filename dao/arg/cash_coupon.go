@@ -16,11 +16,14 @@ type CashCoupon struct {
 
 	ExpiredOnly      bool
 	UnexpiredOnly    bool
-	NotIncludeHide   bool
-	ShopIdEqual      string `form:"shopId" json:"shopId"`
-
+	ExpiredEqual     string `form:"expired" json:"expired"`
 	OverExpiryDate   bool
 	BeforeExpiryDate bool
+
+	NotIncludeHide   bool
+	HideEqual      string `form:"hide" json:"hide"`
+	ShopIdEqual      string `form:"shopId" json:"shopId"`
+
 
 	PageSize         int `form:"pageSize" json:"pageSize"`
 	TargetPage       int `form:"targetPage" json:"targetPage"`
@@ -134,6 +137,13 @@ func (arg *CashCoupon) getCountConditions() (string, []interface{}) {
 		sql += " expired = ?"
 		params = append(params, arg.ExpiredOnly)
 	}
+	if arg.ExpiredEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " expired = ?"
+		params = append(params, arg.ExpiredEqual == "true")
+	}
 	if arg.OverExpiryDate {
 		if sql != "" {
 			sql += " and"
@@ -154,6 +164,13 @@ func (arg *CashCoupon) getCountConditions() (string, []interface{}) {
 		}
 		sql += " hide = ?"
 		params = append(params, false)
+	}
+	if arg.HideEqual != "" {
+		if sql != "" {
+			sql += " and"
+		}
+		sql += " hide = ?"
+		params = append(params, arg.HideEqual == "true")
 	}
 	if len(params) != 0 {
 		sql = " where" + sql
