@@ -1,23 +1,22 @@
 package wxpay
 
 import (
-	"mimi/djq/config"
-	"strings"
-	"net/http"
-	"github.com/pkg/errors"
-	"io/ioutil"
-	"encoding/json"
-	"mimi/djq/cache"
-	"time"
-	"mimi/djq/util"
-	"sort"
 	"bytes"
+	"crypto/md5"
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/json"
+	"github.com/pkg/errors"
+	"io/ioutil"
+	"mimi/djq/cache"
+	"mimi/djq/config"
+	"mimi/djq/util"
+	"net/http"
+	"sort"
 	"strconv"
-	"crypto/md5"
+	"strings"
+	"time"
 )
-
 
 func GetSignKey() (signKey string, err error) {
 	cacheName := "sandBoxSignKey"
@@ -33,9 +32,9 @@ func GetSignKey() (signKey string, err error) {
 		//defer response.Body.Close()    //请求完了关闭回复主体
 		//body, err := ioutil.ReadAll(response.Body)
 		//fmt.Println(string(body))
-		appId := config.Get("wxpay_appid") // 微信公众平台应用ID
+		appId := config.Get("wxpay_appid")  // 微信公众平台应用ID
 		mchId := config.Get("wxpay_mch_id") // 微信支付商户平台商户号
-		apiKey := config.Get("wxpay_key") // 微信支付商户平台API密钥
+		apiKey := config.Get("wxpay_key")   // 微信支付商户平台API密钥
 
 		c := NewClient(appId, mchId, apiKey)
 
@@ -52,9 +51,9 @@ func GetSignKey() (signKey string, err error) {
 
 		params := make(Params)
 		params.SetString("mch_id", c.MchId)
-		params.SetString("nonce_str", util.BuildUUID())  // 随机字符串
+		params.SetString("nonce_str", util.BuildUUID()) // 随机字符串
 		//params.SetString("nonce_str", util.BuildUUID())  // 随机字符串
-		params.SetString("sign", c.Sign(params))                           // 签名
+		params.SetString("sign", c.Sign(params)) // 签名
 
 		// 查询企业付款接口请求URL
 		url := "https://api.mch.weixin.qq.com/sandboxnew/pay/getsignkey"
@@ -65,7 +64,7 @@ func GetSignKey() (signKey string, err error) {
 			return "", errors.Wrap(err, "获取测试API_KEY失败")
 		}
 		signKey = p1.GetString("sandbox_signkey")
-		if err := cache.Set(cacheName, signKey, time.Second * 7000); err != nil {
+		if err := cache.Set(cacheName, signKey, time.Second*7000); err != nil {
 			return "", errors.Wrap(err, "获取测试API_KEY失败")
 		}
 	}
@@ -95,11 +94,11 @@ func GetAccessToken() (string, error) {
 		if err != nil {
 			return "", errors.Wrap(err, "获取微信AccessToken异常")
 		}
-		if result["errcode"] != nil{
+		if result["errcode"] != nil {
 			return "", errors.Wrap(err, "获取微信AccessToken异常")
 		}
 		accessToken = result["access_token"].(string)
-		if err := cache.Set(cacheName, accessToken, time.Second * 7000); err != nil {
+		if err := cache.Set(cacheName, accessToken, time.Second*7000); err != nil {
 			return "", errors.Wrap(err, "获取微信AccessToken异常")
 		}
 	}
@@ -132,11 +131,11 @@ func GetJsapiTicket() (string, error) {
 		if err != nil {
 			return "", errors.Wrap(err, "获取微信JsapiTicket异常")
 		}
-		if result["errmsg"].(string) != "ok"{
+		if result["errmsg"].(string) != "ok" {
 			return "", errors.Wrap(err, "获取微信JsapiTicket异常")
 		}
 		jsapiTicket = result["ticket"].(string)
-		if err := cache.Set(cacheName, jsapiTicket, time.Second * 7000); err != nil {
+		if err := cache.Set(cacheName, jsapiTicket, time.Second*7000); err != nil {
 			return "", errors.Wrap(err, "获取微信JsapiTicket异常")
 		}
 	}
@@ -179,7 +178,7 @@ func Signature(params Params) string {
 			buf.WriteString(k)
 			buf.WriteString(`=`)
 			buf.WriteString(params.GetString(k))
-			if i < len(keys) - 1 {
+			if i < len(keys)-1 {
 				buf.WriteString(`&`)
 			}
 		}
@@ -205,7 +204,7 @@ func Signature4Pay(params Params) string {
 			buf.WriteString(k)
 			buf.WriteString(`=`)
 			buf.WriteString(params.GetString(k))
-			if i < len(keys) - 1 {
+			if i < len(keys)-1 {
 				buf.WriteString(`&`)
 			}
 		}

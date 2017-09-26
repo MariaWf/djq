@@ -63,7 +63,7 @@ func (c *Config) InitConfig(path string) {
 		if len(frist) == 0 {
 			continue
 		}
-		second := strings.TrimSpace(s[index + 1:])
+		second := strings.TrimSpace(s[index+1:])
 
 		pos := strings.Index(second, "\t#")
 		if pos > -1 {

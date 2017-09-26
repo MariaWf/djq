@@ -3,12 +3,12 @@ package service
 import (
 	"database/sql"
 	"github.com/pkg/errors"
+	"log"
 	"mimi/djq/dao"
 	"mimi/djq/dao/arg"
 	"mimi/djq/db/mysql"
 	"mimi/djq/model"
 	"mimi/djq/util"
-	"log"
 )
 
 type Admin struct {
@@ -178,13 +178,13 @@ func (service *Admin) UpdateSelf(obj *model.Admin) (*model.Admin, error) {
 	obj.Password = sourcePassword
 
 	if obj.Password != "" {
-		err = service.checkWithOptions(obj,"id","mobile","password")
+		err = service.checkWithOptions(obj, "id", "mobile", "password")
 		if err != nil {
 			return nil, err
 		}
 		obj.Password = util.BuildPassword4DB(obj.Password)
-	}else{
-		err = service.checkWithOptions(obj,"id","mobile")
+	} else {
+		err = service.checkWithOptions(obj, "id", "mobile")
 		if err != nil {
 			return nil, err
 		}
@@ -199,11 +199,10 @@ func (service *Admin) UpdateSelf(obj *model.Admin) (*model.Admin, error) {
 	defer mysql.Close(conn, &rollback)
 	daoObj := service.GetDaoInstance(conn)
 
-
 	if obj.Password != "" {
 		_, err = dao.Update(daoObj, obj, "mobile", "password")
 	} else {
-		_, err = dao.Update(daoObj, obj,  "mobile")
+		_, err = dao.Update(daoObj, obj, "mobile")
 	}
 	if err != nil {
 		rollback = true
@@ -221,13 +220,13 @@ func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
 	obj.Password = sourcePassword
 
 	if obj.Password != "" {
-		err = service.checkWithOptions(obj,"id","name", "mobile", "password", "locked")
+		err = service.checkWithOptions(obj, "id", "name", "mobile", "password", "locked")
 		if err != nil {
 			return nil, err
 		}
 		obj.Password = util.BuildPassword4DB(obj.Password)
-	}else{
-		err = service.checkWithOptions(obj,"id","name", "mobile",  "locked")
+	} else {
+		err = service.checkWithOptions(obj, "id", "name", "mobile", "locked")
 		if err != nil {
 			return nil, err
 		}
@@ -271,7 +270,6 @@ func (service *Admin) Update(obj *model.Admin) (*model.Admin, error) {
 	}
 	return obj, checkErr(err)
 }
-
 
 func (service *Admin) refreshRelationshipWithRole(conn *sql.Tx, obj *model.Admin) error {
 	daoObj := service.GetDaoInstance(conn).(*dao.Admin)
@@ -362,14 +360,14 @@ func (service *Admin) Delete(ids ...string) (int64, error) {
 
 }
 
-func (service *Admin) checkWithOptions(obj *model.Admin, args ... string) error {
+func (service *Admin) checkWithOptions(obj *model.Admin, args ...string) error {
 	if obj == nil {
 		return ErrObjectEmpty
 	}
 	for _, arg := range args {
 		switch arg {
 		case "id":
-			if obj.Id == ""{
+			if obj.Id == "" {
 				return ErrIdEmpty
 			}
 		case "name":
@@ -389,11 +387,10 @@ func (service *Admin) checkWithOptions(obj *model.Admin, args ... string) error 
 	return nil
 }
 
-
 func (service *Admin) CheckUpdate(obj model.BaseModelInterface) error {
-	return service.checkWithOptions(obj.(*model.Admin),"id","name","mobile","password")
+	return service.checkWithOptions(obj.(*model.Admin), "id", "name", "mobile", "password")
 }
 
 func (service *Admin) CheckAdd(obj model.BaseModelInterface) error {
-	return service.checkWithOptions(obj.(*model.Admin),"name","mobile","password")
+	return service.checkWithOptions(obj.(*model.Admin), "name", "mobile", "password")
 }

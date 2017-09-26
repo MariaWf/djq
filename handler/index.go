@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"html/template"
-	"mimi/djq/config"
-	"mimi/djq/util"
-	"net/http"
-	"strings"
-	"mimi/djq/session"
 	"log"
 	"math/rand"
-	"strconv"
 	"mimi/djq/aliyun"
 	"mimi/djq/cache"
+	"mimi/djq/config"
+	"mimi/djq/session"
+	"mimi/djq/util"
+	"net/http"
+	"strconv"
+	"strings"
 )
 
 func NotFound(c *gin.Context) {
@@ -86,7 +86,7 @@ func TestShop(c *gin.Context) {
 	t.Execute(c.Writer, values)
 }
 
-func GetServerRootUrl(c *gin.Context){
+func GetServerRootUrl(c *gin.Context) {
 	result := util.BuildSuccessResult(config.Get("server_root_url"))
 	c.JSON(http.StatusOK, result)
 }
@@ -112,24 +112,24 @@ func GeetestInit(c *gin.Context) {
 	c.JSON(http.StatusOK, responseMap)
 }
 
-func GetCaptcha(c *gin.Context){
+func GetCaptcha(c *gin.Context) {
 	if !util.GeetestCheck(c) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrParamException.Error()))
 		return
 	}
 	mobile := c.PostForm("mobile")
-	if !util.MatchMobile(mobile){
+	if !util.MatchMobile(mobile) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrMobileFormat.Error()))
 		return
 	}
-	sn ,err := session.GetUi(c.Writer,c.Request)
+	sn, err := session.GetUi(c.Writer, c.Request)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
 		return
 	}
-	captcha := strconv.Itoa(rand.Intn(8888)+1000)
-	err = sn.Set(session.SessionNameUiUserCaptcha,captcha)
+	captcha := strconv.Itoa(rand.Intn(8888) + 1000)
+	err = sn.Set(session.SessionNameUiUserCaptcha, captcha)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
@@ -146,8 +146,8 @@ func GetCaptcha(c *gin.Context){
 	c.JSON(http.StatusOK, result)
 }
 
-func GetTotalCashCouponPrice(c *gin.Context){
-	price,err := cache.Get(cache.CacheNameGlobalTotalCashCouponPrice)
+func GetTotalCashCouponPrice(c *gin.Context) {
+	price, err := cache.Get(cache.CacheNameGlobalTotalCashCouponPrice)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
@@ -178,7 +178,7 @@ func Upload(c *gin.Context) {
 
 	// Upload the file to specific dst.
 	// c.SaveUploadedFile(file, dst)
-	c.SaveUploadedFile(file, "c:/upload/" + file.Filename)
+	c.SaveUploadedFile(file, "c:/upload/"+file.Filename)
 
 	//c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
 	result := util.BuildSuccessResult(file.Filename)

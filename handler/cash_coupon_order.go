@@ -2,19 +2,19 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/influxdata/influxdb/pkg/slices"
+	"github.com/pkg/errors"
 	"log"
 	"mimi/djq/constant"
 	"mimi/djq/dao/arg"
 	"mimi/djq/model"
 	"mimi/djq/service"
-	"mimi/djq/util"
-	"net/http"
-	"strings"
 	"mimi/djq/session"
+	"mimi/djq/util"
 	"mimi/djq/wxpay"
-	"github.com/pkg/errors"
-	"github.com/influxdata/influxdb/pkg/slices"
+	"net/http"
 	"strconv"
+	"strings"
 )
 
 func CashCouponOrderComplete4Si(c *gin.Context) {
@@ -112,7 +112,7 @@ func CashCouponOrderActionBuyFromCashCouponOrder4Ui(c *gin.Context) {
 	}
 }
 
-func putInCartAction(c *gin.Context, ids ... string) (list []*model.CashCouponOrder, err error) {
+func putInCartAction(c *gin.Context, ids ...string) (list []*model.CashCouponOrder, err error) {
 	if len(ids) == 0 {
 		err = errors.New("未知代金券")
 		return
@@ -140,7 +140,7 @@ func putInCartAction(c *gin.Context, ids ... string) (list []*model.CashCouponOr
 	return
 }
 
-func buyAction(c *gin.Context, ids ... string) (params wxpay.Params, err error) {
+func buyAction(c *gin.Context, ids ...string) (params wxpay.Params, err error) {
 	idList := make([]string, 0, len(ids))
 	for _, v := range ids {
 		if strings.TrimSpace(v) == "" {
@@ -205,7 +205,7 @@ func CashCouponOrderListUnused4Ui(c *gin.Context) {
 	if err != nil {
 		targetPage = util.BeginPage
 	}
-	list, err := listCashCouponOrder4Ui(c, []int{constant.CashCouponOrderStatusPaidNotUsed,constant.CashCouponOrderStatusNotUsedRefunding,constant.CashCouponOrderStatusNotUsedRefunded}, targetPage)
+	list, err := listCashCouponOrder4Ui(c, []int{constant.CashCouponOrderStatusPaidNotUsed, constant.CashCouponOrderStatusNotUsedRefunding, constant.CashCouponOrderStatusNotUsedRefunded}, targetPage)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
@@ -219,7 +219,7 @@ func CashCouponOrderListUsed4Ui(c *gin.Context) {
 	if err != nil {
 		targetPage = util.BeginPage
 	}
-	list, err := listCashCouponOrder4Ui(c, []int{constant.CashCouponOrderStatusUsed,constant.CashCouponOrderStatusUsedRefunding,constant.CashCouponOrderStatusUsedRefunded}, targetPage)
+	list, err := listCashCouponOrder4Ui(c, []int{constant.CashCouponOrderStatusUsed, constant.CashCouponOrderStatusUsedRefunding, constant.CashCouponOrderStatusUsedRefunded}, targetPage)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
@@ -295,7 +295,7 @@ func listCashCouponOrder4Ui(c *gin.Context, statusList []int, targetPage int) (p
 				for _, v2 := range shopList {
 					if v1.(*model.CashCoupon).ShopId == v2.(*model.Shop).Id {
 						v1.(*model.CashCoupon).Shop = v2.(*model.Shop)
-						break;
+						break
 					}
 				}
 			}
@@ -304,7 +304,7 @@ func listCashCouponOrder4Ui(c *gin.Context, statusList []int, targetPage int) (p
 			for _, v2 := range cashCouponList {
 				if v1.CashCouponId == v2.(*model.CashCoupon).Id {
 					v1.CashCoupon = v2.(*model.CashCoupon)
-					break;
+					break
 				}
 			}
 		}
@@ -365,7 +365,7 @@ func CashCouponOrderGet(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	result := util.BuildSuccessResult(map[string]interface{}{"cashCouponOrder":obj, "cashCoupon":cashCoupon, "user":user})
+	result := util.BuildSuccessResult(map[string]interface{}{"cashCouponOrder": obj, "cashCoupon": cashCoupon, "user": user})
 	c.JSON(http.StatusOK, result)
 	//serviceObj := &service.CashCouponOrder{}
 	//result := service.ResultGet(serviceObj, c.Param("id"))

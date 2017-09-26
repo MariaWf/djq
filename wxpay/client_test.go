@@ -1,18 +1,18 @@
 package wxpay
 
 import (
-	"testing"
 	"log"
+	"testing"
 )
 
 func TestClient_WithCert(t *testing.T) {
-	appId  := "" // 微信公众平台应用ID
-	mchId  := "" // 微信支付商户平台商户号
+	appId := ""  // 微信公众平台应用ID
+	mchId := ""  // 微信支付商户平台商户号
 	apiKey := "" // 微信支付商户平台API密钥
 
 	// 微信支付商户平台证书路径
-	certFile   := "cert/apiclient_cert.pem"
-	keyFile    := "cert/apiclient_key.pem"
+	certFile := "cert/apiclient_cert.pem"
+	keyFile := "cert/apiclient_key.pem"
 	rootcaFile := "cert/rootca.pem"
 
 	c := NewClient(appId, mchId, apiKey)

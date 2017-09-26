@@ -4,11 +4,11 @@ import "github.com/pkg/errors"
 
 const (
 	Split4Permission = ","
-	Split4Id = ","
+	Split4Id         = ","
 )
 
 var (
-	AdminId string
+	AdminId     string
 	AdminRoleId string
 )
 
@@ -79,14 +79,14 @@ const (
 )
 
 var (
-	ErrUpload = errors.New("上传失败")
-	ErrUploadUnknownType = errors.New("未知文件类型")
+	ErrUpload             = errors.New("上传失败")
+	ErrUploadUnknownType  = errors.New("未知文件类型")
 	ErrUploadImageSupport = errors.New("只支持jpg;png;gif;jpeg格式")
 )
 
 var (
 	ErrWxpayConfirmIllegalOrderStatus = errors.New("支付确认，非法订单状态")
-	ErrWxpayConfirmTotalFeeNotMatch = errors.New("支付确认，金额不符")
+	ErrWxpayConfirmTotalFeeNotMatch   = errors.New("支付确认，金额不符")
 
 	ErrWxpayCancelIllegalOrderStatus = errors.New("支付取消，非法订单状态")
 )

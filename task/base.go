@@ -1,9 +1,9 @@
 package task
 
 import (
-	"time"
 	"log"
 	"sync"
+	"time"
 )
 
 var lock = sync.Mutex{}
@@ -20,22 +20,22 @@ func FixTimeCycle(f interface{}, hour int, minute int, second int) {
 	s := now.Second()
 
 	if hour > -1 {
-		timeSleep += time.Duration(hour - h) * time.Hour
-		timeSleep += time.Duration(minute - m) * time.Minute
-		timeSleep += time.Duration(second - s) * time.Second
+		timeSleep += time.Duration(hour-h) * time.Hour
+		timeSleep += time.Duration(minute-m) * time.Minute
+		timeSleep += time.Duration(second-s) * time.Second
 		if timeSleep < 0 {
 			timeSleep += 24 * time.Hour
 		}
 		d = 24 * time.Hour
 	} else if minute > -1 {
-		timeSleep += time.Duration(minute - m) * time.Minute
-		timeSleep += time.Duration(second - s) * time.Second
+		timeSleep += time.Duration(minute-m) * time.Minute
+		timeSleep += time.Duration(second-s) * time.Second
 		if timeSleep < 0 {
 			timeSleep += 60 * time.Minute
 		}
 		d = 60 * time.Minute
 	} else if second > -1 {
-		timeSleep += time.Duration(second - s) * time.Second
+		timeSleep += time.Duration(second-s) * time.Second
 		if timeSleep < 0 {
 			timeSleep += 60 * time.Second
 		}
@@ -60,7 +60,7 @@ func FixTimeIntervalCycle(f interface{}, d time.Duration) {
 	}
 }
 
-func goFunc(f interface{}, args... interface{}) {
+func goFunc(f interface{}, args ...interface{}) {
 	if len(args) > 1 {
 		go f.(func(...interface{}))(args)
 	} else if len(args) == 1 {

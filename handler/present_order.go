@@ -7,10 +7,10 @@ import (
 	"mimi/djq/dao/arg"
 	"mimi/djq/model"
 	"mimi/djq/service"
+	"mimi/djq/session"
 	"mimi/djq/util"
 	"net/http"
 	"strings"
-	"mimi/djq/session"
 )
 
 func PresentOrderList4Ui(c *gin.Context) {
@@ -65,7 +65,7 @@ func PresentOrderList4Ui(c *gin.Context) {
 			for _, p := range presents {
 				if pId == p.(*model.Present).Id {
 					v.(*model.PresentOrder).Present = p.(*model.Present)
-					break;
+					break
 				}
 			}
 		}
@@ -169,7 +169,7 @@ func PresentOrderGet(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	result := util.BuildSuccessResult(map[string]interface{}{"presentOrder":obj, "present":present, "user":user})
+	result := util.BuildSuccessResult(map[string]interface{}{"presentOrder": obj, "present": present, "user": user})
 	//result := service.ResultGet(serviceObj, c.Param("id"))
 	c.JSON(http.StatusOK, result)
 }

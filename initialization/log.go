@@ -1,10 +1,10 @@
 package initialization
 
 import (
-	"path/filepath"
-	"os"
-	"mimi/djq/config"
 	"log"
+	"mimi/djq/config"
+	"os"
+	"path/filepath"
 )
 
 func InitGlobalLog() {
@@ -17,7 +17,7 @@ func InitGlobalLog() {
 	}
 	path := filepath.Dir(globalLogUrl)
 	os.MkdirAll(path, 0777)
-	logFile, err := os.OpenFile(globalLogUrl, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	logFile, err := os.OpenFile(globalLogUrl, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
 	}

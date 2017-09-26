@@ -2,11 +2,11 @@ package dao
 
 import (
 	"fmt"
+	"mimi/djq/dao/arg"
+	"mimi/djq/db/mysql"
 	"net/http"
 	"os"
 	"testing"
-	"mimi/djq/db/mysql"
-	"mimi/djq/dao/arg"
 )
 
 type interface1 interface {

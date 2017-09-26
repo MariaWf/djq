@@ -14,13 +14,13 @@ type ShopIntroductionImage struct {
 	NotIncludeHide bool
 	HideEqual      string `form:"hide" json:"hide"`
 
-	PageSize       int `form:"pageSize" json:"pageSize"`
-	TargetPage     int `form:"targetPage" json:"targetPage"`
+	PageSize   int `form:"pageSize" json:"pageSize"`
+	TargetPage int `form:"targetPage" json:"targetPage"`
 
-	DisplayNames   []string
+	DisplayNames []string
 
-	UpdateObject   interface{}
-	UpdateNames    []string
+	UpdateObject interface{}
+	UpdateNames  []string
 }
 
 func (arg *ShopIntroductionImage) GetDisplayNames() []string {

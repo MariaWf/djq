@@ -1,28 +1,28 @@
 package wxpay
 
 import (
+	"fmt"
+	"github.com/pkg/errors"
+	"io/ioutil"
 	"mimi/djq/config"
 	"mimi/djq/util"
-	"github.com/pkg/errors"
 	"net/http"
-	"io/ioutil"
-	"fmt"
 )
 
-func DownloadBill(billDate string) ( string, error) {
+func DownloadBill(billDate string) (string, error) {
 	var err error
 
 	url := "https://api.mch.weixin.qq.com/pay/downloadbill"
 
-	appId := config.Get("wxpay_appid") // 微信公众平台应用ID
+	appId := config.Get("wxpay_appid")  // 微信公众平台应用ID
 	mchId := config.Get("wxpay_mch_id") // 微信支付商户平台商户号
-	apiKey := config.Get("wxpay_key") // 微信支付商户平台API密钥
+	apiKey := config.Get("wxpay_key")   // 微信支付商户平台API密钥
 
 	if config.Get("running_state") == "test" {
 		url = "https://api.mch.weixin.qq.com/sandboxnew/pay/downloadbill"
 		apiKey, err = GetSignKey()
 		if err != nil {
-			return "", errors.Wrap(err,"获取测试API_KEY失败")
+			return "", errors.Wrap(err, "获取测试API_KEY失败")
 		}
 	}
 
@@ -30,20 +30,19 @@ func DownloadBill(billDate string) ( string, error) {
 
 	params := make(Params)
 
-	params.SetString("appid",c.AppId)//公众账号ID	appid	是	String(32)	wx8888888888888888	微信分配的公众账号ID（企业号corpid即为此appId）
-	params.SetString("mch_id",c.MchId)//商户号	mch_id	是	String(32)	1900000109	微信支付分配的商户号
+	params.SetString("appid", c.AppId)  //公众账号ID	appid	是	String(32)	wx8888888888888888	微信分配的公众账号ID（企业号corpid即为此appId）
+	params.SetString("mch_id", c.MchId) //商户号	mch_id	是	String(32)	1900000109	微信支付分配的商户号
 	//设备号	device_info	否	String(32)	013467007045764	微信支付分配的终端设备号
-	params.SetString("nonce_str",util.BuildUUID())//随机字符串	nonce_str	是	String(32)	5K8264ILTKCH16CQ2502SI8ZNMTM67VS	随机字符串，不长于32位。推荐随机数生成算法
-	params.SetString("sign_type","MD5")//签名类型	sign_type	否	String(32)	HMAC-SHA256	签名类型，目前支持HMAC-SHA256和MD5，默认为MD5
-	params.SetString("bill_date",billDate)//对账单日期	bill_date	是	String(8)	20140603	下载对账单的日期，格式：20140603
-	params.SetString("bill_type","ALL")//账单类型	bill_type	是	String(8)	ALL
+	params.SetString("nonce_str", util.BuildUUID()) //随机字符串	nonce_str	是	String(32)	5K8264ILTKCH16CQ2502SI8ZNMTM67VS	随机字符串，不长于32位。推荐随机数生成算法
+	params.SetString("sign_type", "MD5")            //签名类型	sign_type	否	String(32)	HMAC-SHA256	签名类型，目前支持HMAC-SHA256和MD5，默认为MD5
+	params.SetString("bill_date", billDate)         //对账单日期	bill_date	是	String(8)	20140603	下载对账单的日期，格式：20140603
+	params.SetString("bill_type", "ALL")            //账单类型	bill_type	是	String(8)	ALL
 	//ALL，返回当日所有订单信息，默认值
 	//SUCCESS，返回当日成功支付的订单
 	//REFUND，返回当日退款订单
 	//RECHARGE_REFUND，返回当日充值退款订单（相比其他对账单多一栏“返还手续费”）
 
 	params.SetString("sign", c.Sign(params)) //签名	sign	是	String(32)	C380BEC2BFD727A4B6845133519F3AD6	通过签名算法计算得出的签名值，详见签名生成算法
-
 
 	// 发送查询企业付款请求
 	resp, err := http.Post(url, bodyType, c.Encode(params))
@@ -60,9 +59,10 @@ func DownloadBill(billDate string) ( string, error) {
 	//	panic(err)
 	//}
 	//fmt.Println(p2)
-	return string(bs),err
+	return string(bs), err
 	//return c.Post(url, params, false)
 }
+
 //应用场景
 //商户可以通过该接口下载历史交易清单。比如掉单、系统错误等导致商户侧和微信侧数据不一致，通过对账单核对后可校正支付状态。
 //注意：

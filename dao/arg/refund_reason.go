@@ -10,17 +10,17 @@ type RefundReason struct {
 	OrderBy        string
 	IdsIn          []string
 
-	DescriptionLike string  `form:"keyword" json:"keyword"`
+	DescriptionLike string `form:"keyword" json:"keyword"`
 
 	NotIncludeHide bool
 
-	PageSize       int `form:"pageSize" json:"pageSize"`
-	TargetPage     int `form:"targetPage" json:"targetPage"`
+	PageSize   int `form:"pageSize" json:"pageSize"`
+	TargetPage int `form:"targetPage" json:"targetPage"`
 
-	DisplayNames   []string
+	DisplayNames []string
 
-	UpdateObject   interface{}
-	UpdateNames    []string
+	UpdateObject interface{}
+	UpdateNames  []string
 }
 
 func (arg *RefundReason) GetDisplayNames() []string {
@@ -103,7 +103,7 @@ func (arg *RefundReason) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " description like ?"
-		params = append(params, "%" + arg.DescriptionLike + "%")
+		params = append(params, "%"+arg.DescriptionLike+"%")
 	}
 	if arg.NotIncludeHide {
 		if sql != "" {

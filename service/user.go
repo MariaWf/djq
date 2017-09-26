@@ -2,13 +2,13 @@ package service
 
 import (
 	"database/sql"
-	"mimi/djq/dao"
-	"mimi/djq/model"
-	"mimi/djq/util"
+	"github.com/pkg/errors"
 	"log"
+	"mimi/djq/dao"
 	"mimi/djq/dao/arg"
 	"mimi/djq/db/mysql"
-	"github.com/pkg/errors"
+	"mimi/djq/model"
+	"mimi/djq/util"
 )
 
 type User struct {
@@ -19,7 +19,7 @@ func (service *User) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
 }
 
 func (service *User) SharedActionResponse(id string) (err error) {
-	if id == ""{
+	if id == "" {
 		err = ErrIdEmpty
 		log.Println(err)
 		return
@@ -33,7 +33,7 @@ func (service *User) SharedActionResponse(id string) (err error) {
 	rollback := false
 	defer mysql.Close(conn, &rollback)
 	daoObj := service.GetDaoInstance(conn)
-	userO,err := dao.Get(daoObj,id)
+	userO, err := dao.Get(daoObj, id)
 	if err != nil {
 		rollback = true
 		err = checkErr(err)
@@ -41,13 +41,13 @@ func (service *User) SharedActionResponse(id string) (err error) {
 		return
 	}
 	user := userO.(*model.User)
-	if user.Shared{
+	if user.Shared {
 		rollback = true
 		return
-	}else{
+	} else {
 		user.Shared = true
-		user.PresentChance = user.PresentChance+1
-		_,err = dao.Update(daoObj,user,"shared","presentChance")
+		user.PresentChance = user.PresentChance + 1
+		_, err = dao.Update(daoObj, user, "shared", "presentChance")
 		if err != nil {
 			rollback = true
 			err = checkErr(err)
@@ -88,16 +88,16 @@ func (service *User) Register(obj *model.User) (user *model.User, err error) {
 		return
 	}
 	if len(list) == 0 {
-		_,err = dao.Add(daoObj,user)
+		_, err = dao.Add(daoObj, user)
 		if err != nil {
 			rollback = true
 			err = checkErr(err)
 			log.Println(err)
 			return
 		}
-	}else{
+	} else {
 		user = list[0].(*model.User)
-		if user.Locked{
+		if user.Locked {
 			err = errors.New("用户被锁定，请联系管理员")
 			return
 		}

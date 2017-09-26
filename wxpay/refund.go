@@ -1,68 +1,68 @@
 package wxpay
 
 import (
-	"mimi/djq/config"
 	"github.com/pkg/errors"
+	"log"
+	"mimi/djq/config"
 	"mimi/djq/util"
 	"strconv"
-	"log"
 )
 
-func Refund(payOrderNumber string, totalFee int, refundOrderNumber string,refundFee int) (Params, error) {
+func Refund(payOrderNumber string, totalFee int, refundOrderNumber string, refundFee int) (Params, error) {
 	var err error
 	url := "https://api.mch.weixin.qq.com/secapi/pay/refund"
 
-	appId := config.Get("wxpay_appid") // 微信公众平台应用ID
+	appId := config.Get("wxpay_appid")  // 微信公众平台应用ID
 	mchId := config.Get("wxpay_mch_id") // 微信支付商户平台商户号
-	apiKey := config.Get("wxpay_key") // 微信支付商户平台API密钥
+	apiKey := config.Get("wxpay_key")   // 微信支付商户平台API密钥
 
 	if config.Get("running_state") == "test" {
 		url = "https://api.mch.weixin.qq.com/sandboxnew/secapi/pay/refund"
 		apiKey, err = GetSignKey()
 		if err != nil {
-			return nil, errors.Wrap(err,"获取测试API_KEY失败")
+			return nil, errors.Wrap(err, "获取测试API_KEY失败")
 		}
 	}
 
 	c := NewClient(appId, mchId, apiKey)
 
 	// 微信支付商户平台证书路径
-	certFile   := config.Get("wxpay_cert_file")
-	keyFile    := config.Get("wxpay_key_file")
+	certFile := config.Get("wxpay_cert_file")
+	keyFile := config.Get("wxpay_key_file")
 	rootcaFile := config.Get("wxpay_rootca_file")
 
 	// 附着商户证书
 	err = c.WithCert(certFile, keyFile, rootcaFile)
 	if err != nil {
 		log.Println(err)
-		return nil ,errors.Wrap(err,"获取商户证书失败")
+		return nil, errors.Wrap(err, "获取商户证书失败")
 	}
 
 	params := make(Params)
 
-	params.SetString("appid",c.AppId)//公众账号ID	appid	是	String(32)	wx8888888888888888	微信分配的公众账号ID（企业号corpid即为此appId）
-	params.SetString("mch_id",c.MchId)//商户号	mch_id	是	String(32)	1900000109	微信支付分配的商户号
-	params.SetString("nonce_str",util.BuildUUID())//随机字符串	nonce_str	是	String(32)	5K8264ILTKCH16CQ2502SI8ZNMTM67VS	随机字符串，不长于32位。推荐随机数生成算法
-	params.SetString("sign_type","MD5")//签名类型	sign_type	否	String(32)	HMAC-SHA256	签名类型，目前支持HMAC-SHA256和MD5，默认为MD5
+	params.SetString("appid", c.AppId)              //公众账号ID	appid	是	String(32)	wx8888888888888888	微信分配的公众账号ID（企业号corpid即为此appId）
+	params.SetString("mch_id", c.MchId)             //商户号	mch_id	是	String(32)	1900000109	微信支付分配的商户号
+	params.SetString("nonce_str", util.BuildUUID()) //随机字符串	nonce_str	是	String(32)	5K8264ILTKCH16CQ2502SI8ZNMTM67VS	随机字符串，不长于32位。推荐随机数生成算法
+	params.SetString("sign_type", "MD5")            //签名类型	sign_type	否	String(32)	HMAC-SHA256	签名类型，目前支持HMAC-SHA256和MD5，默认为MD5
 	//微信订单号	transaction_id	二选一	String(28)	1217752501201407033233368018	微信生成的订单号，在支付通知中有返回
-	params.SetString("out_trade_no",payOrderNumber)//商户订单号	out_trade_no	String(32)	1217752501201407033233368018	商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一。
-	params.SetString("out_refund_no",refundOrderNumber)//商户退款单号	out_refund_no	是	String(64)	1217752501201407033233368018	商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@ ，同一退款单号多次请求只退一笔。
-	params.SetString("total_fee",strconv.Itoa(totalFee))//订单金额	total_fee	是	Int	100	订单总金额，单位为分，只能为整数，详见支付金额
-	params.SetString("refund_fee",strconv.Itoa(refundFee))//退款金额	refund_fee	是	Int	100	退款总金额，订单总金额，单位为分，只能为整数，详见支付金额
-	params.SetString("refund_fee_type","CNY")//货币种类	refund_fee_type	否	String(8)	CNY	货币类型，符合ISO 4217标准的三位字母代码，默认人民币：CNY，其他值列表详见货币类型
-	params.SetString("refund_desc","")//退款原因	refund_desc	否	String(80)	商品已售完	若商户传入，会在下发给用户的退款消息中体现退款原因
+	params.SetString("out_trade_no", payOrderNumber)        //商户订单号	out_trade_no	String(32)	1217752501201407033233368018	商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一。
+	params.SetString("out_refund_no", refundOrderNumber)    //商户退款单号	out_refund_no	是	String(64)	1217752501201407033233368018	商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@ ，同一退款单号多次请求只退一笔。
+	params.SetString("total_fee", strconv.Itoa(totalFee))   //订单金额	total_fee	是	Int	100	订单总金额，单位为分，只能为整数，详见支付金额
+	params.SetString("refund_fee", strconv.Itoa(refundFee)) //退款金额	refund_fee	是	Int	100	退款总金额，订单总金额，单位为分，只能为整数，详见支付金额
+	params.SetString("refund_fee_type", "CNY")              //货币种类	refund_fee_type	否	String(8)	CNY	货币类型，符合ISO 4217标准的三位字母代码，默认人民币：CNY，其他值列表详见货币类型
+	params.SetString("refund_desc", "")                     //退款原因	refund_desc	否	String(80)	商品已售完	若商户传入，会在下发给用户的退款消息中体现退款原因
 	//退款资金来源	refund_account	否	String(30)	REFUND_SOURCE_RECHARGE_FUNDS
 	//仅针对老资金流商户使用
 	//REFUND_SOURCE_UNSETTLED_FUNDS---未结算资金退款（默认使用未结算资金退款）
 	//REFUND_SOURCE_RECHARGE_FUNDS---可用余额退款
-	params.SetString("sign", c.Sign(params))//签名	sign	是	String(32)	C380BEC2BFD727A4B6845133519F3AD6	签名，详见签名生成算法
+	params.SetString("sign", c.Sign(params)) //签名	sign	是	String(32)	C380BEC2BFD727A4B6845133519F3AD6	签名，详见签名生成算法
 
 	return c.Post(url, params, true)
 
 }
 
-func RefundResult(payOrderNumber string, totalFee int, refundOrderNumber string,refundFee int) (err error) {
-	params, err := Refund(payOrderNumber,totalFee,refundOrderNumber,refundFee)
+func RefundResult(payOrderNumber string, totalFee int, refundOrderNumber string, refundFee int) (err error) {
+	params, err := Refund(payOrderNumber, totalFee, refundOrderNumber, refundFee)
 	if err != nil {
 		return
 	}
@@ -79,6 +79,7 @@ func RefundResult(payOrderNumber string, totalFee int, refundOrderNumber string,
 	}
 	return
 }
+
 //应用场景
 //当交易发生之后一段时间内，由于买家或者卖家的原因需要退款时，卖家可以通过退款接口将支付款退还给买家，微信支付将在收到退款请求并且验证成功之后，按照退款规则将支付款按原路退到买家帐号上。
 //注意：

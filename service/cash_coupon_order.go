@@ -3,17 +3,17 @@ package service
 import (
 	"database/sql"
 	"github.com/pkg/errors"
-	"mimi/djq/dao"
-	"mimi/djq/model"
-	"mimi/djq/db/mysql"
-	"mimi/djq/dao/arg"
-	"mimi/djq/wxpay"
-	"mimi/djq/util"
 	"log"
 	"mimi/djq/constant"
+	"mimi/djq/dao"
+	"mimi/djq/dao/arg"
+	"mimi/djq/db/mysql"
+	"mimi/djq/model"
+	"mimi/djq/util"
+	"mimi/djq/wxpay"
+	"strconv"
 	"strings"
 	"time"
-	"strconv"
 )
 
 type CashCouponOrder struct {
@@ -75,7 +75,7 @@ func (service *CashCouponOrder) Complete(shopAccountId, id string) (err error) {
 		err = errors.New("代金券不属于本店")
 		return
 	}
-	if cashCoupon.Expired{
+	if cashCoupon.Expired {
 		rollback = true
 		err = errors.New("代金券已过期")
 		return
@@ -95,15 +95,15 @@ func (service *CashCouponOrder) Complete(shopAccountId, id string) (err error) {
 		return
 	}
 	daoUser := &dao.User{conn}
-	userO,err := dao.Get(daoUser,cashCouponOrder.UserId)
+	userO, err := dao.Get(daoUser, cashCouponOrder.UserId)
 	if err != nil {
 		rollback = true
 		err = checkErr(err)
 		return
 	}
 	user := userO.(*model.User)
-	user.PresentChance = user.PresentChance+1
-	_,err = dao.Update(daoUser,user,"presentChance")
+	user.PresentChance = user.PresentChance + 1
+	_, err = dao.Update(daoUser, user, "presentChance")
 	if err != nil {
 		rollback = true
 		err = checkErr(err)
@@ -112,7 +112,7 @@ func (service *CashCouponOrder) Complete(shopAccountId, id string) (err error) {
 	return
 }
 
-func (service *CashCouponOrder) BatchAddInCart(userId string, ids ... string) (list []*model.CashCouponOrder, err error) {
+func (service *CashCouponOrder) BatchAddInCart(userId string, ids ...string) (list []*model.CashCouponOrder, err error) {
 	list = make([]*model.CashCouponOrder, 0, len(ids))
 	if len(ids) == 0 {
 		err = errors.New("未包含代金券")
@@ -168,7 +168,7 @@ func (service *CashCouponOrder) BatchAddInCart(userId string, ids ... string) (l
 //创建支付订单，
 // 如果已经创建且在生命周期内重复使用支付订单，
 // 如果不在生命周期内则关闭旧订单重新创建
-func (service *CashCouponOrder) Pay(userId string, openId string, clientIp string, ids ... string) (np wxpay.Params, err error) {
+func (service *CashCouponOrder) Pay(userId string, openId string, clientIp string, ids ...string) (np wxpay.Params, err error) {
 	np = make(wxpay.Params)
 	if len(ids) == 0 {
 		err = errors.New("未包含代金券订单")
@@ -197,6 +197,14 @@ func (service *CashCouponOrder) Pay(userId string, openId string, clientIp strin
 	}
 	rollback := false
 	defer mysql.Close(conn, &rollback)
+	daoUser := &dao.User{conn}
+	_,err = dao.Get(daoUser,userId)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+
 	daoObj := service.GetDaoInstance(conn).(*dao.CashCouponOrder)
 	argObj := daoObj.GetArgInstance().(*arg.CashCouponOrder)
 	argObj.IdsIn = ids
@@ -293,8 +301,8 @@ func buildPayReturnParams(payOrderNumber, prepayId string) (np wxpay.Params) {
 	np.SetString("appId", client.AppId)
 	np.SetString("nonceStr", util.BuildUUID())
 	np.SetString("timeStamp", strconv.FormatInt(time.Now().Unix(), 10))
-	np.SetString("package", "prepay_id=" + prepayId)
-	np.SetString("signType", "MD5")//MD5
+	np.SetString("package", "prepay_id="+prepayId)
+	np.SetString("signType", "MD5") //MD5
 	np.SetString("paySign", client.Sign(np))
 	np.SetString("payOrderNumber", payOrderNumber)
 	return
@@ -427,7 +435,7 @@ func (service *CashCouponOrder) CancelOrder(payOrderNumber string) (idListStr st
 		obj.PrepayId = ""
 		obj.Status = constant.CashCouponOrderStatusInCart
 		argObj.UpdateObject = obj
-		argObj.UpdateNames = []string{"payOrderNumber", "payBegin", "payEnd", "prepayId","status"}
+		argObj.UpdateNames = []string{"payOrderNumber", "payBegin", "payEnd", "prepayId", "status"}
 		_, err = dao.BatchUpdate(daoObj, argObj)
 		if err != nil {
 			rollback = true

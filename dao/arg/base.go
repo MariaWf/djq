@@ -2,9 +2,9 @@ package arg
 
 import (
 	"errors"
+	"mimi/djq/model"
 	"mimi/djq/util"
 	"strings"
-	"mimi/djq/model"
 )
 
 var ErrUpdateObjectEmpty = errors.New("dao: updateObject is empty")
@@ -12,7 +12,7 @@ var ErrUpdateObjectEmpty = errors.New("dao: updateObject is empty")
 const (
 	//SELECT 列名称 FROM 表名称
 	SelectSql = "select {columnNames} from {tableName} {conditions};"
-	CountSql = "select count(*) from {tableName} {conditions};"
+	CountSql  = "select count(*) from {tableName} {conditions};"
 	//DELETE FROM 表名称 WHERE 列名称 = 值
 	DeleteSql = "delete from {tableName} {conditions};"
 	//INSERT INTO table_name (列1, 列2,...) VALUES (值1, 值2,....)

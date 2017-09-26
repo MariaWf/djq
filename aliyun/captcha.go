@@ -14,7 +14,7 @@ func CaptchaSend(phoneNumber string, code string) error {
 	if err != nil {
 		return err
 	}
-	err = aliyunSms.Send(phoneNumber, `{"code":"` + code + `"}`)
+	err = aliyunSms.Send(phoneNumber, `{"code":"`+code+`"}`)
 	if err != nil {
 		return err
 	}

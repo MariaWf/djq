@@ -5,14 +5,14 @@ import (
 )
 
 type PresentOrder struct {
-	Id        string        `form:"id" json:"id" db:"id" desc:"id"`
-	PresentId string        `form:"presentId" json:"presentId" db:"present_id" desc:"礼品ID"`
-	UserId    string        `form:"userId" json:"userId" db:"user_id" desc:"用户ID"`
-	Number    string        `form:"number" json:"number" db:"number" desc:"编码"`
-	Status    int           `form:"status" json:"status" db:"status" desc:"状态"`
+	Id        string `form:"id" json:"id" db:"id" desc:"id"`
+	PresentId string `form:"presentId" json:"presentId" db:"present_id" desc:"礼品ID"`
+	UserId    string `form:"userId" json:"userId" db:"user_id" desc:"用户ID"`
+	Number    string `form:"number" json:"number" db:"number" desc:"编码"`
+	Status    int    `form:"status" json:"status" db:"status" desc:"状态"`
 
-	Present   *Present   `form:"present" json:"present"  desc:"礼品"`
-	User      *User   `form:"user" json:"user"  desc:"用户"`
+	Present *Present `form:"present" json:"present"  desc:"礼品"`
+	User    *User    `form:"user" json:"user"  desc:"用户"`
 }
 
 func (obj *PresentOrder) GetId() string {
@@ -37,11 +37,16 @@ func (obj *PresentOrder) GetMapNames() []string {
 
 func (obj *PresentOrder) GetValue4Map(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "presentId": return obj.PresentId
-	case "userId": return obj.UserId
-	case "number": return obj.Number
-	case "status": return obj.Status
+	case "id":
+		return obj.Id
+	case "presentId":
+		return obj.PresentId
+	case "userId":
+		return obj.UserId
+	case "number":
+		return obj.Number
+	case "status":
+		return obj.Status
 	}
 	panic(errors.New("对象presentOrder属性[" + name + "]不存在"))
 }
@@ -56,22 +61,32 @@ func (obj *PresentOrder) GetDBFromMapName(name string) string {
 
 func (obj *PresentOrder) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id": return &obj.Id
-	case "present_id": return &obj.PresentId
-	case "user_id": return &obj.UserId
-	case "number": return &obj.Number
-	case "status": return &obj.Status
+	case "id":
+		return &obj.Id
+	case "present_id":
+		return &obj.PresentId
+	case "user_id":
+		return &obj.UserId
+	case "number":
+		return &obj.Number
+	case "status":
+		return &obj.Status
 	}
 	panic(errors.New("对象presentOrder属性[" + name + "]不存在"))
 }
 
 func (obj *PresentOrder) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "present_id": return obj.PresentId
-	case "user_id": return obj.UserId
-	case "number": return obj.Number
-	case "status": return obj.Status
+	case "id":
+		return obj.Id
+	case "present_id":
+		return obj.PresentId
+	case "user_id":
+		return obj.UserId
+	case "number":
+		return obj.Number
+	case "status":
+		return obj.Status
 	}
 	panic(errors.New("对象presentOrder属性[" + name + "]不存在"))
 }

@@ -1,16 +1,16 @@
 package task
 
 import (
-	"testing"
-	"time"
-	"mimi/djq/cache"
 	"fmt"
+	"mimi/djq/cache"
 	"mimi/djq/dao"
 	"mimi/djq/dao/arg"
 	"mimi/djq/db/mysql"
 	"mimi/djq/model"
 	"mimi/djq/util"
 	"mimi/djq/wxpay"
+	"testing"
+	"time"
 )
 
 func TestCheckPayingOrder(t *testing.T) {
@@ -19,7 +19,7 @@ func TestCheckPayingOrder(t *testing.T) {
 }
 
 func TestCloseCanceledOrder(t *testing.T) {
-	err := cache.Set("mimi:name", "mimiName", time.Hour * 1)
+	err := cache.Set("mimi:name", "mimiName", time.Hour*1)
 	checkErr(err)
 	value, err := cache.Get("mimi:name")
 	checkErr(err)
@@ -40,7 +40,7 @@ func TestCloseCanceledOrder(t *testing.T) {
 		_, err = cache.Del(obj)
 		checkErr(err)
 
-		_, err = cache.Expire(obj, time.Minute * 30)
+		_, err = cache.Expire(obj, time.Minute*30)
 		checkErr(err)
 		t, err = cache.GetExpire(obj)
 		fmt.Println(t)
@@ -95,11 +95,11 @@ func TestCountCashCoupon(t *testing.T) {
 
 func TestCountCashCoupon2(t *testing.T) {
 	cache.Set(cache.CacheNameCashCouponOrderCounting, "false", 0)
-	for i:=0;i<10;i++{
+	for i := 0; i < 10; i++ {
 		go CountCashCouponAction()
 		//time.Sleep(1*time.Second)
 	}
-	time.Sleep(10*time.Second)
+	time.Sleep(10 * time.Second)
 }
 
 func TestCountForPromotionalPartnerAction(t *testing.T) {
@@ -110,7 +110,7 @@ func TestFixTimeIntervalCycle(t *testing.T) {
 	fmt.Println(time.Now())
 	FixTimeIntervalCycle(func() {
 		fmt.Println(time.Now())
-	}, 5 * time.Second)
+	}, 5*time.Second)
 }
 
 func TestFixTimeCycle(t *testing.T) {
@@ -128,7 +128,7 @@ func TestDiv(t *testing.T) {
 	t.Log(r)
 }
 
-func TestAll(t *testing.T){
+func TestAll(t *testing.T) {
 	AgreeNotUsedRefundingAction()
 	CheckExpiredCashCouponAction()
 	CheckExpiredPresentAction()

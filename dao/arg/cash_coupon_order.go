@@ -6,32 +6,32 @@ import (
 )
 
 type CashCouponOrder struct {
-	IdEqual             string
-	IncludeDeleted      bool
-	OrderBy             string
-	IdsIn               []string
-	UserIdEqual         string `form:"userId" json:"userId"`
-	UserIdsIn           []string
+	IdEqual        string
+	IncludeDeleted bool
+	OrderBy        string
+	IdsIn          []string
+	UserIdEqual    string `form:"userId" json:"userId"`
+	UserIdsIn      []string
 
-	NumberEqual         string  `form:"keyword" json:"keyword"`
-	StatusEqual         string `form:"status" json:"status"`
-	StatusIn            []int
+	NumberEqual string `form:"keyword" json:"keyword"`
+	StatusEqual string `form:"status" json:"status"`
+	StatusIn    []int
 
-	CashCouponIdsIn     []string
-	NotComplete         bool
+	CashCouponIdsIn []string
+	NotComplete     bool
 
-	PayBeginGT          string
-	PayBeginLT          string
+	PayBeginGT string
+	PayBeginLT string
 
 	PayOrderNumberEqual string `form:"payOrderNumber" json:"payOrderNumber"`
 
-	PageSize            int `form:"pageSize" json:"pageSize"`
-	TargetPage          int `form:"targetPage" json:"targetPage"`
+	PageSize   int `form:"pageSize" json:"pageSize"`
+	TargetPage int `form:"targetPage" json:"targetPage"`
 
-	DisplayNames        []string
+	DisplayNames []string
 
-	UpdateObject        interface{}
-	UpdateNames         []string
+	UpdateObject interface{}
+	UpdateNames  []string
 }
 
 func (arg *CashCouponOrder) GetDisplayNames() []string {

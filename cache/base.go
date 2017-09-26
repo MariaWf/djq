@@ -1,33 +1,33 @@
 package cache
 
 import (
-	"mimi/djq/db/redis"
-	"time"
-	"strings"
 	"github.com/pkg/errors"
+	"mimi/djq/db/redis"
+	"strings"
+	"time"
 )
 
 var ErrNameIsEmpty = errors.New("缓存名称为空")
 
 const (
-	CacheNameGlobalTotalCashCouponNumber = "globalTotalCashCouponNumber"
-	CacheNameGlobalTotalCashCouponPrice = "globalTotalCashCouponPrice"
+	CacheNameGlobalTotalCashCouponNumber    = "globalTotalCashCouponNumber"
+	CacheNameGlobalTotalCashCouponPrice     = "globalTotalCashCouponPrice"
 	CacheNameGlobalTotalCashCouponPriceHide = "globalTotalCashCouponPriceHide"
-	CacheNameCashCouponOrderCounting = "cashCouponOrderCounting"
+	CacheNameCashCouponOrderCounting        = "cashCouponOrderCounting"
 
-	CacheNameShopRedPackHide = "shopRedPackHide"
+	CacheNameShopRedPackHide        = "shopRedPackHide"
 	CacheNamePromotionalPartnerRate = "promotionalPartnerRate"
 
 	CacheNamePromotionalPartnerCounting = "promotionalPartnerCounting"
 
 	CacheNameIndexContactWayNumber = "contactIndexWayNumber"
-	CacheNameIndexContactWayHide = "contactIndexWayHide"
+	CacheNameIndexContactWayHide   = "contactIndexWayHide"
 
-	CacheNameCheckingRefundingOrder = "checkingRefundingOrder"
-	CacheNameCheckingPayingOrder = "checkingPayingOrder"
-	CacheNameAgreeingNotUsedRefunding = "agreeingNotUsedRefunding"
+	CacheNameCheckingRefundingOrder    = "checkingRefundingOrder"
+	CacheNameCheckingPayingOrder       = "checkingPayingOrder"
+	CacheNameAgreeingNotUsedRefunding  = "agreeingNotUsedRefunding"
 	CacheNameCheckingExpiredCashCoupon = "checkingExpiredCashCoupon"
-	CacheNameCheckingExpiredPresent = "checkingExpiredPresent"
+	CacheNameCheckingExpiredPresent    = "checkingExpiredPresent"
 
 	CacheNameWithWaterMarkInShopIntroductionImage = "withWaterMarkInShopIntroductionImage"
 

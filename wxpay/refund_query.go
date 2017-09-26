@@ -1,19 +1,19 @@
 package wxpay
 
 import (
-	"strconv"
+	"github.com/pkg/errors"
+	"log"
 	"mimi/djq/config"
 	"mimi/djq/util"
-	"log"
-	"github.com/pkg/errors"
+	"strconv"
 )
 
 func RefundQuery(refundOrderNumber string) (Params, error) {
 	url := "https://api.mch.weixin.qq.com/pay/refundquery"
 
-	appId := config.Get("wxpay_appid") // 微信公众平台应用ID
+	appId := config.Get("wxpay_appid")  // 微信公众平台应用ID
 	mchId := config.Get("wxpay_mch_id") // 微信支付商户平台商户号
-	apiKey := config.Get("wxpay_key") // 微信支付商户平台API密钥
+	apiKey := config.Get("wxpay_key")   // 微信支付商户平台API密钥
 
 	var err error
 	if config.Get("running_state") == "test" {
@@ -29,16 +29,16 @@ func RefundQuery(refundOrderNumber string) (Params, error) {
 	params := make(Params)
 
 	//字段名	变量名	必填	类型	示例值	描述
-	params.SetString("appid", c.AppId)//公众账号ID	appid	是	String(32)	wxd678efh567hg6787	微信支付分配的公众账号ID（企业号corpid即为此appId）
-	params.SetString("mch_id", c.MchId)//商户号	mch_id	是	String(32)	1230000109	微信支付分配的商户号
+	params.SetString("appid", c.AppId)  //公众账号ID	appid	是	String(32)	wxd678efh567hg6787	微信支付分配的公众账号ID（企业号corpid即为此appId）
+	params.SetString("mch_id", c.MchId) //商户号	mch_id	是	String(32)	1230000109	微信支付分配的商户号
 	//微信退款号	transaction_id	四选一	String(32)	1217752501201407033233368018	微信退款号查询的优先级是： refund_id > out_refund_no > transaction_id > out_trade_no
 	//商户退款号	out_trade_no	String(32)	1217752501201407033233368018	商户系统内部退款号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一。
 	//商户退款单号	out_refund_no	String(64)	1217752501201407033233368018	商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@ ，同一退款单号多次请求只退一笔。
 	//微信退款单号	refund_id	String(32)	1217752501201407033233368018
 	params.SetString("out_refund_no", refundOrderNumber)
-	params.SetString("nonce_str", util.BuildUUID())//随机字符串	nonce_str	是	String(32)	C380BEC2BFD727A4B6845133519F3AD6	随机字符串，不长于32位。推荐随机数生成算法
-	params.SetString("sign_type", "MD5")//签名类型	sign_type	否	String(32)	HMAC-SHA256	签名类型，目前支持HMAC-SHA256和MD5，默认为MD5
-	params.SetString("sign", c.Sign(params))//签名	sign	是	String(32)	5K8264ILTKCH16CQ2502SI8ZNMTM67VS	通过签名算法计算得出的签名值，详见签名生成算法
+	params.SetString("nonce_str", util.BuildUUID()) //随机字符串	nonce_str	是	String(32)	C380BEC2BFD727A4B6845133519F3AD6	随机字符串，不长于32位。推荐随机数生成算法
+	params.SetString("sign_type", "MD5")            //签名类型	sign_type	否	String(32)	HMAC-SHA256	签名类型，目前支持HMAC-SHA256和MD5，默认为MD5
+	params.SetString("sign", c.Sign(params))        //签名	sign	是	String(32)	5K8264ILTKCH16CQ2502SI8ZNMTM67VS	通过签名算法计算得出的签名值，详见签名生成算法
 
 	return c.Post(url, params, false)
 }
@@ -69,8 +69,6 @@ func RefundQueryResult(RefundOrderNumber string) (refundState string, refundFee 
 	}
 	return
 }
-
-
 
 //应用场景
 //提交退款申请后，通过调用该接口查询退款状态。退款有一定延时，用零钱支付的退款20分钟内到账，银行卡支付的退款3个工作日后重新查询退款状态。

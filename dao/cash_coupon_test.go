@@ -1,13 +1,13 @@
 package dao
 
 import (
-	"testing"
+	"encoding/json"
+	"mimi/djq/dao/arg"
 	"mimi/djq/db/mysql"
 	"mimi/djq/model"
-	"encoding/json"
-	"time"
 	"mimi/djq/util"
-	"mimi/djq/dao/arg"
+	"testing"
+	"time"
 )
 
 func TestCashCoupon_Add(t *testing.T) {
@@ -43,4 +43,3 @@ func TestCashCoupon_List(t *testing.T) {
 	}
 
 }
-

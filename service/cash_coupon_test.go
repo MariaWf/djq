@@ -1,8 +1,8 @@
 package service
 
 import (
-	"testing"
 	"mimi/djq/dao/arg"
+	"testing"
 )
 
 func TestCashCoupon_Find(t *testing.T) {
@@ -16,7 +16,7 @@ func TestCashCoupon_Find(t *testing.T) {
 	cashCouponList, err := Find(serviceCashCoupon, argCashCoupon)
 	if err != nil {
 		t.Error(err)
-	}else{
+	} else {
 		t.Log(len(cashCouponList))
 	}
 }

@@ -32,11 +32,16 @@ func (obj *ShopIntroductionImage) GetMapNames() []string {
 
 func (obj *ShopIntroductionImage) GetValue4Map(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "shopId": return obj.ShopId
-	case "priority": return obj.Priority
-	case "contentUrl": return obj.ContentUrl
-	case "hide": return obj.Hide
+	case "id":
+		return obj.Id
+	case "shopId":
+		return obj.ShopId
+	case "priority":
+		return obj.Priority
+	case "contentUrl":
+		return obj.ContentUrl
+	case "hide":
+		return obj.Hide
 	}
 	panic(errors.New("对象shopIntroductionImage属性[" + name + "]不存在"))
 }
@@ -51,23 +56,32 @@ func (obj *ShopIntroductionImage) GetDBFromMapName(name string) string {
 
 func (obj *ShopIntroductionImage) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id": return &obj.Id
-	case "shop_id": return &obj.ShopId
-	case "priority": return &obj.Priority
-	case "content_url": return &obj.ContentUrl
-	case "hide": return &obj.Hide
+	case "id":
+		return &obj.Id
+	case "shop_id":
+		return &obj.ShopId
+	case "priority":
+		return &obj.Priority
+	case "content_url":
+		return &obj.ContentUrl
+	case "hide":
+		return &obj.Hide
 	}
 	panic(errors.New("对象shopIntroductionImage属性[" + name + "]不存在"))
 }
 
 func (obj *ShopIntroductionImage) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "shop_id": return obj.ShopId
-	case "priority": return obj.Priority
-	case "content_url": return obj.ContentUrl
-	case "hide": return obj.Hide
+	case "id":
+		return obj.Id
+	case "shop_id":
+		return obj.ShopId
+	case "priority":
+		return obj.Priority
+	case "content_url":
+		return obj.ContentUrl
+	case "hide":
+		return obj.Hide
 	}
 	panic(errors.New("对象shopIntroductionImage属性[" + name + "]不存在"))
 }
-

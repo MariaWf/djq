@@ -1,15 +1,15 @@
 package initialization
 
 import (
-	"strconv"
-	"mimi/djq/service"
-	"mimi/djq/dao/arg"
-	"time"
-	"mimi/djq/model"
 	"math/rand"
 	"mimi/djq/constant"
+	"mimi/djq/dao/arg"
+	"mimi/djq/model"
+	"mimi/djq/service"
 	"mimi/djq/util"
+	"strconv"
 	"strings"
+	"time"
 )
 
 const specialMobile string = "15017528974"
@@ -17,36 +17,36 @@ const specialMobile string = "15017528974"
 const testImageHead string = "http://static.51zxiu.cn/app/djq/test/"
 
 func getRandomPresentImage() string {
-	return util.FormatImagePresent(testImageHead + "present" + strconv.Itoa(rand.Intn(10) + 1) + ".jpg")
+	return util.FormatImagePresent(testImageHead + "present" + strconv.Itoa(rand.Intn(10)+1) + ".jpg")
 }
 
 func getRandomShopLogo() string {
-	return util.FormatImageShopLogo(testImageHead + "logo" + strconv.Itoa(rand.Intn(6) + 1) + ".png")
+	return util.FormatImageShopLogo(testImageHead + "logo" + strconv.Itoa(rand.Intn(6)+1) + ".png")
 }
 
 func getRandomCashCoupon() string {
-	return util.FormatImageCashCoupon(testImageHead + "djq" + strconv.Itoa(rand.Intn(7) + 1) + ".jpg")
+	return util.FormatImageCashCoupon(testImageHead + "djq" + strconv.Itoa(rand.Intn(7)+1) + ".png")
 }
 
 func getRandomShopPreImage() string {
-	return util.FormatImageShopPreImage(testImageHead + "shopPreImage" + strconv.Itoa(rand.Intn(6) + 1) + ".jpg")
+	return util.FormatImageShopPreImage(testImageHead + "shopPreImage" + strconv.Itoa(rand.Intn(6)+1) + ".jpg")
 }
 
 func getRandomShopIntroductionImage() string {
 	if rand.Intn(10) < 1 {
 		return util.FormatImageShopIntroductionImage(testImageHead + "intro0.gif")
 	}
-	return util.FormatImageShopIntroductionImage(testImageHead + "intro" + strconv.Itoa(rand.Intn(10) + 1) + ".jpg")
+	return util.FormatImageShopIntroductionImage(testImageHead + "intro" + strconv.Itoa(rand.Intn(10)+1) + ".jpg")
 }
 
 func getRandomAdvertisement() string {
-	if rand.Intn(5) < 1 {
-		return util.FormatImageAdvertisement(testImageHead + "intro0.gif")
-	}
+	var url string
 	if rand.Intn(2) < 1 {
-		return getRandomCashCoupon()
+		url = getRandomCashCoupon()
+	} else {
+		url = getRandomShopPreImage()
 	}
-	return getRandomShopPreImage()
+	return util.FormatImageAdvertisement(url)
 }
 
 func getRandomEvidence() string {
@@ -192,7 +192,7 @@ func InitTestShop() []*model.Shop {
 			obj.ShopClassificationList = rl
 			obj.Name = "名称" + strconv.Itoa(i)
 			obj.Logo = getRandomShopLogo()
-			obj.PreImage = getRandomPresentImage()
+			obj.PreImage = getRandomShopPreImage()
 			//obj.TotalCashCouponNumber = rand.Intn(1000)
 			//obj.TotalCashCouponPrice = rand.Intn(1000) * obj.TotalCashCouponNumber
 			obj.Introduction = "介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍" + strconv.Itoa(i)
@@ -327,7 +327,7 @@ func InitTestUser() []*model.User {
 	checkErr(err)
 	if count < 5 {
 		checkErr(err)
-		list = make([]*model.User, 300 - 100, 300 - 100)
+		list = make([]*model.User, 300-100, 300-100)
 		for i := 100; i < 300; i++ {
 			obj := &model.User{}
 			obj.Mobile = "12345678" + strconv.Itoa(i)
@@ -348,7 +348,7 @@ func InitTestUser() []*model.User {
 			}
 			_, err := service.Add(serviceUser, obj)
 			checkErr(err)
-			list[i - 100] = obj
+			list[i-100] = obj
 		}
 	}
 	return list
@@ -454,17 +454,17 @@ func InitTestCashCouponOrderInCart(userList []*model.User, shopList []*model.Sho
 }
 
 func InitTestCashCouponOrderPayNotUsed(cashCouponOrder *model.CashCouponOrder) {
-	beginTime := time.Now().Add(-time.Duration(rand.Intn(1000)) * time.Hour - time.Duration(rand.Intn(1000)) * time.Minute - time.Duration(rand.Intn(1000)) * time.Second)
+	beginTime := time.Now().Add(-time.Duration(rand.Intn(1000))*time.Hour - time.Duration(rand.Intn(1000))*time.Minute - time.Duration(rand.Intn(1000))*time.Second)
 	expiryDate, err := util.ParseTimeFromDB(cashCouponOrder.CashCoupon.ExpiryDate)
 	checkErr(err)
 	for beginTime.After(expiryDate) {
-		beginTime = beginTime.Add(-time.Duration(rand.Intn(1000)) * time.Hour - time.Duration(rand.Intn(1000)) * time.Minute - time.Duration(rand.Intn(1000)) * time.Second)
+		beginTime = beginTime.Add(-time.Duration(rand.Intn(1000))*time.Hour - time.Duration(rand.Intn(1000))*time.Minute - time.Duration(rand.Intn(1000))*time.Second)
 	}
 	cashCouponOrder.PayOrderNumber = util.BuildUUID()
 	cashCouponOrder.PayBegin = util.StringTime4DB(beginTime)
 	cashCouponOrder.PrepayId = "test_prepay_id"
 	cashCouponOrder.Status = constant.CashCouponOrderStatusPaidNotUsed
-	cashCouponOrder.PayEnd = util.StringTime4DB(beginTime.Add(time.Duration(rand.Intn(100)) * time.Second + 1))
+	cashCouponOrder.PayEnd = util.StringTime4DB(beginTime.Add(time.Duration(rand.Intn(100))*time.Second + 1))
 
 	serviceCashCouponOrder := &service.CashCouponOrder{}
 	_, err = service.Update(serviceCashCouponOrder, cashCouponOrder, "payOrderNumber", "payBegin", "payEnd", "prepayId", "status")
@@ -488,9 +488,9 @@ func InitTestCashCouponOrderUsed(cashCouponOrder *model.CashCouponOrder) {
 	err := serviceCashCouponOrder.Complete(shopAccountId, cashCouponOrder.Id)
 	checkErr(err)
 	cashCouponOrder.Status = constant.CashCouponOrderStatusUsed
-	if rand.Intn(2)<1{
+	if rand.Intn(2) < 1 {
 		InitTestCashCouponOrderRefunded(cashCouponOrder)
-	}else{
+	} else {
 		InitTestCashCouponOrderRefunding(cashCouponOrder)
 	}
 }
@@ -528,9 +528,9 @@ func InitTestCashCouponOrderRefunded(cashCouponOrder *model.CashCouponOrder) {
 		if rand.Intn(2) < 1 {
 			refund := buildSimpleTestRefundModel(cashCouponOrder.Price, constant.RefundStatusNotUsedRefundSuccess, "", cashCouponOrder.Id)
 			refund.RefundOrderNumber = util.BuildUUID()
-			beginTime := payEnd.Add(time.Duration(rand.Intn(10)) * time.Hour + time.Duration(rand.Intn(10)) * time.Minute + time.Duration(rand.Intn(100)) * time.Second)
+			beginTime := payEnd.Add(time.Duration(rand.Intn(10))*time.Hour + time.Duration(rand.Intn(10))*time.Minute + time.Duration(rand.Intn(100))*time.Second)
 			refund.RefundBegin = util.StringTime4DB(beginTime)
-			refund.RefundEnd = util.StringTime4DB(beginTime.Add(time.Duration(rand.Intn(100)) * time.Second + 1))
+			refund.RefundEnd = util.StringTime4DB(beginTime.Add(time.Duration(rand.Intn(100))*time.Second + 1))
 			_, err = service.Add(serviceRefund, refund)
 			checkErr(err)
 
@@ -564,14 +564,14 @@ func InitTestCashCouponOrderRefunded(cashCouponOrder *model.CashCouponOrder) {
 			}
 		}
 		for i := 0; i < 3; i++ {
-			if cashCouponOrder.Price - cashCouponOrder.RefundAmount > 0 {
+			if cashCouponOrder.Price-cashCouponOrder.RefundAmount > 0 {
 				r := rand.Intn(cashCouponOrder.Price - cashCouponOrder.RefundAmount)
 				if r > 0 {
 					refund := buildSimpleTestRefundModel(cashCouponOrder.Price, constant.RefundStatusUsedRefundSuccess, "", cashCouponOrder.Id)
 					refund.RefundOrderNumber = util.BuildUUID()
-					beginTime := payEnd.Add(time.Duration(rand.Intn(10)) * time.Hour + time.Duration(rand.Intn(10)) * time.Minute + time.Duration(rand.Intn(100)) * time.Second)
+					beginTime := payEnd.Add(time.Duration(rand.Intn(10))*time.Hour + time.Duration(rand.Intn(10))*time.Minute + time.Duration(rand.Intn(100))*time.Second)
 					refund.RefundBegin = util.StringTime4DB(beginTime)
-					refund.RefundEnd = util.StringTime4DB(beginTime.Add(time.Duration(rand.Intn(100)) * time.Second + 1))
+					refund.RefundEnd = util.StringTime4DB(beginTime.Add(time.Duration(rand.Intn(100))*time.Second + 1))
 					refund.Evidence = getRandomEvidence()
 					_, err = service.Add(serviceRefund, refund)
 					checkErr(err)
@@ -704,7 +704,7 @@ func InitTestRefund(cashCouponOrder *model.CashCouponOrder) {
 	//	constant.RefundStatusUsedRefundFail,
 	//	constant.RefundStatusUsedRefundCancel}
 
-	switch cashCouponOrder.Status{
+	switch cashCouponOrder.Status {
 	case constant.CashCouponOrderStatusInCart:
 		return
 	case constant.CashCouponOrderStatusPaidNotUsed:
@@ -727,7 +727,7 @@ func InitTestRefund(cashCouponOrder *model.CashCouponOrder) {
 		}
 		obj := buildTestRefundModel(refundReasonList, cashCouponOrder)
 		obj.Status = constant.RefundStatusUsedRefunding
-		obj.RefundAmount = rand.Intn(cashCouponOrder.Price - cashCouponOrder.RefundAmount) + 1
+		obj.RefundAmount = rand.Intn(cashCouponOrder.Price-cashCouponOrder.RefundAmount) + 1
 		_, err := service.Add(serviceRefund, obj)
 		checkErr(err)
 		goto Used
@@ -746,7 +746,7 @@ func InitTestRefund(cashCouponOrder *model.CashCouponOrder) {
 		goto Used
 	}
 
-	Used:
+Used:
 	if rand.Intn(2) < 1 {
 		obj := buildTestRefundModel(refundReasonList, cashCouponOrder)
 		obj.Status = constant.RefundStatusUsedRefundCancel
@@ -760,7 +760,7 @@ func InitTestRefund(cashCouponOrder *model.CashCouponOrder) {
 		checkErr(err)
 	}
 
-	PaidNotUsed:
+PaidNotUsed:
 	if rand.Intn(2) < 1 {
 		obj := buildTestRefundModel(refundReasonList, cashCouponOrder)
 		obj.Status = constant.RefundStatusNotUsedRefundCancel

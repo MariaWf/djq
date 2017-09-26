@@ -2,21 +2,21 @@ package arg
 
 import (
 	"mimi/djq/model"
-	"time"
 	"mimi/djq/util"
+	"time"
 )
 
 type Present struct {
-	IdEqual          string
-	IncludeDeleted   bool
-	NameLike         string `form:"keyword" json:"keyword"`
-	NameEqual        string
-	OrderBy          string
-	IdsIn            []string
+	IdEqual        string
+	IncludeDeleted bool
+	NameLike       string `form:"keyword" json:"keyword"`
+	NameEqual      string
+	OrderBy        string
+	IdsIn          []string
 
-	Enough           bool
-	NotIncludeHide   bool
-	HideEqual        string `form:"hide" json:"hide"`
+	Enough         bool
+	NotIncludeHide bool
+	HideEqual      string `form:"hide" json:"hide"`
 
 	OverExpiryDate   bool
 	BeforeExpiryDate bool
@@ -24,13 +24,13 @@ type Present struct {
 	UnexpiredOnly    bool
 	ExpiredEqual     string `form:"expired" json:"expired"`
 
-	PageSize         int `form:"pageSize" json:"pageSize"`
-	TargetPage       int `form:"targetPage" json:"targetPage"`
+	PageSize   int `form:"pageSize" json:"pageSize"`
+	TargetPage int `form:"targetPage" json:"targetPage"`
 
-	DisplayNames     []string
+	DisplayNames []string
 
-	UpdateObject     interface{}
-	UpdateNames      []string
+	UpdateObject interface{}
+	UpdateNames  []string
 }
 
 func (arg *Present) GetDisplayNames() []string {
@@ -113,7 +113,7 @@ func (arg *Present) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " name like ?"
-		params = append(params, "%" + arg.NameLike + "%")
+		params = append(params, "%"+arg.NameLike+"%")
 	}
 	if arg.NameEqual != "" {
 		if sql != "" {

@@ -3,17 +3,17 @@ package util
 import (
 	"github.com/pkg/errors"
 	"regexp"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 var (
-	RegexpChinese = "\u4e00-\u9fa5"
-	ErrNameFormat = errors.New("名称为英文或数字或下划线，不能以数字开头长度为4到32")
-	ErrMobileFormat = errors.New("手机号码为11为数字")
+	RegexpChinese     = "\u4e00-\u9fa5"
+	ErrNameFormat     = errors.New("名称为英文或数字或下划线，不能以数字开头长度为4到32")
+	ErrMobileFormat   = errors.New("手机号码为11为数字")
 	ErrPasswordFormat = errors.New("密码长度为6到32")
 	ErrPriorityFormat = errors.New("优先权重范围为0到999")
-	ErrWeightFormat = errors.New("抽奖权重范围为0到999")
+	ErrWeightFormat   = errors.New("抽奖权重范围为0到999")
 )
 
 func MatchNonnegativeNumberWithErr(number int, name string) error {

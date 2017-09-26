@@ -6,11 +6,11 @@ import (
 )
 
 type Refund struct {
-	IdEqual                string
-	IncludeDeleted         bool
-	OrderBy                string
-	IdsIn                  []string
-	CashCouponOrderIdsIn   []string
+	IdEqual              string
+	IncludeDeleted       bool
+	OrderBy              string
+	IdsIn                []string
+	CashCouponOrderIdsIn []string
 
 	StatusEqual            string `form:"status" json:"status"`
 	StatusIn               []int
@@ -18,13 +18,13 @@ type Refund struct {
 	RefundOrderNumberEqual string
 	RefundOrderNumberLike  string `form:"keyword" json:"keyword"`
 
-	PageSize               int `form:"pageSize" json:"pageSize"`
-	TargetPage             int `form:"targetPage" json:"targetPage"`
+	PageSize   int `form:"pageSize" json:"pageSize"`
+	TargetPage int `form:"targetPage" json:"targetPage"`
 
-	DisplayNames           []string
+	DisplayNames []string
 
-	UpdateObject           interface{}
-	UpdateNames            []string
+	UpdateObject interface{}
+	UpdateNames  []string
 }
 
 func (arg *Refund) GetDisplayNames() []string {
@@ -144,7 +144,7 @@ func (arg *Refund) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " refund_order_number like ?"
-		params = append(params, "%" + arg.RefundOrderNumberLike + "%")
+		params = append(params, "%"+arg.RefundOrderNumberLike+"%")
 	}
 	if arg.RefundOrderNumberEqual != "" {
 		if sql != "" {

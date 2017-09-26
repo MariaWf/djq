@@ -1,18 +1,18 @@
 package handler
 
 import (
-	"testing"
-	"strings"
-	"crypto/md5"
-	"encoding/hex"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"mimi/djq/config"
 	"mimi/djq/wxpay"
+	"strings"
+	"testing"
 )
 
-func TestECBAes(t *testing.T){
+func TestECBAes(t *testing.T) {
 	testAesECB3()
 }
 func testAesECB() {
@@ -73,7 +73,7 @@ func testAesECB3() {
 	fmt.Println(client.Aes256EcbDecrypt(str))
 	//fmt.Println(string(bb))
 }
-func myEncode(txt,key string) (dest []byte,err error){
+func myEncode(txt, key string) (dest []byte, err error) {
 	//dest = make([]byte, (len(txt)/len(key)+1)*len(key))
 	dest = make([]byte, (len(txt)/len(key)+1)*len(key))
 
@@ -87,7 +87,7 @@ func myEncode(txt,key string) (dest []byte,err error){
 	return
 }
 
-func myDecode(bs []byte,key string) (txt []byte,err error){
+func myDecode(bs []byte, key string) (txt []byte, err error) {
 
 	keyBytes := []byte(key)
 	block, err := aes.NewCipher(keyBytes) //选择加密算法

@@ -2,14 +2,14 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
+	"mimi/djq/constant"
+	"mimi/djq/dao/arg"
 	"mimi/djq/model"
+	"mimi/djq/service"
 	"mimi/djq/util"
 	"net/http"
 	"strings"
-	"log"
-	"mimi/djq/constant"
-	"mimi/djq/service"
-	"mimi/djq/dao/arg"
 )
 
 func ShopList4Open(c *gin.Context) {

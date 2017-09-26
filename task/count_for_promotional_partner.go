@@ -1,13 +1,13 @@
 package task
 
 import (
-	"mimi/djq/dao/arg"
-	"mimi/djq/service"
-	"mimi/djq/model"
-	"mimi/djq/constant"
-	"mimi/djq/cache"
-	"strconv"
 	"log"
+	"mimi/djq/cache"
+	"mimi/djq/constant"
+	"mimi/djq/dao/arg"
+	"mimi/djq/model"
+	"mimi/djq/service"
+	"strconv"
 )
 
 //每天凌晨2点统计合作伙伴数据

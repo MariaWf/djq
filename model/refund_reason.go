@@ -22,19 +22,23 @@ func (obj *RefundReason) GetTableName() string {
 }
 
 func (obj *RefundReason) GetDBNames() []string {
-	return []string{"id","priority", "hide", "description"}
+	return []string{"id", "priority", "hide", "description"}
 }
 
 func (obj *RefundReason) GetMapNames() []string {
-	return []string{"id","priority", "hide", "description"}
+	return []string{"id", "priority", "hide", "description"}
 }
 
 func (obj *RefundReason) GetValue4Map(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "priority": return obj.Priority
-	case "hide": return obj.Hide
-	case "description": return obj.Description
+	case "id":
+		return obj.Id
+	case "priority":
+		return obj.Priority
+	case "hide":
+		return obj.Hide
+	case "description":
+		return obj.Description
 	}
 	panic(errors.New("对象refundReason属性[" + name + "]不存在"))
 }
@@ -49,20 +53,28 @@ func (obj *RefundReason) GetDBFromMapName(name string) string {
 
 func (obj *RefundReason) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id": return &obj.Id
-	case "priority": return &obj.Priority
-	case "hide": return &obj.Hide
-	case "description": return &obj.Description
+	case "id":
+		return &obj.Id
+	case "priority":
+		return &obj.Priority
+	case "hide":
+		return &obj.Hide
+	case "description":
+		return &obj.Description
 	}
 	panic(errors.New("对象refundReason属性[" + name + "]不存在"))
 }
 
 func (obj *RefundReason) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "priority": return obj.Priority
-	case "hide": return obj.Hide
-	case "description": return obj.Description
+	case "id":
+		return obj.Id
+	case "priority":
+		return obj.Priority
+	case "hide":
+		return obj.Hide
+	case "description":
+		return obj.Description
 	}
 	panic(errors.New("对象refundReason属性[" + name + "]不存在"))
 }

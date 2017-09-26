@@ -1,41 +1,41 @@
 package wxpay
 
 import (
-	"strconv"
-	"mimi/djq/config"
 	"github.com/pkg/errors"
 	"log"
+	"mimi/djq/config"
 	"mimi/djq/util"
+	"strconv"
 )
 
 func SendRedPack(openId string, totalAmount int) (Params, error) {
 	var err error
 	url := "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack"
 
-	appId := config.Get("wxpay_appid") // 微信公众平台应用ID
+	appId := config.Get("wxpay_appid")  // 微信公众平台应用ID
 	mchId := config.Get("wxpay_mch_id") // 微信支付商户平台商户号
-	apiKey := config.Get("wxpay_key") // 微信支付商户平台API密钥
+	apiKey := config.Get("wxpay_key")   // 微信支付商户平台API密钥
 
 	if config.Get("running_state") == "test" {
 		url = "https://api.mch.weixin.qq.com/sandboxnew/mmpaymkttransfers/sendredpack"
 		apiKey, err = GetSignKey()
 		if err != nil {
-			return nil, errors.Wrap(err,"获取测试API_KEY失败")
+			return nil, errors.Wrap(err, "获取测试API_KEY失败")
 		}
 	}
 
 	c := NewClient(appId, mchId, apiKey)
 
 	// 微信支付商户平台证书路径
-	certFile   := config.Get("wxpay_cert_file")
-	keyFile    := config.Get("wxpay_key_file")
+	certFile := config.Get("wxpay_cert_file")
+	keyFile := config.Get("wxpay_key_file")
 	rootcaFile := config.Get("wxpay_rootca_file")
 
 	// 附着商户证书
 	err = c.WithCert(certFile, keyFile, rootcaFile)
 	if err != nil {
 		log.Println(err)
-		return nil ,errors.Wrap(err,"获取商户证书失败")
+		return nil, errors.Wrap(err, "获取商户证书失败")
 	}
 
 	sendName := "摩设共享设计平台"
@@ -45,25 +45,25 @@ func SendRedPack(openId string, totalAmount int) (Params, error) {
 	clientIp := config.Get("external_ip")
 	params := make(Params)
 
-	params.SetString("nonce_str",util.BuildUUID())//随机字符串	nonce_str	是	5K8264ILTKCH16CQ2502SI8ZNMTM67VS	String(32)	随机字符串，不长于32位
-	params.SetString("mch_billno",util.BuildUUID()[:28])//商户订单号	mch_billno	是	10000098201411111234567890	String(28)
+	params.SetString("nonce_str", util.BuildUUID())       //随机字符串	nonce_str	是	5K8264ILTKCH16CQ2502SI8ZNMTM67VS	String(32)	随机字符串，不长于32位
+	params.SetString("mch_billno", util.BuildUUID()[:28]) //商户订单号	mch_billno	是	10000098201411111234567890	String(28)
 	//商户订单号（每个订单号必须唯一。取值范围：0~9，a~z，A~Z）
 	//接口根据商户订单号支持重入，如出现超时可再调用。
-	params.SetString("mch_id",c.MchId)//商户号	mch_id	是	10000098	String(32)	微信支付分配的商户号
-	params.SetString("wxappid",c.AppId)//公众账号appid	wxappid	是	wx8888888888888888	String(32)	微信分配的公众账号ID（企业号corpid即为此appId）。接口传入的所有appid应该为公众号的appid（在mp.weixin.qq.com申请的），不能为APP的appid（在open.weixin.qq.com申请的）。
-	params.SetString("send_name",sendName)//商户名称	send_name	是	天虹百货	String(32)	红包发送者名称
-	params.SetString("re_openid",openId)//用户openid	re_openid	是	oxTWIuGaIt6gTKsQRLau2M0yL16E	String(32)
+	params.SetString("mch_id", c.MchId)     //商户号	mch_id	是	10000098	String(32)	微信支付分配的商户号
+	params.SetString("wxappid", c.AppId)    //公众账号appid	wxappid	是	wx8888888888888888	String(32)	微信分配的公众账号ID（企业号corpid即为此appId）。接口传入的所有appid应该为公众号的appid（在mp.weixin.qq.com申请的），不能为APP的appid（在open.weixin.qq.com申请的）。
+	params.SetString("send_name", sendName) //商户名称	send_name	是	天虹百货	String(32)	红包发送者名称
+	params.SetString("re_openid", openId)   //用户openid	re_openid	是	oxTWIuGaIt6gTKsQRLau2M0yL16E	String(32)
 	//接受红包的用户
 	//用户在wxappid下的openid
-	params.SetString("total_amount",strconv.Itoa(totalAmount))//付款金额	total_amount	是	1000	int	付款金额，单位分
-	params.SetString("total_num",strconv.Itoa(1))//红包发放总人数	total_num	是	1	int
+	params.SetString("total_amount", strconv.Itoa(totalAmount)) //付款金额	total_amount	是	1000	int	付款金额，单位分
+	params.SetString("total_num", strconv.Itoa(1))              //红包发放总人数	total_num	是	1	int
 	//红包发放总人数
 	//total_num=1
-	params.SetString("wishing",wishing)//红包祝福语	wishing	是	感谢您参加猜灯谜活动，祝您元宵节快乐！	String(128)	红包祝福语
-	params.SetString("client_ip",clientIp)//Ip地址	client_ip	是	192.168.0.1	String(15)	调用接口的机器Ip地址
-	params.SetString("act_name",actName)//活动名称	act_name	是	猜灯谜抢红包活动	String(32)	活动名称
-	params.SetString("remark",remark)//备注	remark	是	猜越多得越多，快来抢！	String(256)	备注信息
-	params.SetString("scene_id","PRODUCT_2")//场景id	scene_id	否	PRODUCT_8	String(32)
+	params.SetString("wishing", wishing)      //红包祝福语	wishing	是	感谢您参加猜灯谜活动，祝您元宵节快乐！	String(128)	红包祝福语
+	params.SetString("client_ip", clientIp)   //Ip地址	client_ip	是	192.168.0.1	String(15)	调用接口的机器Ip地址
+	params.SetString("act_name", actName)     //活动名称	act_name	是	猜灯谜抢红包活动	String(32)	活动名称
+	params.SetString("remark", remark)        //备注	remark	是	猜越多得越多，快来抢！	String(256)	备注信息
+	params.SetString("scene_id", "PRODUCT_2") //场景id	scene_id	否	PRODUCT_8	String(32)
 	//发放红包使用场景，红包金额大于200时必传
 	//PRODUCT_1:商品促销
 	//PRODUCT_2:抽奖
@@ -83,14 +83,14 @@ func SendRedPack(openId string, totalAmount int) (Params, error) {
 	//资金授权商户号	consume_mch_id	否	1222000096	String(32)
 	//资金授权商户号
 	//服务商替特约商户发放时使用
-	params.SetString("sign", c.Sign(params))//签名	sign	是	String(32)	C380BEC2BFD727A4B6845133519F3AD6	签名，详见签名生成算法
+	params.SetString("sign", c.Sign(params)) //签名	sign	是	String(32)	C380BEC2BFD727A4B6845133519F3AD6	签名，详见签名生成算法
 
 	return c.Post(url, params, true)
 
 }
 
 func SendRedPackResult(openId string, totalAmount int) (err error) {
-	params, err := SendRedPack(openId,totalAmount)
+	params, err := SendRedPack(openId, totalAmount)
 	if err != nil {
 		return
 	}
@@ -107,6 +107,7 @@ func SendRedPackResult(openId string, totalAmount int) (err error) {
 	}
 	return
 }
+
 //发放规则
 //1.发送频率限制------默认1800/min
 //2.发送个数上限------按照默认1800/min算

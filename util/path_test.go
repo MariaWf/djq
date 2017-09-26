@@ -1,9 +1,9 @@
 package util
 
 import (
-	"testing"
-	"strconv"
 	"fmt"
+	"strconv"
+	"testing"
 )
 
 func TestAppend(t *testing.T) {
@@ -16,20 +16,20 @@ func TestAppend(t *testing.T) {
 	//t.Log(PathAppend(root2, tail))
 	//t.Log(PathAppend(root2, tail2))
 	//t.Log(test())
-	num,err := strconv.Atoi("")
-	if err!=nil{
+	num, err := strconv.Atoi("")
+	if err != nil {
 		t.Error(err)
-	}else{
+	} else {
 		t.Log(num)
 	}
 }
 
-func TestScanf(t *testing.T){
-	t.Log(fmt.Sprintf("oldRefundAmount:%v_refundAmount:%v_totalFee:%v",1, 2,3))
+func TestScanf(t *testing.T) {
+	t.Log(fmt.Sprintf("oldRefundAmount:%v_refundAmount:%v_totalFee:%v", 1, 2, 3))
 
 }
 
-func test() (path string){
+func test() (path string) {
 	root := "http://localhost:8081\\"
 	tail := "a/b\\c"
 	tail2 := "/d/e/f"
@@ -51,7 +51,6 @@ func TestPathAppend2(t *testing.T) {
 	tail6 := ""
 	t.Log(PathAppend(root, tail, tail2, tail3, tail6, tail4, tail5, tail6))
 }
-
 
 func BenchmarkPathAppend2(b *testing.B) {
 	root := "http://localhost:8081\\"

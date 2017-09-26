@@ -33,7 +33,7 @@ func ShopClassificationList(c *gin.Context) {
 	argObj.OrderBy = "priority desc"
 
 	serviceObj := &service.ShopClassification{}
-	argObj.DisplayNames = []string{"id", "name", "priority", "hide","description"}
+	argObj.DisplayNames = []string{"id", "name", "priority", "hide", "description"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }
@@ -68,7 +68,7 @@ func ShopClassificationPatch(c *gin.Context) {
 	}
 
 	serviceObj := &service.ShopClassification{}
-	result := service.ResultUpdate(serviceObj, obj, "name", "priority", "hide","description")
+	result := service.ResultUpdate(serviceObj, obj, "name", "priority", "hide", "description")
 	c.JSON(http.StatusOK, result)
 }
 

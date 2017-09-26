@@ -2,17 +2,17 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/influxdata/influxdb/pkg/slices"
 	"log"
 	"mimi/djq/constant"
 	"mimi/djq/dao/arg"
 	"mimi/djq/model"
 	"mimi/djq/service"
+	"mimi/djq/session"
 	"mimi/djq/util"
 	"net/http"
-	"strings"
-	"mimi/djq/session"
 	"strconv"
-	"github.com/influxdata/influxdb/pkg/slices"
+	"strings"
 )
 
 func RefundList4Ui(c *gin.Context) {
@@ -89,7 +89,7 @@ func RefundList4Ui(c *gin.Context) {
 				for _, v2 := range shopList {
 					if v1.(*model.CashCoupon).ShopId == v2.(*model.Shop).Id {
 						v1.(*model.CashCoupon).Shop = v2.(*model.Shop)
-						break;
+						break
 					}
 				}
 			}
@@ -98,7 +98,7 @@ func RefundList4Ui(c *gin.Context) {
 			for _, v2 := range cashCouponList {
 				if v1.CashCouponId == v2.(*model.CashCoupon).Id {
 					v1.CashCoupon = v2.(*model.CashCoupon)
-					break;
+					break
 				}
 			}
 		}
@@ -120,12 +120,12 @@ func RefundList4Ui(c *gin.Context) {
 			for _, cashCouponOrder := range list {
 				if refund.(*model.Refund).CashCouponOrderId == cashCouponOrder.Id {
 					refund.(*model.Refund).CashCouponOrder = cashCouponOrder
-					break;
+					break
 				}
 			}
 
 		}
-		count,err := service.Count(serviceObj,argObj)
+		count, err := service.Count(serviceObj, argObj)
 		if err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
@@ -219,7 +219,7 @@ func RefundGet(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	result := util.BuildSuccessResult(map[string]interface{}{"refund":obj, "cashCouponOrder":cashCouponOrder, "cashCoupon":cashCoupon})
+	result := util.BuildSuccessResult(map[string]interface{}{"refund": obj, "cashCouponOrder": cashCouponOrder, "cashCoupon": cashCoupon})
 	//result := service.ResultGet(serviceObj, c.Param("id"))
 	c.JSON(http.StatusOK, result)
 }

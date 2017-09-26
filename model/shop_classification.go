@@ -32,11 +32,16 @@ func (obj *ShopClassification) GetMapNames() []string {
 
 func (obj *ShopClassification) GetValue4Map(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "name": return obj.Name
-	case "priority": return obj.Priority
-	case "description": return obj.Description
-	case "hide": return obj.Hide
+	case "id":
+		return obj.Id
+	case "name":
+		return obj.Name
+	case "priority":
+		return obj.Priority
+	case "description":
+		return obj.Description
+	case "hide":
+		return obj.Hide
 	}
 	panic(errors.New("对象shopClassification属性[" + name + "]不存在"))
 }
@@ -51,22 +56,32 @@ func (obj *ShopClassification) GetDBFromMapName(name string) string {
 
 func (obj *ShopClassification) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id": return &obj.Id
-	case "name": return &obj.Name
-	case "priority": return &obj.Priority
-	case "description": return &obj.Description
-	case "hide": return &obj.Hide
+	case "id":
+		return &obj.Id
+	case "name":
+		return &obj.Name
+	case "priority":
+		return &obj.Priority
+	case "description":
+		return &obj.Description
+	case "hide":
+		return &obj.Hide
 	}
 	panic(errors.New("对象shopClassification属性[" + name + "]不存在"))
 }
 
 func (obj *ShopClassification) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "name": return obj.Name
-	case "priority": return obj.Priority
-	case "description": return obj.Description
-	case "hide": return obj.Hide
+	case "id":
+		return obj.Id
+	case "name":
+		return obj.Name
+	case "priority":
+		return obj.Priority
+	case "description":
+		return obj.Description
+	case "hide":
+		return obj.Hide
 	}
 	panic(errors.New("对象shopClassification属性[" + name + "]不存在"))
 }

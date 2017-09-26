@@ -16,13 +16,13 @@ type User struct {
 	UnlockedOnly              bool
 	LockedEqual               string `form:"locked" json:"locked"`
 
-	PageSize                  int `form:"pageSize" json:"pageSize"`
-	TargetPage                int `form:"targetPage" json:"targetPage"`
+	PageSize   int `form:"pageSize" json:"pageSize"`
+	TargetPage int `form:"targetPage" json:"targetPage"`
 
-	DisplayNames              []string
+	DisplayNames []string
 
-	UpdateObject              interface{}
-	UpdateNames               []string
+	UpdateObject interface{}
+	UpdateNames  []string
 }
 
 func (arg *User) GetDisplayNames() []string {
@@ -119,7 +119,7 @@ func (arg *User) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " mobile like ?"
-		params = append(params, "%" + arg.KeywordLike + "%")
+		params = append(params, "%"+arg.KeywordLike+"%")
 	}
 	if arg.LockedEqual != "" {
 		if sql != "" {

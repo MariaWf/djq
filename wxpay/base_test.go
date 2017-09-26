@@ -1,12 +1,12 @@
 package wxpay
 
 import (
-	"testing"
-	"mimi/djq/util"
-	"math/rand"
-	"net"
 	"fmt"
+	"math/rand"
+	"mimi/djq/util"
+	"net"
 	"os"
+	"testing"
 )
 
 func TestGetSignKey(t *testing.T) {
@@ -23,7 +23,7 @@ func TestUnifiedOrder(t *testing.T) {
 	totalFee := rand.Intn(10000) + 1
 	clientIp := "192.168.1.1"
 	openId := ""
-	params, err := UnifiedOrder(payOrderNumber, totalFee, clientIp,openId)
+	params, err := UnifiedOrder(payOrderNumber, totalFee, clientIp, openId)
 	if err != nil {
 		t.Error(err)
 	} else {
@@ -34,32 +34,32 @@ func TestUnifiedOrder(t *testing.T) {
 
 func TestGetAccessToken(t *testing.T) {
 	obj, err := GetAccessToken()
-	if err!=nil{
+	if err != nil {
 		t.Error(err)
-	}else{
+	} else {
 		t.Log(obj)
 	}
 }
 
 func TestGetJsapiTicket(t *testing.T) {
 	obj, err := GetJsapiTicket()
-	if err!=nil{
+	if err != nil {
 		t.Error(err)
-	}else{
+	} else {
 		t.Log(obj)
 	}
 }
 
 func TestGetSignatureMap(t *testing.T) {
-	obj,err := GetConfigSignatureMap("http://www.baidu.com")
-	if err!=nil{
+	obj, err := GetConfigSignatureMap("http://www.baidu.com")
+	if err != nil {
 		t.Error(err)
-	}else{
+	} else {
 		t.Log(obj)
 	}
 }
 
-func TestGetClientIp(t *testing.T){
+func TestGetClientIp(t *testing.T) {
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		fmt.Println(err.Error())

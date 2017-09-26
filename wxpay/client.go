@@ -2,23 +2,23 @@ package wxpay
 
 import (
 	"bytes"
+	"crypto/aes"
+	"crypto/cipher"
 	"crypto/md5"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
+	"mimi/djq/config"
 	"net/http"
 	"sort"
 	"strings"
 	"time"
-	"mimi/djq/config"
-	"fmt"
-	"crypto/aes"
-	"crypto/cipher"
-	"encoding/base64"
 )
 
 const bodyType = "application/xml; charset=utf-8"
@@ -28,16 +28,16 @@ type Client struct {
 	stdClient *http.Client
 	tlsClient *http.Client
 
-	AppId     string
-	MchId     string
-	ApiKey    string
+	AppId  string
+	MchId  string
+	ApiKey string
 }
 
 // 实例化API客户端
 func NewDefaultClient() *Client {
-	appId := config.Get("wxpay_appid") // 微信公众平台应用ID
+	appId := config.Get("wxpay_appid")  // 微信公众平台应用ID
 	mchId := config.Get("wxpay_mch_id") // 微信支付商户平台商户号
-	apiKey := config.Get("wxpay_key") // 微信支付商户平台API密钥
+	apiKey := config.Get("wxpay_key")   // 微信支付商户平台API密钥
 	return &Client{
 		stdClient: &http.Client{},
 		AppId:     appId,
@@ -201,7 +201,7 @@ func (c *Client) Aes256EcbDecrypt(str string) (Params, error) {
 }
 
 func myEncode(txt, key string) (dest []byte, err error) {
-	dest = make([]byte, (len(txt) / len(key) + 1) * len(key))
+	dest = make([]byte, (len(txt)/len(key)+1)*len(key))
 
 	aesCipher, err := aes.NewCipher([]byte(key))
 	if err != nil {

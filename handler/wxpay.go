@@ -1,22 +1,22 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
+	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
+	"html/template"
+	"io"
+	"io/ioutil"
+	"log"
+	"mimi/djq/config"
+	"mimi/djq/service"
+	"mimi/djq/session"
+	"mimi/djq/util"
 	"mimi/djq/wxpay"
 	"net/http"
-	"mimi/djq/util"
-	"log"
-	"io/ioutil"
-	"html/template"
-	"mimi/djq/session"
-	"strings"
-	"mimi/djq/config"
-	"encoding/json"
-	"github.com/pkg/errors"
-	"mimi/djq/service"
 	"strconv"
-	"io"
+	"strings"
 )
 
 var ErrWxpayGetOpenIdFail = errors.New("获取微信OpenId失败")
@@ -181,7 +181,7 @@ func Notify4unified_order(r io.Reader) io.Reader {
 				serviceObj := &service.CashCouponOrder{}
 				_, err := serviceObj.ConfirmOrder(payOrderNumber, totalFee)
 				if err != nil {
-					err = errors.Wrap(err, payOrderNumber + "_" + strconv.Itoa(totalFee))
+					err = errors.Wrap(err, payOrderNumber+"_"+strconv.Itoa(totalFee))
 					log.Println(err)
 					//cache.Set(cache.CacheNameWxpayErrorPayOrderNumberConfirm + payOrderNumber, err.Error(), time.Hour * 24 * 7)
 					p2.SetString("return_code", "FAIL")

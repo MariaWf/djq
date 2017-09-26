@@ -1,9 +1,9 @@
 package util
 
 import (
-	"strings"
-	"path/filepath"
 	"mimi/djq/constant"
+	"path/filepath"
+	"strings"
 )
 
 func FormatImageWaterMark(url string) string {

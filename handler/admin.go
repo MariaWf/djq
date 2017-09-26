@@ -237,7 +237,7 @@ func AdminPatchSelf(c *gin.Context) {
 	}
 
 	serviceObj := &service.Admin{}
-	_,err = serviceObj.UpdateSelf(obj)
+	_, err = serviceObj.UpdateSelf(obj)
 	//_, err = service.Update(serviceObj, obj, "mobile", "password")
 	if err != nil {
 		log.Println(err)

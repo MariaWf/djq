@@ -1,8 +1,8 @@
 package util
 
 import (
-	"strings"
 	"path/filepath"
+	"strings"
 )
 
 //func PathAppend(head, tail string) string {
@@ -26,7 +26,7 @@ import (
 //	}
 //}
 
-func PathAppend(strs ... string) string {
+func PathAppend(strs ...string) string {
 	newStrs := make([]string, 0, len(strs))
 	for _, str := range strs {
 		str = filepath.ToSlash(str)

@@ -10,10 +10,10 @@ func checkErr(err error) {
 func TestSet(t *testing.T) {
 	//err := Set("t1", "mimi", 0)
 	//checkErr(err)
-	ti,err := GetExpire("t1")
+	ti, err := GetExpire("t1")
 	checkErr(err)
 	t.Log(ti)
-	v,err := Get("t1")
+	v, err := Get("t1")
 	checkErr(err)
 	t.Log(v)
 }

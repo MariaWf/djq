@@ -1,12 +1,12 @@
 package task
 
 import (
-	"mimi/djq/service"
-	"mimi/djq/dao/arg"
-	"mimi/djq/model"
+	"log"
 	"mimi/djq/cache"
 	"mimi/djq/constant"
-	"log"
+	"mimi/djq/dao/arg"
+	"mimi/djq/model"
+	"mimi/djq/service"
 )
 
 //每天凌晨3点统计商家代金券消费数据

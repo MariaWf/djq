@@ -1,14 +1,14 @@
 package task
 
 import (
-	"time"
-	"mimi/djq/service"
-	"mimi/djq/dao/arg"
-	"strconv"
-	"mimi/djq/constant"
 	"log"
-	"mimi/djq/model"
 	"mimi/djq/cache"
+	"mimi/djq/constant"
+	"mimi/djq/dao/arg"
+	"mimi/djq/model"
+	"mimi/djq/service"
+	"strconv"
+	"time"
 )
 
 //定时自动同意未使用代金券订单的退款申请
@@ -17,7 +17,7 @@ func AgreeNotUsedRefunding() {
 	if err != nil {
 		log.Println(err)
 	}
-	FixTimeIntervalCycle(AgreeNotUsedRefundingAction, time.Minute * 30)
+	FixTimeIntervalCycle(AgreeNotUsedRefundingAction, time.Minute*30)
 }
 
 func AgreeNotUsedRefundingAction() {

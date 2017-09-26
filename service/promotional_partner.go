@@ -3,10 +3,10 @@ package service
 import (
 	"database/sql"
 	"mimi/djq/dao"
+	"mimi/djq/dao/arg"
+	"mimi/djq/db/mysql"
 	"mimi/djq/model"
 	"mimi/djq/util"
-	"mimi/djq/db/mysql"
-	"mimi/djq/dao/arg"
 )
 
 type PromotionalPartner struct {

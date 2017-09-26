@@ -10,35 +10,35 @@ import (
 )
 
 const (
-	SessionNameMiAdminId = "miAdminId"
+	SessionNameMiAdminId    = "miAdminId"
 	SessionNameMiPermission = "miPermission"
-	SessionNameMiAdminName = "miAdminName"
+	SessionNameMiAdminName  = "miAdminName"
 
-	SessionNameUiUserId = "uiUserId"
-	SessionNameUiUserMobile = "uiUserMobile"
-	SessionNameUiUserOpenId = "uiUserOpenId"
-	SessionNameUiUserCaptcha = "uiUserCaptcha"
+	SessionNameUiUserId         = "uiUserId"
+	SessionNameUiUserMobile     = "uiUserMobile"
+	SessionNameUiUserOpenId     = "uiUserOpenId"
+	SessionNameUiUserCaptcha    = "uiUserCaptcha"
 	SessionNameUiUserLoginCount = "uiUserLoginCount"
 
-	SessionNameSiShopAccountId = "siShopAccountId"
-	SessionNameSiShopAccountName = "siShopAccountName"
+	SessionNameSiShopAccountId     = "siShopAccountId"
+	SessionNameSiShopAccountName   = "siShopAccountName"
 	SessionNameSiShopAccountOpenId = "siShopAccountOpenId"
 )
 
 func GetMi(w http.ResponseWriter, r *http.Request) (*Session, error) {
-	return Get(w, r, "mi", 0, time.Hour * 1)
+	return Get(w, r, "mi", 0, time.Hour*1)
 }
 
 func GetUi(w http.ResponseWriter, r *http.Request) (*Session, error) {
-	return Get(w, r, "ui", 60 * 60 * 24 * 365, time.Hour * 24 * 365)
+	return Get(w, r, "ui", 60*60*24*365, time.Hour*24*365)
 }
 
 func GetSi(w http.ResponseWriter, r *http.Request) (*Session, error) {
-	return Get(w, r, "si", 0, time.Hour * 18)
+	return Get(w, r, "si", 0, time.Hour*18)
 }
 
 func GetOpen(w http.ResponseWriter, r *http.Request) (*Session, error) {
-	return Get(w, r, "ui", 0, time.Hour * 1)
+	return Get(w, r, "ui", 0, time.Hour*1)
 }
 
 func Get(w http.ResponseWriter, r *http.Request, sessionType string, cookieMaxAge int, redisExpires time.Duration) (*Session, error) {
@@ -109,7 +109,7 @@ func (sn *Session) Set(key string, value string) error {
 	return nil
 }
 
-func (sn *Session) SetTemp(key string, value string,expires time.Duration) error {
+func (sn *Session) SetTemp(key string, value string, expires time.Duration) error {
 	conn := redis.Get()
 	var vMap map[string]interface{} = make(map[string]interface{})
 
@@ -123,7 +123,6 @@ func (sn *Session) SetTemp(key string, value string,expires time.Duration) error
 	}
 	return nil
 }
-
 
 func (sn *Session) Del() error {
 	conn := redis.Get()

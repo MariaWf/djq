@@ -34,13 +34,20 @@ func (obj *Advertisement) GetMapNames() []string {
 
 func (obj *Advertisement) GetValue4Map(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "name": return obj.Name
-	case "image": return obj.Image
-	case "link": return obj.Link
-	case "priority": return obj.Priority
-	case "hide": return obj.Hide
-	case "description": return obj.Description
+	case "id":
+		return obj.Id
+	case "name":
+		return obj.Name
+	case "image":
+		return obj.Image
+	case "link":
+		return obj.Link
+	case "priority":
+		return obj.Priority
+	case "hide":
+		return obj.Hide
+	case "description":
+		return obj.Description
 	}
 	panic(errors.New("对象advertisement属性[" + name + "]不存在"))
 }
@@ -55,26 +62,40 @@ func (obj *Advertisement) GetDBFromMapName(name string) string {
 
 func (obj *Advertisement) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id": return &obj.Id
-	case "name": return &obj.Name
-	case "image": return &obj.Image
-	case "link": return &obj.Link
-	case "priority": return &obj.Priority
-	case "hide": return &obj.Hide
-	case "description": return &obj.Description
+	case "id":
+		return &obj.Id
+	case "name":
+		return &obj.Name
+	case "image":
+		return &obj.Image
+	case "link":
+		return &obj.Link
+	case "priority":
+		return &obj.Priority
+	case "hide":
+		return &obj.Hide
+	case "description":
+		return &obj.Description
 	}
 	panic(errors.New("对象advertisement属性[" + name + "]不存在"))
 }
 
 func (obj *Advertisement) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "name": return obj.Name
-	case "image": return obj.Image
-	case "link": return obj.Link
-	case "priority": return obj.Priority
-	case "hide": return obj.Hide
-	case "description": return obj.Description
+	case "id":
+		return obj.Id
+	case "name":
+		return obj.Name
+	case "image":
+		return obj.Image
+	case "link":
+		return obj.Link
+	case "priority":
+		return obj.Priority
+	case "hide":
+		return obj.Hide
+	case "description":
+		return obj.Description
 	}
 	panic(errors.New("对象advertisement属性[" + name + "]不存在"))
 }

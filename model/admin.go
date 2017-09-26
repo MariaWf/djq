@@ -3,11 +3,11 @@ package model
 import "errors"
 
 type Admin struct {
-	Id             string `form:"id" json:"id" db:"id" desc:"id"`
-	Name           string `form:"name" json:"name" db:"name" desc:"名称"`
-	Mobile         string `form:"mobile" json:"mobile" db:"mobile" desc:"手机"`
-	Password       string `form:"password" json:"password" db:"password" desc:"密码"`
-	Locked         bool   `form:"locked" json:"locked" db:"locked" desc:"锁定"`
+	Id       string `form:"id" json:"id" db:"id" desc:"id"`
+	Name     string `form:"name" json:"name" db:"name" desc:"名称"`
+	Mobile   string `form:"mobile" json:"mobile" db:"mobile" desc:"手机"`
+	Password string `form:"password" json:"password" db:"password" desc:"密码"`
+	Locked   bool   `form:"locked" json:"locked" db:"locked" desc:"锁定"`
 
 	RoleList       []*Role       `json:"roleList" desc:"角色列表"`
 	PermissionList []*Permission `json:"permissionList" desc:"权限列表"`
@@ -35,11 +35,16 @@ func (obj *Admin) GetMapNames() []string {
 
 func (obj *Admin) GetValue4Map(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "name": return obj.Name
-	case "locked": return obj.Locked
-	case "mobile": return obj.Mobile
-	case "password": return obj.Password
+	case "id":
+		return obj.Id
+	case "name":
+		return obj.Name
+	case "locked":
+		return obj.Locked
+	case "mobile":
+		return obj.Mobile
+	case "password":
+		return obj.Password
 	}
 	panic(errors.New("对象admin属性[" + name + "]不存在"))
 }
@@ -54,22 +59,32 @@ func (obj *Admin) GetDBFromMapName(name string) string {
 
 func (obj *Admin) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id": return &obj.Id
-	case "name": return &obj.Name
-	case "mobile": return &obj.Mobile
-	case "locked": return &obj.Locked
-	case "password": return &obj.Password
+	case "id":
+		return &obj.Id
+	case "name":
+		return &obj.Name
+	case "mobile":
+		return &obj.Mobile
+	case "locked":
+		return &obj.Locked
+	case "password":
+		return &obj.Password
 	}
 	panic(errors.New("对象admin属性[" + name + "]不存在"))
 }
 
 func (obj *Admin) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "name": return obj.Name
-	case "locked": return obj.Locked
-	case "mobile": return obj.Mobile
-	case "password": return obj.Password
+	case "id":
+		return obj.Id
+	case "name":
+		return obj.Name
+	case "locked":
+		return obj.Locked
+	case "mobile":
+		return obj.Mobile
+	case "password":
+		return obj.Password
 	}
 	panic(errors.New("对象admin属性[" + name + "]不存在"))
 }

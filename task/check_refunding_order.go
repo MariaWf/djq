@@ -1,15 +1,15 @@
 package task
 
 import (
-	"time"
 	"log"
-	"mimi/djq/dao/arg"
+	"mimi/djq/cache"
 	"mimi/djq/constant"
+	"mimi/djq/dao/arg"
+	"mimi/djq/model"
 	"mimi/djq/service"
 	"mimi/djq/util"
-	"mimi/djq/model"
 	"mimi/djq/wxpay"
-	"mimi/djq/cache"
+	"time"
 )
 
 //每1分钟检测一次，所有离开始退款时间超过1分钟的执行中退款，
@@ -21,7 +21,7 @@ func CheckRefundingOrder() {
 	if err != nil {
 		log.Println(err)
 	}
-	FixTimeIntervalCycle(CheckRefundingOrderAction, time.Minute * 1)
+	FixTimeIntervalCycle(CheckRefundingOrderAction, time.Minute*1)
 }
 
 func CheckRefundingOrderAction() {

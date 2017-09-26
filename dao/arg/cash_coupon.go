@@ -2,17 +2,17 @@ package arg
 
 import (
 	"mimi/djq/model"
-	"time"
 	"mimi/djq/util"
+	"time"
 )
 
 type CashCoupon struct {
-	IdEqual          string
-	IncludeDeleted   bool
-	NameLike         string `form:"keyword" json:"keyword"`
-	NameEqual        string
-	OrderBy          string
-	IdsIn            []string
+	IdEqual        string
+	IncludeDeleted bool
+	NameLike       string `form:"keyword" json:"keyword"`
+	NameEqual      string
+	OrderBy        string
+	IdsIn          []string
 
 	ExpiredOnly      bool
 	UnexpiredOnly    bool
@@ -20,18 +20,17 @@ type CashCoupon struct {
 	OverExpiryDate   bool
 	BeforeExpiryDate bool
 
-	NotIncludeHide   bool
+	NotIncludeHide bool
 	HideEqual      string `form:"hide" json:"hide"`
-	ShopIdEqual      string `form:"shopId" json:"shopId"`
+	ShopIdEqual    string `form:"shopId" json:"shopId"`
 
+	PageSize   int `form:"pageSize" json:"pageSize"`
+	TargetPage int `form:"targetPage" json:"targetPage"`
 
-	PageSize         int `form:"pageSize" json:"pageSize"`
-	TargetPage       int `form:"targetPage" json:"targetPage"`
+	DisplayNames []string
 
-	DisplayNames     []string
-
-	UpdateObject     interface{}
-	UpdateNames      []string
+	UpdateObject interface{}
+	UpdateNames  []string
 }
 
 func (arg *CashCoupon) GetDisplayNames() []string {
@@ -121,7 +120,7 @@ func (arg *CashCoupon) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " name like ?"
-		params = append(params, "%" + arg.NameLike + "%")
+		params = append(params, "%"+arg.NameLike+"%")
 	}
 	if arg.NameEqual != "" {
 		if sql != "" {

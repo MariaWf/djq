@@ -26,23 +26,31 @@ func (obj *ShopAccount) GetTableName() string {
 }
 
 func (obj *ShopAccount) GetDBNames() []string {
-	return []string{"id", "shop_id", "name", "password","description", "money_chance", "total_money", "locked"}
+	return []string{"id", "shop_id", "name", "password", "description", "money_chance", "total_money", "locked"}
 }
 
 func (obj *ShopAccount) GetMapNames() []string {
-	return []string{"id", "shopId", "name", "password","description", "moneyChance", "totalMoney", "locked"}
+	return []string{"id", "shopId", "name", "password", "description", "moneyChance", "totalMoney", "locked"}
 }
 
 func (obj *ShopAccount) GetValue4Map(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "shopId": return obj.ShopId
-	case "name": return obj.Name
-	case "password": return obj.Password
-	case "description": return obj.Description
-	case "moneyChance": return obj.MoneyChance
-	case "totalMoney": return obj.TotalMoney
-	case "locked": return obj.Locked
+	case "id":
+		return obj.Id
+	case "shopId":
+		return obj.ShopId
+	case "name":
+		return obj.Name
+	case "password":
+		return obj.Password
+	case "description":
+		return obj.Description
+	case "moneyChance":
+		return obj.MoneyChance
+	case "totalMoney":
+		return obj.TotalMoney
+	case "locked":
+		return obj.Locked
 	}
 	panic(errors.New("对象shopAccount属性[" + name + "]不存在"))
 }
@@ -57,28 +65,44 @@ func (obj *ShopAccount) GetDBFromMapName(name string) string {
 
 func (obj *ShopAccount) GetPointer4DB(name string) interface{} {
 	switch name {
-	case "id": return &obj.Id
-	case "shop_id": return &obj.ShopId
-	case "name": return &obj.Name
-	case "password": return &obj.Password
-	case "description": return &obj.Description
-	case "money_chance": return &obj.MoneyChance
-	case "total_money": return &obj.TotalMoney
-	case "locked": return &obj.Locked
+	case "id":
+		return &obj.Id
+	case "shop_id":
+		return &obj.ShopId
+	case "name":
+		return &obj.Name
+	case "password":
+		return &obj.Password
+	case "description":
+		return &obj.Description
+	case "money_chance":
+		return &obj.MoneyChance
+	case "total_money":
+		return &obj.TotalMoney
+	case "locked":
+		return &obj.Locked
 	}
 	panic(errors.New("对象shopAccount属性[" + name + "]不存在"))
 }
 
 func (obj *ShopAccount) GetValue4DB(name string) interface{} {
 	switch name {
-	case "id": return obj.Id
-	case "shop_id": return obj.ShopId
-	case "name": return obj.Name
-	case "password": return obj.Password
-	case "description": return obj.Description
-	case "money_chance": return obj.MoneyChance
-	case "total_money": return obj.TotalMoney
-	case "locked": return obj.Locked
+	case "id":
+		return obj.Id
+	case "shop_id":
+		return obj.ShopId
+	case "name":
+		return obj.Name
+	case "password":
+		return obj.Password
+	case "description":
+		return obj.Description
+	case "money_chance":
+		return obj.MoneyChance
+	case "total_money":
+		return obj.TotalMoney
+	case "locked":
+		return obj.Locked
 	}
 	panic(errors.New("对象shopAccount属性[" + name + "]不存在"))
 }

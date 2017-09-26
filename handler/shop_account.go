@@ -7,10 +7,10 @@ import (
 	"mimi/djq/dao/arg"
 	"mimi/djq/model"
 	"mimi/djq/service"
+	"mimi/djq/session"
 	"mimi/djq/util"
 	"net/http"
 	"strings"
-	"mimi/djq/session"
 )
 
 func ShopAccountLogin(c *gin.Context) {
@@ -144,7 +144,7 @@ func ShopAccountGetMoney4Si(c *gin.Context) {
 		return
 	}
 	serviceObj := &service.ShopAccount{}
-	money, err := serviceObj.GetMoney(shopAccountId,openId)
+	money, err := serviceObj.GetMoney(shopAccountId, openId)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
@@ -199,7 +199,7 @@ func ShopAccountActionGetPresentOrderOrCashCouponOrder4Si(c *gin.Context) {
 			return
 		}
 		serviceCashCoupon := &service.CashCoupon{}
-		cashCoupon, err := service.Get(serviceCashCoupon,cashCouponOrder.CashCouponId)
+		cashCoupon, err := service.Get(serviceCashCoupon, cashCouponOrder.CashCouponId)
 		if err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
@@ -218,7 +218,7 @@ func ShopAccountActionGetPresentOrderOrCashCouponOrder4Si(c *gin.Context) {
 		}
 		cashCouponOrder.CashCoupon = cashCoupon.(*model.CashCoupon)
 		serviceUser := &service.User{}
-		user,err := service.Get(serviceUser,cashCouponOrder.UserId)
+		user, err := service.Get(serviceUser, cashCouponOrder.UserId)
 		if err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
@@ -256,7 +256,7 @@ func ShopAccountActionGetPresentOrderOrCashCouponOrder4Si(c *gin.Context) {
 		}
 		presentOrder.Present = present.(*model.Present)
 		serviceUser := &service.User{}
-		user,err := service.Get(serviceUser,presentOrder.UserId)
+		user, err := service.Get(serviceUser, presentOrder.UserId)
 		if err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))

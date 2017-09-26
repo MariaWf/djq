@@ -20,6 +20,6 @@ func BenchmarkConfig(b *testing.B) {
 	}
 }
 
-func TestApiType(t *testing.T){
-	t.Log(ApiTypeMi,ApiTypeUi,ApiTypeSi,ApiTypeOpen)
+func TestApiType(t *testing.T) {
+	t.Log(ApiTypeMi, ApiTypeUi, ApiTypeSi, ApiTypeOpen)
 }

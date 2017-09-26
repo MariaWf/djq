@@ -12,13 +12,13 @@ type PromotionalPartner struct {
 	OrderBy        string
 	IdsIn          []string
 
-	PageSize       int `form:"pageSize" json:"pageSize"`
-	TargetPage     int `form:"targetPage" json:"targetPage"`
+	PageSize   int `form:"pageSize" json:"pageSize"`
+	TargetPage int `form:"targetPage" json:"targetPage"`
 
-	DisplayNames   []string
+	DisplayNames []string
 
-	UpdateObject   interface{}
-	UpdateNames    []string
+	UpdateObject interface{}
+	UpdateNames  []string
 }
 
 func (arg *PromotionalPartner) GetDisplayNames() []string {
@@ -101,7 +101,7 @@ func (arg *PromotionalPartner) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " name like ?"
-		params = append(params, "%" + arg.NameLike + "%")
+		params = append(params, "%"+arg.NameLike+"%")
 	}
 	if arg.NameEqual != "" {
 		if sql != "" {

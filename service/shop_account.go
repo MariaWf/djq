@@ -3,13 +3,13 @@ package service
 import (
 	"database/sql"
 	"github.com/pkg/errors"
-	"mimi/djq/dao"
-	"mimi/djq/model"
-	"mimi/djq/util"
 	"log"
+	"math/rand"
+	"mimi/djq/dao"
 	"mimi/djq/dao/arg"
 	"mimi/djq/db/mysql"
-	"math/rand"
+	"mimi/djq/model"
+	"mimi/djq/util"
 	"mimi/djq/wxpay"
 )
 
@@ -58,7 +58,7 @@ func (service *ShopAccount) GetMoney(shopAccountId, openId string) (money int, e
 		err = checkErr(err)
 		return
 	}
-	err = wxpay.SendRedPackResult(openId,money)
+	err = wxpay.SendRedPackResult(openId, money)
 	if err != nil {
 		rollback = true
 		err = checkErr(err)

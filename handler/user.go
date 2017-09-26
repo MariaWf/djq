@@ -1,19 +1,19 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"mimi/djq/constant"
 	"mimi/djq/dao/arg"
 	"mimi/djq/model"
 	"mimi/djq/service"
 	"mimi/djq/session"
 	"mimi/djq/util"
 	"net/http"
-	"strings"
-	"mimi/djq/constant"
 	"strconv"
+	"strings"
 	"time"
-	"fmt"
 )
 
 func UserLogin(c *gin.Context) {
@@ -64,7 +64,7 @@ func UserLogin(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("登录频繁，请休息5分钟再来"))
 		return
 	}
-	err = sn.SetTemp(session.SessionNameUiUserLoginCount, strconv.Itoa(newCount), time.Minute * 5)
+	err = sn.SetTemp(session.SessionNameUiUserLoginCount, strconv.Itoa(newCount), time.Minute*5)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))

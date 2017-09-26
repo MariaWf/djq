@@ -1,14 +1,14 @@
 package handler
 
 import (
-	"net/http"
-	"github.com/gin-gonic/gin"
-	"strconv"
 	"fmt"
-	"mimi/djq/cache"
+	"github.com/gin-gonic/gin"
 	"log"
-	"mimi/djq/util"
+	"mimi/djq/cache"
 	"mimi/djq/task"
+	"mimi/djq/util"
+	"net/http"
+	"strconv"
 )
 
 func PromotionalPartnerActionMaintenanceStatusGet(c *gin.Context) {
@@ -73,11 +73,11 @@ func PromotionalPartnerActionMaintenanceStatusPost(c *gin.Context) {
 }
 
 func PromotionalPartnerActionCountNow(c *gin.Context) {
-	defer func(){
-		if err:=recover();err!=nil{
+	defer func() {
+		if err := recover(); err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
-		}	
+		}
 	}()
 	task.CountForPromotionalPartnerAction()
 	result := util.BuildSuccessResult("")
@@ -108,7 +108,7 @@ func ShopAccountActionMaintenanceStatusGet(c *gin.Context) {
 
 func ShopAccountActionMaintenanceStatusPost(c *gin.Context) {
 	hide := c.PostForm("redPackHide")
-	if hide != "true"  && hide != "false" {
+	if hide != "true" && hide != "false" {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(fmt.Sprintf("值只能为true或false:%v", hide)))
 		return
 	}
@@ -167,7 +167,7 @@ func IndexContactWayActionMaintenanceStatusGet(c *gin.Context) {
 func IndexContactWayActionMaintenanceStatusPost(c *gin.Context) {
 	hide := c.PostForm("indexContactWayHide")
 	number := c.PostForm("indexContactWayNumber")
-	if hide != "true"  && hide != "false" {
+	if hide != "true" && hide != "false" {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(fmt.Sprintf("值只能为true或false:%v", hide)))
 		return
 	}
@@ -210,7 +210,7 @@ func CashCouponOrderActionMaintenanceStatusGet(c *gin.Context) {
 		return
 	}
 
-	if counting=="" {
+	if counting == "" {
 		counting = "false"
 		err = cache.Set(cache.CacheNameCashCouponOrderCounting, counting, 0)
 		if err != nil {
@@ -237,7 +237,7 @@ func CashCouponOrderActionMaintenanceStatusGet(c *gin.Context) {
 
 func CashCouponOrderActionMaintenanceStatusPost(c *gin.Context) {
 	hide := c.PostForm("cashCouponOrderHide")
-	if hide != "true"  && hide != "false" {
+	if hide != "true" && hide != "false" {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(fmt.Sprintf("值只能为true或false:%v", hide)))
 		return
 	}
@@ -255,8 +255,8 @@ func CashCouponOrderActionMaintenanceStatusPost(c *gin.Context) {
 }
 
 func CashCouponOrderActionCountNow(c *gin.Context) {
-	defer func(){
-		if err:=recover();err!=nil{
+	defer func() {
+		if err := recover(); err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
 		}

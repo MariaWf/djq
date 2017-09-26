@@ -23,7 +23,7 @@ func StringArrClean(list []string) []string {
 		for _, ns := range newList {
 			if ns == s {
 				exist = true
-				break;
+				break
 			}
 		}
 		if !exist {
@@ -39,7 +39,7 @@ func StringArrDelete(list []string, obj string) []string {
 	}
 	for i, str := range list {
 		if str == obj {
-			return append(list[:i], list[i + 1:]...)
+			return append(list[:i], list[i+1:]...)
 		}
 	}
 	return StringArrCopy(list)

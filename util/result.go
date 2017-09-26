@@ -6,9 +6,9 @@ import (
 
 const (
 	ResultStatusNeedPermission = 3
-	ResultStatusNeedLogin = 2
-	ResultStatusSuccess = 1
-	ResultStatusFail = 0
+	ResultStatusNeedLogin      = 2
+	ResultStatusSuccess        = 1
+	ResultStatusFail           = 0
 )
 
 var ErrNeedMiLogin = errors.New("请先登录再进行下一步操作")
@@ -21,10 +21,10 @@ type ResultVO struct {
 }
 
 type PageVO struct {
-	TargetPage int `form:"targetPage" json:"targetPage"`
-	PageSize   int `form:"pageSize" json:"pageSize"`
-	Total      int `form:"total" json:"total"`
-	TotalPage  int `form:"totalPage" json:"totalPage"`
+	TargetPage int         `form:"targetPage" json:"targetPage"`
+	PageSize   int         `form:"pageSize" json:"pageSize"`
+	Total      int         `form:"total" json:"total"`
+	TotalPage  int         `form:"totalPage" json:"totalPage"`
 	Datas      interface{} `form:"datas" json:"datas"`
 }
 
@@ -62,7 +62,7 @@ func BuildPageVO(targetPage int, pageSize int, total int, datas interface{}) *Pa
 		pageSize = MaxPageSize
 	}
 	totalPage := total / pageSize
-	if total % pageSize > 0 {
+	if total%pageSize > 0 {
 		totalPage++
 	}
 	return &PageVO{targetPage, pageSize, total, totalPage, datas}
@@ -70,7 +70,7 @@ func BuildPageVO(targetPage int, pageSize int, total int, datas interface{}) *Pa
 
 func BuildDefaultPageVO(datas interface{}) *PageVO {
 	totalPage := 1
-	if len(datas.([]interface{})) == 0{
+	if len(datas.([]interface{})) == 0 {
 		totalPage = 0
 	}
 	return &PageVO{BeginPage, MaxPageSize, len(datas.([]interface{})), totalPage, datas}

@@ -19,6 +19,6 @@ func TestParseTimeFromDB(t *testing.T) {
 	t.Log(k)
 }
 
-func testBool(test *bool){
+func testBool(test *bool) {
 	*test = false
 }

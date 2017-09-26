@@ -4,30 +4,30 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"log"
 	"math"
 	"math/rand"
+	"mimi/djq/config"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
-	"github.com/gin-gonic/gin"
-	"mimi/djq/config"
-	"github.com/pkg/errors"
 )
 
 var ErrParamException = errors.New("滑动验证码不正确")
 
 const (
 	FN_CHALLENGE = "geetest_challenge"
-	FN_VALIDATE = "geetest_validate"
-	FN_SECCODE = "geetest_seccode"
+	FN_VALIDATE  = "geetest_validate"
+	FN_SECCODE   = "geetest_seccode"
 
 	GT_STATUS_SESSION_KEY = "gt_server_status"
 
-	API_URL = "http://api.geetest.com"
+	API_URL          = "http://api.geetest.com"
 	REGISTER_HANDLER = "/register.php"
 	VALIDATE_HANDLER = "/validate.php"
 
@@ -191,9 +191,9 @@ func (gt *Geetest) validateFailImage(ans, fullBgIndex, imgGrpIndex int) bool {
 	imgGrp := gt.md5Encode([]byte(strconv.Itoa(imgGrpIndex)))[10:20]
 	var answerDecode []byte
 	for i := 0; i < 9; i++ {
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			answerDecode = append(answerDecode, fullBg[i])
-		} else if i % 2 == 1 {
+		} else if i%2 == 1 {
 			answerDecode = append(answerDecode, imgGrp[i])
 		}
 	}
@@ -207,7 +207,7 @@ func (gt *Geetest) validateFailImage(ans, fullBgIndex, imgGrpIndex int) bool {
 	if result < 40 {
 		result = 40
 	}
-	return math.Abs(float64(ans - result)) < thread
+	return math.Abs(float64(ans-result)) < thread
 }
 
 func (gt *Geetest) md5Encode(values []byte) string {
@@ -225,7 +225,7 @@ func (gt *Geetest) decodeRandBase(challenge string) int {
 		}
 		tempList = append(tempList, result)
 	}
-	return tempList[0] * 36 + tempList[1]
+	return tempList[0]*36 + tempList[1]
 }
 
 func (gt *Geetest) decodeResponse(challenge, userresponse string) (res int) {
@@ -238,7 +238,7 @@ func (gt *Geetest) decodeResponse(challenge, userresponse string) (res int) {
 		if _, exist := key[i]; exist {
 			continue
 		}
-		value := digits[len(key) % 5]
+		value := digits[len(key)%5]
 		key[i] = value
 	}
 	for _, i := range userresponse {

@@ -1,8 +1,8 @@
 package util
 
 import (
-	"testing"
 	"mimi/djq/model"
+	"testing"
 )
 
 func TestCleanImageUrl(t *testing.T) {
@@ -12,10 +12,10 @@ func TestCleanImageUrl(t *testing.T) {
 }
 
 func TestObj(t *testing.T) {
-	a:=tk()
-	if a==nil{
+	a := tk()
+	if a == nil {
 		t.Log("nil")
-	}else{
+	} else {
 		t.Log(a)
 	}
 }

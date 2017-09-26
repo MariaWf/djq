@@ -4,10 +4,10 @@ import (
 	"log"
 	"mimi/djq/config"
 	"mimi/djq/constant"
-	"mimi/djq/router"
-	"time"
-	"mimi/djq/task"
 	"mimi/djq/initialization"
+	"mimi/djq/router"
+	"mimi/djq/task"
+	"time"
 )
 
 func main() {

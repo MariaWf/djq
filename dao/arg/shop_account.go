@@ -15,16 +15,16 @@ type ShopAccount struct {
 	UnlockedOnly   bool
 	LockedEqual    string `form:"locked" json:"locked"`
 
-	PasswordEqual  string
-	ShopIdEqual    string `form:"shopId" json:"shopId"`
+	PasswordEqual string
+	ShopIdEqual   string `form:"shopId" json:"shopId"`
 
-	PageSize       int `form:"pageSize" json:"pageSize"`
-	TargetPage     int `form:"targetPage" json:"targetPage"`
+	PageSize   int `form:"pageSize" json:"pageSize"`
+	TargetPage int `form:"targetPage" json:"targetPage"`
 
-	DisplayNames   []string
+	DisplayNames []string
 
-	UpdateObject   interface{}
-	UpdateNames    []string
+	UpdateObject interface{}
+	UpdateNames  []string
 }
 
 func (arg *ShopAccount) GetDisplayNames() []string {
@@ -114,7 +114,7 @@ func (arg *ShopAccount) getCountConditions() (string, []interface{}) {
 			sql += " and"
 		}
 		sql += " name like ?"
-		params = append(params, "%" + arg.NameLike + "%")
+		params = append(params, "%"+arg.NameLike+"%")
 	}
 	if arg.NameEqual != "" {
 		if sql != "" {

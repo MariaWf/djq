@@ -1,19 +1,19 @@
 package handler
 
 import (
-	"github.com/pkg/errors"
-	"path/filepath"
-	"net/http"
-	"time"
-	"strconv"
-	"os"
-	"strings"
-	"github.com/gin-gonic/gin"
-	"mimi/djq/util"
-	"log"
-	"mimi/djq/constant"
-	"mimi/djq/config"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
+	"log"
+	"mimi/djq/config"
+	"mimi/djq/constant"
+	"mimi/djq/util"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
 )
 
 var ErrParamException = errors.New("参数异常")
@@ -62,7 +62,7 @@ func localUpload(c *gin.Context, typeHead string) {
 	}
 	directoryHead = filepath.Join(directoryHead, "/image")
 	now := time.Now()
-	directory := filepath.Join(typeHead, "/" + now.Format("200601"), "/" + strconv.Itoa(now.Day()))
+	directory := filepath.Join(typeHead, "/"+now.Format("200601"), "/"+strconv.Itoa(now.Day()))
 
 	imagePath := filepath.Join(directoryHead, directory, newName)
 

@@ -31,19 +31,19 @@ func Find(dao BaseDaoInterface, argObj arg.BaseArgInterface) ([]interface{}, err
 	sql, params, columnNames := arg.BuildFindSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
-		return nil, errors.Wrap(err, "conn:" + sql)
+		return nil, errors.Wrap(err, "conn:"+sql)
 	}
 	defer stmt.Close()
 	rows, err := stmt.Query(params...)
 	if err != nil {
-		return nil, errors.Wrap(err, "stmt:" + sql)
+		return nil, errors.Wrap(err, "stmt:"+sql)
 	}
 	defer rows.Close()
 	for rows.Next() {
 		obj := dao.GetModelInstance()
 		err = rows.Scan(model.GetPointers4DB(obj, columnNames)...)
 		if err != nil {
-			return nil, errors.Wrap(err, "rows:" + sql)
+			return nil, errors.Wrap(err, "rows:"+sql)
 		}
 		objList = append(objList, obj)
 	}
@@ -54,23 +54,23 @@ func Count(dao BaseDaoInterface, argObj arg.BaseArgInterface) (int, error) {
 	sql, params := arg.BuildCountSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
-		return 0, errors.Wrap(err, "conn:" + sql)
+		return 0, errors.Wrap(err, "conn:"+sql)
 	}
 	defer stmt.Close()
 	rows, err := stmt.Query(params...)
 	if err != nil {
-		return 0, errors.Wrap(err, "stmt:" + sql)
+		return 0, errors.Wrap(err, "stmt:"+sql)
 	}
 	defer rows.Close()
 	for rows.Next() {
 		total := 0
 		err = rows.Scan(&total)
 		if err != nil {
-			return 0, errors.Wrap(err, "rows:" + sql)
+			return 0, errors.Wrap(err, "rows:"+sql)
 		}
 		return total, nil
 	}
-	return 0, errors.Wrap(ErrUnknown, "dao:model:count:" + sql)
+	return 0, errors.Wrap(ErrUnknown, "dao:model:count:"+sql)
 }
 
 func Get(dao BaseDaoInterface, id string) (interface{}, error) {
@@ -84,19 +84,19 @@ func Get(dao BaseDaoInterface, id string) (interface{}, error) {
 	sql, params, columnNames := arg.BuildFindSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
-		return nil, errors.Wrap(err, "conn:" + sql)
+		return nil, errors.Wrap(err, "conn:"+sql)
 	}
 	defer stmt.Close()
 	rows, err := stmt.Query(params...)
 	if err != nil {
-		return nil, errors.Wrap(err, "stmt:" + sql)
+		return nil, errors.Wrap(err, "stmt:"+sql)
 	}
 	defer rows.Close()
 	for rows.Next() {
 		obj := dao.GetModelInstance()
 		err = rows.Scan(model.GetPointers4DB(obj, columnNames)...)
 		if err != nil {
-			return nil, errors.Wrap(err, "rows:" + sql)
+			return nil, errors.Wrap(err, "rows:"+sql)
 		}
 		return obj, nil
 	}
@@ -111,7 +111,7 @@ func Add(dao BaseDaoInterface, obj model.BaseModelInterface) (interface{}, error
 	sql, columnNames := arg.BuildInsertSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
-		return nil, errors.Wrap(err, "conn:" + sql)
+		return nil, errors.Wrap(err, "conn:"+sql)
 	}
 	defer stmt.Close()
 	id := BuildId()
@@ -119,7 +119,7 @@ func Add(dao BaseDaoInterface, obj model.BaseModelInterface) (interface{}, error
 	params[0] = id
 	_, err = stmt.Exec(params...)
 	if err != nil {
-		return nil, errors.Wrap(err, "stmt:" + sql)
+		return nil, errors.Wrap(err, "stmt:"+sql)
 	}
 	obj.SetId(id)
 	return obj, nil
@@ -140,12 +140,12 @@ func Update(dao BaseDaoInterface, obj model.BaseModelInterface, args ...string) 
 	sql, params := arg.BuildUpdateSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
-		return obj, errors.Wrap(err, "conn:" + sql)
+		return obj, errors.Wrap(err, "conn:"+sql)
 	}
 	defer stmt.Close()
 	_, err = stmt.Exec(params...)
 	if err != nil {
-		return obj, errors.Wrap(err, "stmt:" + sql)
+		return obj, errors.Wrap(err, "stmt:"+sql)
 	}
 	return obj, nil
 }
@@ -154,12 +154,12 @@ func BatchUpdate(dao BaseDaoInterface, argObj arg.BaseArgInterface) (int64, erro
 	sql, params := arg.BuildUpdateSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
-		return 0, errors.Wrap(err, "conn:" + sql)
+		return 0, errors.Wrap(err, "conn:"+sql)
 	}
 	defer stmt.Close()
 	result, err := stmt.Exec(params...)
 	if err != nil {
-		return 0, errors.Wrap(err, "stmt:" + sql)
+		return 0, errors.Wrap(err, "stmt:"+sql)
 	}
 	return result.RowsAffected()
 }
@@ -168,12 +168,12 @@ func Delete(dao BaseDaoInterface, argObj arg.BaseArgInterface) (int64, error) {
 	sql, params := arg.BuildDeleteSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
-		return 0, errors.Wrap(err, "conn:" + sql)
+		return 0, errors.Wrap(err, "conn:"+sql)
 	}
 	defer stmt.Close()
 	result, err := stmt.Exec(params...)
 	if err != nil {
-		return 0, errors.Wrap(err, "stmt:" + sql)
+		return 0, errors.Wrap(err, "stmt:"+sql)
 	}
 	return result.RowsAffected()
 
@@ -183,12 +183,12 @@ func LogicalDelete(dao BaseDaoInterface, argObj arg.BaseArgInterface) (int64, er
 	sql, params := arg.BuildLogicalDeleteSql(argObj)
 	stmt, err := dao.GetConn().Prepare(sql)
 	if err != nil {
-		return 0, errors.Wrap(err, "conn:" + sql)
+		return 0, errors.Wrap(err, "conn:"+sql)
 	}
 	defer stmt.Close()
 	result, err := stmt.Exec(params...)
 	if err != nil {
-		return 0, errors.Wrap(err, "stmt:" + sql)
+		return 0, errors.Wrap(err, "stmt:"+sql)
 	}
 	return result.RowsAffected()
 }

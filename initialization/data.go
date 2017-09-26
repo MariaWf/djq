@@ -1,11 +1,11 @@
 package initialization
 
 import (
-	"mimi/djq/service"
-	"mimi/djq/dao/arg"
 	"mimi/djq/config"
-	"mimi/djq/model"
 	"mimi/djq/constant"
+	"mimi/djq/dao/arg"
+	"mimi/djq/model"
+	"mimi/djq/service"
 	"mimi/djq/util"
 	"strings"
 )

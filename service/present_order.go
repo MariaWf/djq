@@ -2,17 +2,17 @@ package service
 
 import (
 	"database/sql"
-	"github.com/pkg/errors"
-	"mimi/djq/dao"
-	"mimi/djq/model"
-	"mimi/djq/db/mysql"
-	"strings"
-	"mimi/djq/constant"
-	"mimi/djq/dao/arg"
-	"math/rand"
-	"mimi/djq/util"
-	"log"
 	"fmt"
+	"github.com/pkg/errors"
+	"log"
+	"math/rand"
+	"mimi/djq/constant"
+	"mimi/djq/dao"
+	"mimi/djq/dao/arg"
+	"mimi/djq/db/mysql"
+	"mimi/djq/model"
+	"mimi/djq/util"
+	"strings"
 )
 
 type PresentOrder struct {
@@ -156,7 +156,7 @@ func (service *PresentOrder) Random(userId, presentIds string) (presentOrder *mo
 		return
 	}
 	if len(presentList) < 12 {
-		weightTotal = weightTotal + (12 - len(presentList)) * 10
+		weightTotal = weightTotal + (12-len(presentList))*10
 	}
 	randomWeight := rand.Intn(weightTotal)
 	var id string
@@ -164,7 +164,7 @@ func (service *PresentOrder) Random(userId, presentIds string) (presentOrder *mo
 		p := v.(*model.Present)
 		randomWeight -= p.Weight
 		if randomWeight < 0 {
-			if (p.Stock - p.Requirement > 0) {
+			if p.Stock-p.Requirement > 0 {
 				p.Requirement = p.Requirement + 1
 				_, err = dao.Update(daoPresent, p, "requirement")
 				if err != nil {
@@ -180,7 +180,7 @@ func (service *PresentOrder) Random(userId, presentIds string) (presentOrder *mo
 	if id == "" && len(presentList) == 12 {
 		for _, v := range presentList {
 			p := v.(*model.Present)
-			if (p.Stock - p.Requirement > 0) {
+			if p.Stock-p.Requirement > 0 {
 				p.Requirement = p.Requirement + 1
 				_, err = dao.Update(daoPresent, p, "requirement")
 				if err != nil {

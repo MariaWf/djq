@@ -46,7 +46,7 @@ func checkPermission(c *gin.Context, permission string) {
 	//c.AbortWithStatusJSON(http.StatusOK, util.BuildNeedPermissionResult())
 }
 
-func checkPermissionComplicated(c *gin.Context, mode int, permissions ... string) {
+func checkPermissionComplicated(c *gin.Context, mode int, permissions ...string) {
 	sn, err := session.GetMi(c.Writer, c.Request)
 	if err != nil {
 		log.Println(err)
@@ -66,15 +66,15 @@ func checkPermissionComplicated(c *gin.Context, mode int, permissions ... string
 			for _, pn := range permissionList {
 				if permission == pn {
 					existCount++
-					break;
+					break
 				}
 			}
-			if (mode == PermissionCheckModeOr) {
+			if mode == PermissionCheckModeOr {
 				if existCount > 0 {
 					return
 				}
 			} else {
-				if existCount != i + 1 {
+				if existCount != i+1 {
 					c.AbortWithStatusJSON(http.StatusOK, util.BuildNeedPermissionResult())
 					return
 				}
@@ -86,7 +86,7 @@ func checkPermissionComplicated(c *gin.Context, mode int, permissions ... string
 	}
 }
 
-func checkPermissionOr(c *gin.Context, permissions ... string) {
+func checkPermissionOr(c *gin.Context, permissions ...string) {
 	checkPermissionComplicated(c, PermissionCheckModeOr, permissions...)
 }
 
@@ -159,7 +159,7 @@ func PermissionShopD(c *gin.Context) {
 }
 
 func PermissionShopCU(c *gin.Context) {
-	checkPermissionOr(c, "shop_c","shop_u")
+	checkPermissionOr(c, "shop_c", "shop_u")
 }
 
 func PermissionShopClassificationC(c *gin.Context) {
@@ -259,7 +259,7 @@ func PermissionCashCouponOrderD(c *gin.Context) {
 }
 
 func PermissionRefundCU(c *gin.Context) {
-	checkPermissionOr(c, "refund_c","refund_u")
+	checkPermissionOr(c, "refund_c", "refund_u")
 }
 
 func PermissionRefundC(c *gin.Context) {
@@ -294,7 +294,6 @@ func PermissionRefundReasonD(c *gin.Context) {
 	checkPermission(c, "refundReason_d")
 }
 
-
 func PermissionIndexContactWayManage(c *gin.Context) {
 	checkPermission(c, "indexContactWay_manage")
 }
@@ -311,7 +310,6 @@ func PermissionCashCouponOrderCountManage(c *gin.Context) {
 	checkPermission(c, "cashCouponOrderCount_manage")
 }
 
-
 //func PermissionCashCouponC(c *gin.Context) {
 //	checkPermission(c, "cashCoupon_c")
 //}
@@ -327,5 +325,3 @@ func PermissionCashCouponOrderCountManage(c *gin.Context) {
 //func PermissionCashCouponD(c *gin.Context) {
 //	checkPermission(c, "cashCoupon_d")
 //}
-
-

@@ -16,7 +16,6 @@ func Begin() {
 	router := gin.Default()
 	router.NoRoute(handler.NotFound)
 
-
 	mi := router.Group("/mi", handler.ApiGlobal, handler.AdminCheckLogin)
 
 	mi.POST("/login", handler.AdminLogin)
@@ -133,9 +132,9 @@ func Begin() {
 	//miRefund.POST("/refundAction/uploadEvidence",handler.PermissionRefundCU, handler.RefundUploadEvidence)
 	//miRefund.POST("/refundAction/agree",handler.PermissionRefundU, handler.RefundAgree)
 	//miRefund.POST("/refundAction/reject",handler.PermissionRefundU, handler.RefundReject)
-	mi.POST("/refundAction/uploadEvidence",handler.PermissionRefundCU, handler.RefundUploadEvidence)
-	mi.POST("/refundAction/agree",handler.PermissionRefundU, handler.RefundAgree)
-	mi.POST("/refundAction/reject",handler.PermissionRefundU, handler.RefundReject)
+	mi.POST("/refundAction/uploadEvidence", handler.PermissionRefundCU, handler.RefundUploadEvidence)
+	mi.POST("/refundAction/agree", handler.PermissionRefundU, handler.RefundAgree)
+	mi.POST("/refundAction/reject", handler.PermissionRefundU, handler.RefundReject)
 
 	miRefundReason := mi.Group("/refundReason")
 	miRefundReason.GET("/", handler.PermissionRefundReasonR, handler.RefundReasonList)
@@ -143,7 +142,6 @@ func Begin() {
 	miRefundReason.POST("/", handler.PermissionRefundReasonC, handler.RefundReasonPost)
 	miRefundReason.PATCH("/:id", handler.PermissionRefundReasonU, handler.RefundReasonPatch)
 	miRefundReason.DELETE("/", handler.PermissionRefundReasonD, handler.RefundReasonDelete)
-
 
 	mi.GET("/shopAccountAction/maintenanceStatusGet", handler.PermissionShopAccountRedPackManage, handler.ShopAccountActionMaintenanceStatusGet)
 	mi.POST("/shopAccountAction/maintenanceStatusPost", handler.PermissionShopAccountRedPackManage, handler.ShopAccountActionMaintenanceStatusPost)
@@ -159,7 +157,6 @@ func Begin() {
 	mi.POST("/cashCouponOrderAction/maintenanceStatusPost", handler.PermissionCashCouponOrderCountManage, handler.CashCouponOrderActionMaintenanceStatusPost)
 	mi.POST("/cashCouponOrderAction/countNow", handler.PermissionCashCouponOrderCountManage, handler.CashCouponOrderActionCountNow)
 
-
 	si := router.Group("/si", handler.ApiGlobal, handler.ShopAccountCheckLogin)
 	si.POST("/login", handler.ShopAccountLogin)
 	si.POST("/logout", handler.ShopAccountLogout)
@@ -171,29 +168,28 @@ func Begin() {
 	si.POST("/completeCashCouponOrder", handler.CashCouponOrderComplete4Si)
 	si.POST("/getMoney", handler.ShopAccountGetMoney4Si)
 
-
 	ui := router.Group("/ui", handler.ApiGlobal, handler.UserCheckLogin)
 	ui.POST("/login", handler.UserLogin)
 	ui.POST("/logout", handler.UserLogout)
 	ui.GET("/userAction/self", handler.UserGet4Ui)
 
-	ui.GET("/cashCouponOrderInCart",handler.CashCouponOrderListInCart4Ui)
-	ui.GET("/cashCouponOrderUnused",handler.CashCouponOrderListUnused4Ui)
-	ui.GET("/cashCouponOrderUsed",handler.CashCouponOrderListUsed4Ui)
-	ui.DELETE("/cashCouponOrder",handler.CashCouponOrderDelete4Ui)
-	ui.POST("/cashCouponOrder",handler.CashCouponOrderPost4Ui)
-	ui.POST("/cashCouponOrderAction/buyFromCashCoupon",handler.CashCouponOrderActionBuyFromCashCoupon4Ui)
+	ui.GET("/cashCouponOrderInCart", handler.CashCouponOrderListInCart4Ui)
+	ui.GET("/cashCouponOrderUnused", handler.CashCouponOrderListUnused4Ui)
+	ui.GET("/cashCouponOrderUsed", handler.CashCouponOrderListUsed4Ui)
+	ui.DELETE("/cashCouponOrder", handler.CashCouponOrderDelete4Ui)
+	ui.POST("/cashCouponOrder", handler.CashCouponOrderPost4Ui)
+	ui.POST("/cashCouponOrderAction/buyFromCashCoupon", handler.CashCouponOrderActionBuyFromCashCoupon4Ui)
 	ui.POST("/cashCouponOrderAction/buyFromCashCouponOrder", handler.CashCouponOrderActionBuyFromCashCouponOrder4Ui)
 	//ui.POST("/cashCouponOrderAction/refreshByPayOrderNumber", handler.CashCouponOrderActionRefreshByPayOrderNumber4Ui)
 
-	ui.GET("/refund",handler.RefundList4Ui)
-	ui.GET("/refundReason",handler.RefundReasonList4Ui)
-	ui.POST("/refund",handler.RefundPost4Ui)
-	ui.POST("/refundAction/cancel",handler.RefundCancel4Ui)
+	ui.GET("/refund", handler.RefundList4Ui)
+	ui.GET("/refundReason", handler.RefundReasonList4Ui)
+	ui.POST("/refund", handler.RefundPost4Ui)
+	ui.POST("/refundAction/cancel", handler.RefundCancel4Ui)
 	ui.POST("/refundAction/uploadEvidence", handler.RefundUploadEvidence)
-	ui.GET("/present",handler.PresentList4Ui)
-	ui.GET("/presentOrder",handler.PresentOrderList4Ui)
-	ui.POST("/presentOrder",handler.PresentOrderPost4Ui)
+	ui.GET("/present", handler.PresentList4Ui)
+	ui.GET("/presentOrder", handler.PresentOrderList4Ui)
+	ui.POST("/presentOrder", handler.PresentOrderPost4Ui)
 
 	open := router.Group("/open", handler.ApiGlobal)
 	open.GET("/getServerRootUrl", handler.GetServerRootUrl)
@@ -211,15 +207,15 @@ func Begin() {
 	open.GET("/cashCouponOrderAction/maintenanceStatusGet", handler.CashCouponOrderActionMaintenanceStatusGet)
 	//open.GET("/promotionalPartnerAction/MaintenanceStatusGet", handler.PromotionalPartnerActionMaintenanceStatusGet)
 
-	open.POST("/shareTimelineResponse",handler.UserActionShareTimelineResponse)
+	open.POST("/shareTimelineResponse", handler.UserActionShareTimelineResponse)
 
 	wxpay := open.Group("/wxpay")
-	wxpay.GET("config",handler.WxpayConfig)
-	wxpay.GET("query",handler.WxpayQuery)
-	wxpay.GET("getOpenId",handler.WxpayGetOpenId)
+	wxpay.GET("config", handler.WxpayConfig)
+	wxpay.GET("query", handler.WxpayQuery)
+	wxpay.GET("getOpenId", handler.WxpayGetOpenId)
 
-	wxpay.POST("notify4UnifiedOrder",handler.WxpayNotifyUnifiedOrder)
-	wxpay.POST("notify4refund",handler.WxpayNotifyRefund)
+	wxpay.POST("notify4UnifiedOrder", handler.WxpayNotifyUnifiedOrder)
+	wxpay.POST("notify4refund", handler.WxpayNotifyRefund)
 
 	//wxpay.GET("downloadBill",handler.WxpayDownloadBill)
 	// Query string parameters are parsed using the existing underlying request object.
@@ -305,11 +301,11 @@ func initLog() {
 	}
 	path = filepath.Dir(routerErrorLogUrl)
 	os.MkdirAll(path, 0777)
-	infoFile, err := os.OpenFile(routerInfoLogUrl, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	infoFile, err := os.OpenFile(routerInfoLogUrl, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
 	}
-	errorFile, err2 := os.OpenFile(routerErrorLogUrl, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	errorFile, err2 := os.OpenFile(routerErrorLogUrl, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err2 != nil {
 		panic(err2)
 	}

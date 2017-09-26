@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestPing(t *testing.T){
+func TestPing(t *testing.T) {
 
 	var err error
 	db, err = sql.Open("mysql", "root:123456@tcp(localhost:3306)/djq")

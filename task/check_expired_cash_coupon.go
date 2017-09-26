@@ -1,9 +1,9 @@
 package task
 
 import (
-	"mimi/djq/service"
-	"mimi/djq/cache"
 	"log"
+	"mimi/djq/cache"
+	"mimi/djq/service"
 )
 
 //定时检查过期代金券，
