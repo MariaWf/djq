@@ -34,7 +34,7 @@ func PresentList(c *gin.Context) {
 	}
 	argObj.OrderBy = "weight desc,name"
 	serviceObj := &service.Present{}
-	argObj.DisplayNames = []string{"id", "name", "image", "address", "stock", "requirement", "weight", "expiryDate", "hide"}
+	argObj.DisplayNames = []string{"id", "name", "image", "address", "stock", "requirement", "weight", "expiryDate", "expired", "hide"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }

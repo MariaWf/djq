@@ -52,6 +52,8 @@ index
     <button type="button" onclick="saveAdminSelf()">保存管理员自己的信息</button>
 
 </div>
+<img src="http://static.51zxiu.cn/app/djq/upload/image/evidence/8d224a1b041b477fb0b3a80da6186465.jpg?x-oss-process=style/watermark"/>
+<img src="http://static.51zxiu.cn/app/djq/upload/image/evidence/8d224a1b041b477fb0b3a80da6186465.jpg"/>
 </body>
 <script>
     if (getCookie("miSessionId")) {
@@ -261,7 +263,7 @@ index
 
     $(function () {
         $("#b01").click(function () {
-//            htmlobj = $.ajax({url: "http://api.djq.tunnel.qydev.com/user", async: false});
+//            htmlobj = $.ajax({url: "http://api.localhost:8080/user", async: false});
 //
 //            $("#myDiv").html(htmlobj.responseText);
 
@@ -275,7 +277,7 @@ index
             };
             $.ajax({
                 type: 'GET',
-                url: "http://djq.tunnel.qydev.com/user/dd",
+                url: "http://localhost:8080/user/dd",
 //                data: formData,
                 async: true,
                 cache: false,
@@ -297,7 +299,7 @@ index
             var formData = new FormData($("#uploadForm")[0]);
             $.ajax({
                 type: 'POST',
-//                url: "http://djq.tunnel.qydev.com/upload",
+//                url: "http://localhost:8080/upload",
 //                url: "/upload1",
 //                url: "/mi/cashCouponAction/uploadImage",
                 url: "/ui/refundAction/uploadEvidence",
@@ -353,7 +355,7 @@ index
         ids = $("#resultMsg").val()
         $.ajax({
             type: 'DELETE',
-//                url: "http://djq.tunnel.qydev.com/upload",
+//                url: "http://localhost:8080/upload",
 //                url: "/upload",
             url: "/mi/admin?ids=" + ids,
 //            data: {ids:ids},

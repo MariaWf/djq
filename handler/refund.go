@@ -192,7 +192,7 @@ func RefundList(c *gin.Context) {
 	argObj.OrderBy = "status,cash_coupon_order_id,refund_amount"
 
 	serviceObj := &service.Refund{}
-	argObj.DisplayNames = []string{"id", "cashCouponOrderId", "evidence", "reason", "comment", "refundAmount", "status"}
+	//argObj.DisplayNames = []string{"id", "cashCouponOrderId", "evidence", "reason", "comment", "refundAmount", "status"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }

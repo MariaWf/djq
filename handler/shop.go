@@ -25,6 +25,32 @@ func ShopList4Open(c *gin.Context) {
 	serviceObj := &service.Shop{}
 	argObj.DisplayNames = []string{"id", "name", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "priority"}
 	argObj.PageSize = 5
+	//list,err := service.Find(serviceObj,argObj)
+	//if err != nil {
+	//	log.Println(err)
+	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
+	//	return
+	//}
+
+	//hide, err := cache.Get(cache.CacheNameWithWaterMarkInShopIntroductionImage)
+	//if err != nil {
+	//	log.Println(err)
+	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+	//	return
+	//}
+	//if hide == "" {
+	//	hide = "true"
+	//	err = cache.Set(cache.CacheNameWithWaterMarkInShopIntroductionImage, hide, 0)
+	//	if err != nil {
+	//		log.Println(err)
+	//		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+	//		return
+	//	}
+	//}
+	//for _,v:=range list{
+	//	imageO := v.(*model.ShopIntroductionImage)
+	//	imageO.ContentUrl = imageO.ContentUrl+constant.AliyunOssUploadImageStyleWaterMark
+	//}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }

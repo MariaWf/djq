@@ -191,7 +191,7 @@ func CashCouponOrderListInCart4Ui(c *gin.Context) {
 	if err != nil {
 		targetPage = util.BeginPage
 	}
-	list, err := listCashCouponOrder4Ui(c, constant.CashCouponOrderStatusInCart, targetPage)
+	list, err := listCashCouponOrder4Ui(c, []int{constant.CashCouponOrderStatusInCart}, targetPage)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
@@ -205,7 +205,7 @@ func CashCouponOrderListUnused4Ui(c *gin.Context) {
 	if err != nil {
 		targetPage = util.BeginPage
 	}
-	list, err := listCashCouponOrder4Ui(c, constant.CashCouponOrderStatusPaidNotUsed, targetPage)
+	list, err := listCashCouponOrder4Ui(c, []int{constant.CashCouponOrderStatusPaidNotUsed,constant.CashCouponOrderStatusNotUsedRefunding,constant.CashCouponOrderStatusNotUsedRefunded}, targetPage)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
@@ -219,7 +219,7 @@ func CashCouponOrderListUsed4Ui(c *gin.Context) {
 	if err != nil {
 		targetPage = util.BeginPage
 	}
-	list, err := listCashCouponOrder4Ui(c, constant.CashCouponOrderStatusUsed, targetPage)
+	list, err := listCashCouponOrder4Ui(c, []int{constant.CashCouponOrderStatusUsed,constant.CashCouponOrderStatusUsedRefunding,constant.CashCouponOrderStatusUsedRefunded}, targetPage)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
@@ -227,7 +227,7 @@ func CashCouponOrderListUsed4Ui(c *gin.Context) {
 	c.JSON(http.StatusOK, util.BuildSuccessResult(list))
 }
 
-func listCashCouponOrder4Ui(c *gin.Context, status int, targetPage int) (page *util.PageVO, err error) {
+func listCashCouponOrder4Ui(c *gin.Context, statusList []int, targetPage int) (page *util.PageVO, err error) {
 	sn, err := session.GetUi(c.Writer, c.Request)
 	if err != nil {
 		log.Println(err)
@@ -242,11 +242,12 @@ func listCashCouponOrder4Ui(c *gin.Context, status int, targetPage int) (page *u
 	}
 	serviceObj := &service.CashCouponOrder{}
 	argObj := &arg.CashCouponOrder{}
-	argObj.StatusEqual = strconv.Itoa(status)
+	//argObj.StatusEqual = strconv.Itoa(status)
+	argObj.StatusIn = statusList
 	argObj.UserIdEqual = userId
 	argObj.TargetPage = targetPage
 	argObj.PageSize = 5
-	argObj.DisplayNames = []string{"id", "userId", "cashCouponId", "price", "refundAmount", "payOrderNumber", "number", "status"}
+	//argObj.DisplayNames = []string{"id", "userId", "cashCouponId", "price", "refundAmount", "payOrderNumber", "number", "status"}
 	argObj.OrderBy = "number"
 	page, err = service.Page(serviceObj, argObj)
 	if err != nil {

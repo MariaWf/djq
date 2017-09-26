@@ -1,4 +1,4 @@
-package init
+package initialization
 
 func checkErr(err error) {
 	if err != nil {

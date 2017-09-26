@@ -84,7 +84,7 @@ var (
 	ErrUploadImageSupport = errors.New("只支持jpg;png;gif;jpeg格式")
 )
 
-var(
+var (
 	ErrWxpayConfirmIllegalOrderStatus = errors.New("支付确认，非法订单状态")
 	ErrWxpayConfirmTotalFeeNotMatch = errors.New("支付确认，金额不符")
 
@@ -92,3 +92,7 @@ var(
 )
 
 var UploadImageSupport = []string{".jpg", ".png", ".gif", ".jpeg"}
+
+const (
+	AliyunOssUploadImagePath = "app/djq/upload/image"
+)

@@ -29,6 +29,8 @@ const (
 	CacheNameCheckingExpiredCashCoupon = "checkingExpiredCashCoupon"
 	CacheNameCheckingExpiredPresent = "checkingExpiredPresent"
 
+	CacheNameWithWaterMarkInShopIntroductionImage = "withWaterMarkInShopIntroductionImage"
+
 	cacheHead = "cache:"
 )
 

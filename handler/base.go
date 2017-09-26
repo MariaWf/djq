@@ -13,6 +13,7 @@ import (
 	"log"
 	"mimi/djq/constant"
 	"mimi/djq/config"
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
 var ErrParamException = errors.New("参数异常")
@@ -20,6 +21,10 @@ var ErrParamException = errors.New("参数异常")
 var ErrUnknown = errors.New("操作失败，请稍后重试")
 
 func commentUploadImage(c *gin.Context, typeHead string) {
+	aliyunUpload(c, typeHead)
+}
+
+func localUpload(c *gin.Context, typeHead string) {
 	file, err := c.FormFile("theFile")
 	if err != nil {
 		log.Println(err)
@@ -75,13 +80,67 @@ func commentUploadImage(c *gin.Context, typeHead string) {
 		return
 	}
 
-	//serverRootUrl := config.Get("server_root_url")
-	//if serverRootUrl != "" && strings.LastIndex(serverRootUrl, "/") == len(serverRootUrl) - 1 {
-	//	serverRootUrl = serverRootUrl[:len(serverRootUrl) - 1]
-	//}
-	//fmt.Println(serverRootUrl + filepath.ToSlash(filepath.Join("/upload/image", directory, newName)))
-	//util.PathAppend(serverRootUrl,filepath.Join("/upload/image", directory, newName))
-	//result := util.BuildSuccessResult(serverRootUrl + filepath.ToSlash(filepath.Join("/upload/image", directory, newName)))
 	result := util.BuildSuccessResult(util.PathAppend(config.Get("server_root_url"), filepath.Join("/upload/image", directory, newName)))
+	c.JSON(http.StatusOK, result)
+}
+
+func aliyunUpload(c *gin.Context, typeHead string) {
+	file, err := c.FormFile("theFile")
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(constant.ErrUpload.Error()))
+		return
+	}
+	fileSuffix := filepath.Ext(file.Filename)
+	if fileSuffix == "" {
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(constant.ErrUploadUnknownType.Error()))
+		return
+	}
+	fileSuffix = strings.ToLower(fileSuffix)
+	support := false
+	for _, v := range constant.UploadImageSupport {
+		if v == fileSuffix {
+			support = true
+		}
+	}
+	if !support {
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(constant.ErrUploadImageSupport.Error()))
+		return
+	}
+
+	newName := util.BuildUUID() + fileSuffix
+
+	src, err := file.Open()
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(constant.ErrUpload.Error()))
+		return
+	}
+	defer src.Close()
+
+	client, err := oss.New(config.Get("aliyun_oss_end_point"), config.Get("aliyun_access_key_id"), config.Get("aliyun_access_secret"))
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(constant.ErrUpload.Error()))
+		return
+		// HandleError(err)
+	}
+
+	bucket, err := client.Bucket(config.Get("aliyun_oss_bucket"))
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(constant.ErrUpload.Error()))
+		return
+		// HandleError(err)
+	}
+	objectKey := util.PathAppend(constant.AliyunOssUploadImagePath, typeHead, newName)
+	err = bucket.PutObject(objectKey, src)
+	//err = bucket.PutObjectFromFile("my-object", "LocalFile")
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(constant.ErrUpload.Error()))
+		return
+	}
+	result := util.BuildSuccessResult(util.PathAppend("http://", config.Get("static_resource_domain"), objectKey))
 	c.JSON(http.StatusOK, result)
 }

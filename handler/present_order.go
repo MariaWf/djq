@@ -118,13 +118,17 @@ func PresentOrderPost4Ui(c *gin.Context) {
 		return
 	}
 	serviceObj := &service.PresentOrder{}
-	id, err := serviceObj.Random(userId, ids)
+	presentOrder, err := serviceObj.Random(userId, ids)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
-	result := util.BuildSuccessResult(id)
+	presentId := ""
+	if presentOrder != nil {
+		presentId = presentOrder.PresentId
+	}
+	result := util.BuildSuccessResult(presentId)
 	c.JSON(http.StatusOK, result)
 }
 

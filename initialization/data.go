@@ -1,4 +1,4 @@
-package init
+package initialization
 
 import (
 	"mimi/djq/service"
@@ -10,7 +10,15 @@ import (
 	"strings"
 )
 
-func InitRole(name, desc string, permissions *[]model.Permission) string {
+func InitData() string {
+	id := InitAdmin()
+	InitSystemAdmin()
+	InitBusinessAdmin()
+	InitSimpleBusinessAdmin()
+	return id
+}
+
+func InitRole(name, desc string, permissions []*model.Permission) string {
 	serviceRole := &service.Role{}
 	argRole := &arg.Role{}
 	argRole.NameEqual = name
@@ -49,7 +57,7 @@ func InitAdminRole() string {
 func InitSystemRole() string {
 	name := "系统管理员"
 	desc := "拥有删除行为以外的一切权限"
-	permissions := make([]*model.Permission, 0, len(10))
+	permissions := make([]*model.Permission, 0, 10)
 	for _, v := range model.GetPermissionList() {
 		if strings.HasSuffix(v.Code, "_d") {
 			continue
@@ -62,7 +70,7 @@ func InitSystemRole() string {
 func InitBusinessRole() string {
 	name := "业务管理员"
 	desc := "不包含角色管理、管理员管理权限，拥有对其他内容删除行为以外的一切权限"
-	permissions := make([]*model.Permission, 0, len(10))
+	permissions := make([]*model.Permission, 0, 10)
 	for _, v := range model.GetPermissionList() {
 		if strings.HasSuffix(v.Code, "_d") || strings.HasPrefix(v.Code, "admin_") || strings.HasPrefix(v.Code, "role_") {
 			continue
@@ -75,7 +83,7 @@ func InitBusinessRole() string {
 func InitSimpleBusinessRole() string {
 	name := "简单业务管理员"
 	desc := "拥有对广告、退款原因、运维等内容删除行为以外的一切权限"
-	permissions := make([]*model.Permission, 0, len(10))
+	permissions := make([]*model.Permission, 0, 10)
 	for _, v := range model.GetPermissionList() {
 		if strings.HasSuffix(v.Code, "_manage") || strings.HasPrefix(v.Code, "advertisement_") || strings.HasPrefix(v.Code, "refundReason_") {
 			permissions = append(permissions, v)
@@ -88,11 +96,32 @@ func InitAdmin() string {
 	roleId := InitAdminRole()
 	name := config.Get("adminName")
 	password := config.Get("adminPassword")
+	constant.AdminRoleId = roleId
+	return InitCommonAdmin(name, password, roleId)
+}
+
+func InitSystemAdmin() string {
+	roleId := InitSystemRole()
+	name := "systemAdmin"
+	password := "123456"
+	return InitCommonAdmin(name, password, roleId)
+}
+
+func InitBusinessAdmin() string {
+	roleId := InitBusinessRole()
+	name := "businessAdmin"
+	password := "123456"
+	return InitCommonAdmin(name, password, roleId)
+}
+
+func InitSimpleBusinessAdmin() string {
+	roleId := InitSimpleBusinessRole()
+	name := "simpleBusinessAdmin"
+	password := "123456"
 	return InitCommonAdmin(name, password, roleId)
 }
 
 func InitCommonAdmin(name, password, roleId string) string {
-	constant.AdminRoleId = roleId
 	serviceAdmin := &service.Admin{}
 	argAdmin := &arg.Admin{}
 	argAdmin.NameEqual = name

@@ -19,6 +19,7 @@ type Shop struct {
 	ShopClassificationList    []*ShopClassification `form:"shopClassificationList" json:"shopClassificationList" desc:"商家分类"`
 	ShopIntroductionImageList []*ShopIntroductionImage `form:"shopIntroductionImageList" json:"shopIntroductionImageList" desc:"商店介绍图"`
 	CashCouponList            []*CashCoupon            `form:"cashCouponList" json:"cashCouponList" desc:"代金券"`
+	ShopAccountList           []*ShopAccount `form:"shopAccount" json:"shopAccount" desc:"商家账户"`
 }
 
 func (obj *Shop) GetId() string {

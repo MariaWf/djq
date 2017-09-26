@@ -23,6 +23,7 @@ func (service *CashCouponOrder) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterfac
 	return &dao.CashCouponOrder{conn}
 }
 
+//商家账户确认使用订单，完成
 func (service *CashCouponOrder) Complete(shopAccountId, id string) (err error) {
 	if shopAccountId == "" {
 		err = errors.New("未知商户")
@@ -93,6 +94,21 @@ func (service *CashCouponOrder) Complete(shopAccountId, id string) (err error) {
 		err = checkErr(err)
 		return
 	}
+	daoUser := &dao.User{conn}
+	userO,err := dao.Get(daoUser,cashCouponOrder.UserId)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
+	user := userO.(*model.User)
+	user.PresentChance = user.PresentChance+1
+	_,err = dao.Update(daoUser,user,"presentChance")
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		return
+	}
 	return
 }
 
@@ -143,6 +159,7 @@ func (service *CashCouponOrder) BatchAddInCart(userId string, ids ... string) (l
 			err = checkErr(err)
 			return
 		}
+		obj.CashCoupon = cashCoupon
 		list = append(list, obj)
 	}
 	return
@@ -408,8 +425,9 @@ func (service *CashCouponOrder) CancelOrder(payOrderNumber string) (idListStr st
 		obj.PayBegin = util.StringDefaultTime4DB()
 		obj.PayEnd = util.StringDefaultTime4DB()
 		obj.PrepayId = ""
+		obj.Status = constant.CashCouponOrderStatusInCart
 		argObj.UpdateObject = obj
-		argObj.UpdateNames = []string{"payOrderNumber", "payBegin", "payEnd", "prepayId"}
+		argObj.UpdateNames = []string{"payOrderNumber", "payBegin", "payEnd", "prepayId","status"}
 		_, err = dao.BatchUpdate(daoObj, argObj)
 		if err != nil {
 			rollback = true

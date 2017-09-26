@@ -20,7 +20,7 @@ func RoleList(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrParamException.Error()))
 		return
 	}
-	argObj.IdsNotIn = []string{constant.AdminRoleId}
+	//argObj.IdsNotIn = []string{constant.AdminRoleId}
 	argObj.OrderBy = "name"
 	c.JSON(http.StatusOK, service.ResultList(&service.Role{}, argObj))
 }

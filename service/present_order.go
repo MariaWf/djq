@@ -11,6 +11,8 @@ import (
 	"mimi/djq/dao/arg"
 	"math/rand"
 	"mimi/djq/util"
+	"log"
+	"fmt"
 )
 
 type PresentOrder struct {
@@ -53,7 +55,7 @@ func (service *PresentOrder) Complete(id string) (err error) {
 		return
 	}
 	present := presentO.(*model.Present)
-	if present.Expired{
+	if present.Expired {
 		rollback = true
 		err = errors.New("礼品已过期")
 		return
@@ -80,13 +82,14 @@ func (service *PresentOrder) Complete(id string) (err error) {
 	}
 	return
 }
-func (service *PresentOrder) Random(userId, presentIds string) (id string, err error) {
+func (service *PresentOrder) Random(userId, presentIds string) (presentOrder *model.PresentOrder, err error) {
 	if userId == "" {
 		err = errors.New("未知用户ID")
 		return
 	}
 	if presentIds == "" {
 		err = errors.New("未知礼品")
+		return
 	}
 
 	conn, err := mysql.Get()
@@ -149,12 +152,14 @@ func (service *PresentOrder) Random(userId, presentIds string) (id string, err e
 	if weightTotal == 0 || stock == 0 {
 		rollback = true
 		err = errors.New("抽奖异常，请于管理员联系")
+		log.Println(errors.Wrap(err, fmt.Sprintf("presentIds:%v_weightTotal:%v_stock:%v", presentIds, weightTotal, stock)))
 		return
 	}
-	if len(presentList) < 10 {
-		weightTotal = weightTotal + (10 - len(presentList)) * 10
+	if len(presentList) < 12 {
+		weightTotal = weightTotal + (12 - len(presentList)) * 10
 	}
 	randomWeight := rand.Intn(weightTotal)
+	var id string
 	for _, v := range presentList {
 		p := v.(*model.Present)
 		randomWeight -= p.Weight
@@ -172,7 +177,7 @@ func (service *PresentOrder) Random(userId, presentIds string) (id string, err e
 			}
 		}
 	}
-	if id == "" && len(presentList) == 10 {
+	if id == "" && len(presentList) == 12 {
 		for _, v := range presentList {
 			p := v.(*model.Present)
 			if (p.Stock - p.Requirement > 0) {
@@ -188,8 +193,12 @@ func (service *PresentOrder) Random(userId, presentIds string) (id string, err e
 			}
 		}
 	}
+	if id == "" {
+		return
+	}
+	presentOrder = &model.PresentOrder{}
 	daoPresentOrder := &dao.PresentOrder{conn}
-	presentOrder := &model.PresentOrder{}
+	presentOrder = &model.PresentOrder{}
 	presentOrder.PresentId = id
 	presentOrder.Number = util.BuildPresentOrderNumber()
 	presentOrder.UserId = userId
