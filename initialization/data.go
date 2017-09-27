@@ -50,7 +50,7 @@ func InitAdminRole() string {
 	if name == "" {
 		name = "超级管理员"
 	}
-	desc := "超级管理员不能删除，不能修改"
+	desc := "超级管理员拥有最高权限，不能被删除，不能被修改"
 	return InitRole(name, desc, model.GetPermissionList())
 }
 

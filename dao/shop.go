@@ -55,3 +55,31 @@ func (dao *Shop) DeleteRelationshipWithShopClassificationByShopId(shopIds ...str
 	}
 	return result.RowsAffected()
 }
+
+
+func (dao *Shop) ListShopIdsByShopClassificationId(shopClassificationId string) ([]string, error) {
+	if shopClassificationId == "" {
+		return nil, ErrIdEmpty
+	}
+	sql := "select distinct shop_id from tr_shop_classification_shop where shop_classification_id = ? and del_flag = false;"
+	stmt, err := dao.GetConn().Prepare(sql)
+	if err != nil {
+		return nil, errors.Wrap(err, "conn:"+sql)
+	}
+	defer stmt.Close()
+	rows, err := stmt.Query(shopClassificationId)
+	if err != nil {
+		return nil, errors.Wrap(err, "stmt:"+sql)
+	}
+	defer rows.Close()
+	shopIds := make([]string, 0, 10)
+	for rows.Next() {
+		var shopClassificationId string
+		err = rows.Scan(&shopClassificationId)
+		if err != nil {
+			return nil, errors.Wrap(err, "rows:"+sql)
+		}
+		shopIds = append(shopIds, shopClassificationId)
+	}
+	return shopIds, nil
+}

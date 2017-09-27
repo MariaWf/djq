@@ -16,6 +16,44 @@ func (service *Shop) GetDaoInstance(conn *sql.Tx) dao.BaseDaoInterface {
 	return &dao.Shop{conn}
 }
 
+func (service *Shop) FindByShopClassificationId(argObj *arg.Shop, shopClassificationId string) (result *util.ResultVO) {
+	conn, err := mysql.Get()
+	if err != nil {
+		err = checkErr(err)
+		result = util.BuildFailResult(err.Error())
+		return
+	}
+	rollback := false
+	defer mysql.Close(conn, &rollback)
+	daoObj := service.GetDaoInstance(conn).(*dao.Shop)
+	if shopClassificationId != "" {
+		ids, err := daoObj.ListShopIdsByShopClassificationId(shopClassificationId)
+		if err != nil {
+			rollback = true
+			err = checkErr(err)
+			result = util.BuildFailResult(err.Error())
+			return
+		}
+		argObj.IdsIn = ids
+	}
+	total, err := dao.Count(daoObj, argObj)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		result = util.BuildFailResult(err.Error())
+		return
+	}
+	list, err := dao.Find(daoObj, argObj)
+	if err != nil {
+		rollback = true
+		err = checkErr(err)
+		result = util.BuildFailResult(err.Error())
+		return
+	}
+	result = util.BuildSuccessPageResult(argObj.TargetPage, argObj.PageSize, total, list)
+	return
+}
+
 func (service *Shop) Get(id string) (*model.Shop, error) {
 	conn, err := mysql.Get()
 	if err != nil {

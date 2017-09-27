@@ -22,7 +22,6 @@ func ShopList4Open(c *gin.Context) {
 	}
 	argObj.OrderBy = "priority desc"
 	argObj.NotIncludeHide = true
-	serviceObj := &service.Shop{}
 	argObj.DisplayNames = []string{"id", "name", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "priority"}
 	argObj.PageSize = 5
 	//list,err := service.Find(serviceObj,argObj)
@@ -51,7 +50,9 @@ func ShopList4Open(c *gin.Context) {
 	//	imageO := v.(*model.ShopIntroductionImage)
 	//	imageO.ContentUrl = imageO.ContentUrl+constant.AliyunOssUploadImageStyleWaterMark
 	//}
-	result := service.ResultList(serviceObj, argObj)
+	serviceObj := &service.Shop{}
+	result := serviceObj.FindByShopClassificationId(argObj,c.Query("shopClassificationId"))
+	//result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }
 
