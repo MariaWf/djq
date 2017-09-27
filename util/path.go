@@ -31,6 +31,9 @@ func PathAppend(strs ...string) string {
 	for _, str := range strs {
 		str = filepath.ToSlash(str)
 		str = strings.Trim(str, "/")
+		if str == "http:" || str == "https:" {
+			str = str + "/"
+		}
 		if str != "" {
 			newStrs = append(newStrs, str)
 		}
