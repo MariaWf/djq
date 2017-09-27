@@ -15,6 +15,10 @@ func InitData() string {
 	InitSystemAdmin()
 	InitBusinessAdmin()
 	InitSimpleBusinessAdmin()
+	InitReadAndDeleteAdmin()
+	InitReadOnlyAdmin()
+	InitReadAndAddAdmin()
+	InitReadAndUpdateAdmin()
 	return id
 }
 
@@ -92,6 +96,54 @@ func InitSimpleBusinessRole() string {
 	return InitRole(name, desc, permissions)
 }
 
+func InitReadOnlyRole() string {
+	name := "阅读管理员"
+	desc := "一切内容的阅读权限"
+	permissions := make([]*model.Permission, 0, 10)
+	for _, v := range model.GetPermissionList() {
+		if strings.HasSuffix(v.Code, "_r") {
+			permissions = append(permissions, v)
+		}
+	}
+	return InitRole(name, desc, permissions)
+}
+
+func InitReadAndAddRole() string {
+	name := "阅读添加管理员"
+	desc := "一切内容的阅读、添加权限"
+	permissions := make([]*model.Permission, 0, 10)
+	for _, v := range model.GetPermissionList() {
+		if strings.HasSuffix(v.Code, "_c") || strings.HasSuffix(v.Code, "_r") {
+			permissions = append(permissions, v)
+		}
+	}
+	return InitRole(name, desc, permissions)
+}
+
+func InitReadAndUpdateRole() string {
+	name := "阅读更新管理员"
+	desc := "一切内容的阅读、更新权限"
+	permissions := make([]*model.Permission, 0, 10)
+	for _, v := range model.GetPermissionList() {
+		if strings.HasSuffix(v.Code, "_u") || strings.HasSuffix(v.Code, "_r") {
+			permissions = append(permissions, v)
+		}
+	}
+	return InitRole(name, desc, permissions)
+}
+
+func InitReadAndDeleteRole() string {
+	name := "阅读删除管理员"
+	desc := "一切内容的阅读、删除权限"
+	permissions := make([]*model.Permission, 0, 10)
+	for _, v := range model.GetPermissionList() {
+		if strings.HasSuffix(v.Code, "_d") || strings.HasSuffix(v.Code, "_r") {
+			permissions = append(permissions, v)
+		}
+	}
+	return InitRole(name, desc, permissions)
+}
+
 func InitAdmin() string {
 	roleId := InitAdminRole()
 	name := config.Get("adminName")
@@ -117,6 +169,34 @@ func InitBusinessAdmin() string {
 func InitSimpleBusinessAdmin() string {
 	roleId := InitSimpleBusinessRole()
 	name := "simpleBusinessAdmin"
+	password := "123456"
+	return InitCommonAdmin(name, password, roleId)
+}
+
+func InitReadOnlyAdmin() string {
+	roleId := InitReadOnlyRole()
+	name := "readOnlyAdmin"
+	password := "123456"
+	return InitCommonAdmin(name, password, roleId)
+}
+
+func InitReadAndAddAdmin() string {
+	roleId := InitReadAndAddRole()
+	name := "readAndAddAdmin"
+	password := "123456"
+	return InitCommonAdmin(name, password, roleId)
+}
+
+func InitReadAndUpdateAdmin() string {
+	roleId := InitReadAndUpdateRole()
+	name := "readAndUpdateAdmin"
+	password := "123456"
+	return InitCommonAdmin(name, password, roleId)
+}
+
+func InitReadAndDeleteAdmin() string {
+	roleId := InitReadAndUpdateRole()
+	name := "readAndDeleteAdmin"
 	password := "123456"
 	return InitCommonAdmin(name, password, roleId)
 }
