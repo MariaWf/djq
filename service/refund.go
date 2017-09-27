@@ -203,17 +203,6 @@ func (service *Refund) Agree(id string, comment string, refundAmount int) (err e
 		log.Println(errors.Wrap(err, fmt.Sprintf("Status:%v", refund.Status)))
 		return
 	}
-	switch refund.Status {
-	case constant.RefundStatusNotUsedRefunding:
-		refund.Status = constant.RefundStatusNotUsedRefundSuccess
-	case constant.RefundStatusUsedRefunding:
-		refund.Status = constant.RefundStatusUsedRefundSuccess
-	default:
-		rollback = true
-		err = errors.New("退款申请状态异常")
-		log.Println(errors.Wrap(err, fmt.Sprintf("Status:%v", refund.Status)))
-		return
-	}
 	if refund.RefundOrderNumber != "" {
 		rollback = true
 		err = errors.New("已经进行退款流程_refundOrderNumber:" + refund.RefundOrderNumber)
