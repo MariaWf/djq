@@ -195,7 +195,7 @@ func InitReadAndUpdateAdmin() string {
 }
 
 func InitReadAndDeleteAdmin() string {
-	roleId := InitReadAndUpdateRole()
+	roleId := InitReadAndDeleteRole()
 	name := "readAndDeleteAdmin"
 	password := "123456"
 	return InitCommonAdmin(name, password, roleId)

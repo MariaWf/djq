@@ -15,25 +15,41 @@ type orderNumber struct {
 	mutex sync.Mutex
 }
 
+//func (on *orderNumber) build() string {
+//	list := make([]string, 15, 15)
+//	list[0] = on.Type
+//
+//	list[1] = strconv.Itoa((on.Time.Year() % 100) / 10)
+//	list[2] = strconv.Itoa(int(on.Time.Month()) / 10)
+//	list[3] = strconv.Itoa(on.Time.Day() / 10)
+//	list[4] = strconv.Itoa(on.Time.Hour() / 10)
+//	list[5] = strconv.Itoa(on.Time.Minute() / 10)
+//	list[6] = strconv.Itoa(on.Time.Second() / 10)
+//	list[7] = strconv.Itoa(on.Count / 10)
+//
+//	list[8] = strconv.Itoa(on.Count % 10)
+//	list[9] = strconv.Itoa(on.Time.Second() % 10)
+//	list[10] = strconv.Itoa(on.Time.Minute() % 10)
+//	list[11] = strconv.Itoa(on.Time.Hour() % 10)
+//	list[12] = strconv.Itoa(on.Time.Day() % 10)
+//	list[13] = strconv.Itoa(int(on.Time.Month()) % 10)
+//	list[14] = strconv.Itoa(on.Time.Year() % 10)
+//
+//	return strings.Join(list, "")
+//}
+
 func (on *orderNumber) build() string {
 	list := make([]string, 15, 15)
 	list[0] = on.Type
 
-	list[1] = strconv.Itoa((on.Time.Year() % 100) / 10)
-	list[2] = strconv.Itoa(int(on.Time.Month()) / 10)
-	list[3] = strconv.Itoa(on.Time.Day() / 10)
-	list[4] = strconv.Itoa(on.Time.Hour() / 10)
-	list[5] = strconv.Itoa(on.Time.Minute() / 10)
-	list[6] = strconv.Itoa(on.Time.Second() / 10)
-	list[7] = strconv.Itoa(on.Count / 10)
-
+	list[1] = strconv.Itoa(on.Time.Year() % 10)
+	list[2] = strconv.Itoa((on.Time.YearDay() % 100) / 10)
+	list[3] = strconv.Itoa(on.Time.Hour() / 10)
+	list[4] = strconv.Itoa(on.Time.YearDay() % 10)
 	list[8] = strconv.Itoa(on.Count % 10)
-	list[9] = strconv.Itoa(on.Time.Second() % 10)
-	list[10] = strconv.Itoa(on.Time.Minute() % 10)
-	list[11] = strconv.Itoa(on.Time.Hour() % 10)
-	list[12] = strconv.Itoa(on.Time.Day() % 10)
-	list[13] = strconv.Itoa(int(on.Time.Month()) % 10)
-	list[14] = strconv.Itoa(on.Time.Year() % 10)
+	list[6] = strconv.Itoa((on.Time.YearDay()) / 100)
+	list[7] = strconv.Itoa(on.Time.Hour() % 10)
+	list[5] = strconv.Itoa(on.Count / 10)
 
 	return strings.Join(list, "")
 }
@@ -47,11 +63,11 @@ func (on *orderNumber) next() string {
 		on.mutex.Unlock()
 	}()
 	now := time.Now()
-	if now.Sub(on.Time) > time.Second*1 {
+	if now.Sub(on.Time) > time.Hour * 1 {
 		on.Time = now
 		on.Count = 0
 	} else if on.Count == 99 {
-		on.Time = on.Time.Add(time.Second * 1)
+		on.Time = on.Time.Add(time.Hour * 1)
 		on.Count = 0
 	}
 	str := on.build()

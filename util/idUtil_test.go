@@ -14,6 +14,7 @@ func TestBuildPresentOrderNumber(t *testing.T) {
 	}
 	same := 0
 	for i, _ := range list {
+		fmt.Println(list[i])
 		for j := i + 1; j < len(list); j++ {
 			if list[i] == list[j] {
 				same++
@@ -74,4 +75,8 @@ func testBuildCashCouponOrderNumber(c chan []string) {
 
 func TestBuildUUID(t *testing.T) {
 	fmt.Println(BuildUUID())
+}
+
+func TestBuildOrderNumber(t *testing.T) {
+	fmt.Println(BuildCashCouponOrderNumber())
 }

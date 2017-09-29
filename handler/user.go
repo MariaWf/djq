@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"mimi/djq/constant"
@@ -59,7 +58,6 @@ func UserLogin(c *gin.Context) {
 		}
 	}
 	newCount++
-	fmt.Println(newCount)
 	if newCount > 10 {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("登录频繁，请休息5分钟再来"))
 		return
