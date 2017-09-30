@@ -117,7 +117,7 @@ func send2Wxpay(refund *model.Refund, comment string, refundAmount int, conn *sq
 	}
 	if refund.RefundOrderNumber != "" {
 		*rollback = true
-		err = errors.New("已经进行退款流程_refundOrderNumber:" + refund.RefundOrderNumber)
+		err = errors.New("已经进入退款流程_refundOrderNumber:" + refund.RefundOrderNumber)
 		log.Println(errors.Wrap(err, fmt.Sprintf("refundOrderNumber:%v", refund.RefundOrderNumber)))
 		return
 	}
@@ -205,7 +205,7 @@ func (service *Refund) Agree(id string, comment string, refundAmount int) (err e
 	}
 	if refund.RefundOrderNumber != "" {
 		rollback = true
-		err = errors.New("已经进行退款流程_refundOrderNumber:" + refund.RefundOrderNumber)
+		err = errors.New("已经进入退款流程_refundOrderNumber:" + refund.RefundOrderNumber)
 		log.Println(errors.Wrap(err, fmt.Sprintf("refundOrderNumber:%v", refund.RefundOrderNumber)))
 		return
 	}

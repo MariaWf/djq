@@ -43,7 +43,7 @@ func AgreeNotUsedRefundingAction() {
 	serviceRefund := &service.Refund{}
 	argRefund := &arg.Refund{}
 	argRefund.StatusEqual = strconv.Itoa(constant.RefundStatusNotUsedRefunding)
-	argRefund.DisplayNames = []string{"id"}
+	argRefund.DisplayNames = []string{"id","refundAmount"}
 	argRefund.RefundOrderNumberEqual = ""
 	list, err := service.Find(serviceRefund, argRefund)
 	checkErr(err)
