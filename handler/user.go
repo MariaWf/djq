@@ -22,7 +22,7 @@ func UserLogin(c *gin.Context) {
 	//}
 
 	mobile := c.PostForm("mobile")
-	//captcha := c.PostForm("captcha")
+	captcha := c.PostForm("captcha")
 	promotionalPartnerId := c.PostForm("promotionalPartnerId")
 
 	sn, err := session.GetUi(c.Writer, c.Request)
@@ -31,16 +31,16 @@ func UserLogin(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
 		return
 	}
-	//value, err := sn.Get(session.SessionNameUiUserCaptcha)
-	//if err != nil {
-	//	log.Println(err)
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
-	//	return
-	//}
-	//if value != captcha {
-	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("手机验证码不正确"))
-	//	return
-	//}
+	value, err := sn.Get(session.SessionNameUiUserCaptcha)
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	if value != captcha {
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("手机验证码不正确"))
+		return
+	}
 
 	count, err := sn.Get(session.SessionNameUiUserLoginCount)
 	if err != nil {

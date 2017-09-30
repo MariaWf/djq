@@ -113,10 +113,10 @@ func GeetestInit(c *gin.Context) {
 }
 
 func GetCaptcha(c *gin.Context) {
-	if !util.GeetestCheck(c) {
-		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrParamException.Error()))
-		return
-	}
+	//if !util.GeetestCheck(c) {
+	//	c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrParamException.Error()))
+	//	return
+	//}
 	mobile := c.PostForm("mobile")
 	if !util.MatchMobile(mobile) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(util.ErrMobileFormat.Error()))
