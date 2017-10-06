@@ -167,7 +167,7 @@ func ShopAccountActionGetPresentOrderOrCashCouponOrder4Si(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
 		return
 	}
-	number := c.Query("number")
+	number := strings.ToUpper(c.Query("number"))
 	if number == "" {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("编号不能为空"))
 		return
