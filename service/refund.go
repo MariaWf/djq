@@ -82,9 +82,10 @@ func (service *Refund) Add(obj *model.Refund) (refund *model.Refund, err error) 
 		err = errors.New("代金券订单不符合退款状态_status:" + strconv.Itoa(cashCouponOrder.Status) + "_cashCouponOrderId:" + cashCouponOrder.Id)
 		return
 	}
-	if obj.RefundAmount+cashCouponOrder.RefundAmount > cashCouponOrder.Price {
+	if obj.RefundAmount + cashCouponOrder.RefundAmount > cashCouponOrder.Price {
 		rollback = true
-		err = errors.New("退款总额超出订单金额_退款总额：" + strconv.Itoa(cashCouponOrder.RefundAmount) + "_订单金额：" + strconv.Itoa(cashCouponOrder.Price))
+		//err = errors.New("退款总额超出订单金额_退款总额：" + strconv.Itoa(obj.RefundAmount) + "_订单金额：" + strconv.Itoa(cashCouponOrder.Price))
+		err = errors.New(fmt.Sprintf("退款总额超出订单金额_退款申请金额：%v_已退款金额：%v_订单金额：%v",obj.RefundAmount,cashCouponOrder.RefundAmount,cashCouponOrder.Price))
 		return
 	}
 	_, err = dao.Update(daoCashCouponOrder, cashCouponOrder, "status")
@@ -156,14 +157,14 @@ func send2Wxpay(refund *model.Refund, comment string, refundAmount int, conn *sq
 		totalFee += obj.(*model.CashCouponOrder).Price
 		oldRefundAmount += obj.(*model.CashCouponOrder).RefundAmount
 	}
-	if refund.RefundAmount+oldRefundAmount > totalFee {
+	if refund.RefundAmount + oldRefundAmount > totalFee {
 		*rollback = true
 		err = errors.New("退款累计金额超出订单总金额")
 		log.Println(errors.Wrap(err, fmt.Sprintf("oldRefundAmount:%v_refundAmount:%v_totalFee:%v", oldRefundAmount, refund.RefundAmount, totalFee)))
 		return
 	}
 	//调用微信退款
-	err = wxpay.RefundResult(cashCouponOrder.PayOrderNumber, totalFee*100, refund.RefundOrderNumber, refund.RefundAmount*100)
+	err = wxpay.RefundResult(cashCouponOrder.PayOrderNumber, totalFee * 100, refund.RefundOrderNumber, refund.RefundAmount * 100)
 	if err != nil {
 		*rollback = true
 		err = checkErr(err)
@@ -179,6 +180,10 @@ func (service *Refund) Agree(id string, comment string, refundAmount int) (err e
 		return
 	}
 	if err = util.MatchLenWithErr(comment, 0, 200, "平台意见"); err != nil {
+		return
+	}
+	if refundAmount == 0 {
+		err = errors.New("退款金额不能为0")
 		return
 	}
 	conn, err := mysql.Get()
@@ -244,14 +249,14 @@ func (service *Refund) Agree(id string, comment string, refundAmount int) (err e
 		totalFee += obj.(*model.CashCouponOrder).Price
 		oldRefundAmount += obj.(*model.CashCouponOrder).RefundAmount
 	}
-	if refund.RefundAmount+oldRefundAmount > totalFee {
+	if refund.RefundAmount + oldRefundAmount > totalFee {
 		rollback = true
 		err = errors.New("退款累计金额超出订单总金额")
 		log.Println(errors.Wrap(err, fmt.Sprintf("oldRefundAmount:%v_refundAmount:%v_totalFee:%v", oldRefundAmount, refund.RefundAmount, totalFee)))
 		return
 	}
 	//调用微信退款
-	err = wxpay.RefundResult(cashCouponOrder.PayOrderNumber, totalFee*100, refund.RefundOrderNumber, refund.RefundAmount*100)
+	err = wxpay.RefundResult(cashCouponOrder.PayOrderNumber, totalFee * 100, refund.RefundOrderNumber, refund.RefundAmount * 100)
 	if err != nil {
 		rollback = true
 		err = checkErr(err)

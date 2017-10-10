@@ -50,13 +50,13 @@ func RefundQueryResult(RefundOrderNumber string) (refundState string, refundFee 
 	}
 	client := NewDefaultClient()
 	if params["return_code"] == "FAIL" {
-		err = errors.New("查询退款失败")
+		err = errors.New("查询退款失败"+RefundOrderNumber)
 		log.Println(errors.Wrap(err, params["return_msg"]))
 	} else if !client.CheckSign(params) {
-		err = errors.New("查询退款失败")
+		err = errors.New("查询退款失败"+RefundOrderNumber)
 		log.Println(params, errors.Wrap(err, "校验签名不匹配"))
 	} else if params["result_code"] == "FAIL" {
-		err = errors.New("查询退款失败")
+		err = errors.New("查询退款失败"+RefundOrderNumber)
 		log.Println(params, errors.Wrap(err, params["err_code_des"]))
 	} else {
 		refundState = params["refund_status_0"]

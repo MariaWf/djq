@@ -22,3 +22,6 @@ func TestParseTimeFromDB(t *testing.T) {
 func testBool(test *bool) {
 	*test = false
 }
+
+func TestBindJson(t *testing.T){
+}
