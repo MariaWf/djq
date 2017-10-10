@@ -31,6 +31,12 @@ const (
 
 	CacheNameWithWaterMarkInShopIntroductionImage = "withWaterMarkInShopIntroductionImage"
 
+	CacheNamePresentOrderNumberLastTime = "presentOrderNumberLastTime"
+	CacheNamePresentOrderNumberLastCount = "presentOrderNumberLastCount"
+
+	CacheNameCashCouponOrderNumberLastTime = "cashCouponOrderNumberLastTime"
+	CacheNameCashCouponOrderNumberLastCount = "cashCouponOrderNumberLastCount"
+
 	cacheHead = "cache:"
 )
 
@@ -44,6 +50,7 @@ func Get(name string) (string, error) {
 	return conn.Get(GetKey(name)).Result()
 }
 
+// Zero expiration means the key has no expiration time.
 func Set(name string, value interface{}, expiration time.Duration) error {
 	conn := redis.Get()
 	return conn.Set(GetKey(name), value, expiration).Err()

@@ -80,3 +80,8 @@ func TestBuildUUID(t *testing.T) {
 func TestBuildOrderNumber(t *testing.T) {
 	fmt.Println(BuildCashCouponOrderNumber())
 }
+
+func TestOrderNumberTime(t *testing.T) {
+	var lastCashCouponOrderNumber orderNumber
+	t.Log(lastCashCouponOrderNumber.Time)
+}

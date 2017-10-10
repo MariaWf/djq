@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"mimi/djq/cache"
 )
 
 type orderNumber struct {
@@ -62,17 +63,60 @@ func (on *orderNumber) next() string {
 		}
 		on.mutex.Unlock()
 	}()
+	var cnLastTime, cnLastCount string
+	if on.Type == "P" {
+		cnLastTime = cache.CacheNamePresentOrderNumberLastTime
+		cnLastCount = cache.CacheNamePresentOrderNumberLastCount
+	} else {
+		cnLastTime = cache.CacheNameCashCouponOrderNumberLastTime
+		cnLastCount = cache.CacheNameCashCouponOrderNumberLastCount
+	}
+	timeStr, err := cache.Get(cnLastTime)
+	if err != nil {
+		panic(err)
+	}
+	countStr, err := cache.Get(cnLastCount)
+	if err != nil {
+		panic(err)
+	}
 	now := time.Now()
+	if countStr == "" {
+		on.Count = 0
+	} else {
+		on.Count, err = strconv.Atoi(countStr)
+		if err != nil {
+			panic(err)
+		}
+	}
+	if timeStr == "" {
+		on.Time = now
+		on.Count = 0
+	} else {
+		on.Time, err = ParseTimeFromDB(timeStr)
+		if err != nil {
+			panic(err)
+		}
+	}
 	if now.Sub(on.Time) > time.Hour * 1 {
 		on.Time = now
 		on.Count = 0
-	} else if on.Count == 99 {
+	} else if on.Count > 99 {
 		on.Time = on.Time.Add(time.Hour * 1)
 		on.Count = 0
 	}
 	str := on.build()
 	on.Count = on.Count + 1
-	//str:="ss"
+
+	timeStr = StringTime4DB(on.Time)
+	countStr = strconv.Itoa(on.Count)
+	err = cache.Set(cnLastTime, timeStr, 0)
+	if err != nil {
+		panic(err)
+	}
+	err = cache.Set(cnLastCount, countStr, 0)
+	if err != nil {
+		panic(err)
+	}
 	return str
 }
 
