@@ -13,6 +13,33 @@ import (
 	"strings"
 )
 
+//func PresentOrderCount4Ui(c *gin.Context) {
+//	sn, err := session.GetUi(c.Writer, c.Request)
+//	if err != nil {
+//		log.Println(err)
+//		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+//		return
+//	}
+//	userId, err := sn.Get(session.SessionNameUiUserId)
+//	if err != nil || userId == "" {
+//		log.Println(err)
+//		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+//		return
+//	}
+//	argObj := &arg.PresentOrder{}
+//	argObj.UserIdEqual = userId
+//	argObj.StatusEqual = strconv.Itoa(constant.PresentOrderStatusWaiting2Receive)
+//	serviceObj := &service.PresentOrder{}
+//	count, err := service.Count(serviceObj, argObj)
+//	if err != nil {
+//		log.Println(err)
+//		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+//		return
+//	}
+//	result := util.BuildSuccessResult(count)
+//	c.JSON(http.StatusOK, result)
+//}
+
 func PresentOrderList4Ui(c *gin.Context) {
 	sn, err := session.GetUi(c.Writer, c.Request)
 	if err != nil {

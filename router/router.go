@@ -190,6 +190,7 @@ func Begin() {
 	ui.GET("/present", handler.PresentList4Ui)
 	ui.GET("/presentOrder", handler.PresentOrderList4Ui)
 	ui.POST("/presentOrder", handler.PresentOrderPost4Ui)
+	//ui.GET("/presentOrderAction/waiting2ReceiveCount", handler.PresentOrderCount4Ui)
 
 	open := router.Group("/open", handler.ApiGlobal)
 	open.GET("/getServerRootUrl", handler.GetServerRootUrl)
@@ -230,19 +231,20 @@ func Begin() {
 	router.Static("/static", "html/assets")
 	router.Static("/html", "html")
 
-	uploadDirectoryHead := config.Get("uploadPath")
-	if uploadDirectoryHead == "" {
-		uploadDirectoryHead = "upload"
-	}
-	router.Static("/upload", uploadDirectoryHead)
+	router.StaticFile("/", "html/ui/index.html")
+	//uploadDirectoryHead := config.Get("uploadPath")
+	//if uploadDirectoryHead == "" {
+	//	uploadDirectoryHead = "upload"
+	//}
+	//router.Static("/upload", uploadDirectoryHead)
 
-	router.GET("/", handler.Index2)
-	router.GET("/testUser", handler.TestUser)
-	router.GET("/testShop", handler.TestShop)
-	router.GET("/api", handler.Api)
-	wxpay.GET("/index", handler.Wxpay)
+	//router.GET("/", handler.Index2)
+	//router.GET("/testUser", handler.TestUser)
+	//router.GET("/testShop", handler.TestShop)
+	//router.GET("/api", handler.Api)
+	//wxpay.GET("/index", handler.Wxpay)
 	//router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "/home/zhaohao/app/MP_verify_IrIxUvnx9Bob0ktY.txt")
-	router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "E:/download/wx/MP_verify_IrIxUvnx9Bob0ktY.txt")
+	//router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "E:/download/wx/MP_verify_IrIxUvnx9Bob0ktY.txt")
 
 	//router.GET("/getPublicKey", handler.ApiGlobal,handler.GetPublicKey)
 	//router.GET("/user/:id", handler.UserGet)
@@ -250,12 +252,12 @@ func Begin() {
 	//router.POST("/upload", handler.Upload)
 	//mi.POST("/advertisementAction/uploadImage", handler.PermissionAdvertisementU, handler.AdvertisementUploadImage)
 	//router.POST("/upload",  handler.PermissionShopU,handler.CashCouponUploadImage)
-	router.POST("/upload1", handler.ApiGlobal, handler.AdminCheckLogin, handler.PermissionShopU, handler.CashCouponUploadImage)
-	router.POST("/upload2", handler.AdminCheckLogin, handler.PermissionShopU, handler.CashCouponUploadImage)
-	router.POST("/upload3", handler.PermissionShopU, handler.CashCouponUploadImage)
-	router.POST("/upload4", handler.CashCouponUploadImage)
-	router.POST("/upload", handler.Test, handler.Upload)
-	router.POST("/test", handler.Test, handler.TestGet)
+	//router.POST("/upload1", handler.ApiGlobal, handler.AdminCheckLogin, handler.PermissionShopU, handler.CashCouponUploadImage)
+	//router.POST("/upload2", handler.AdminCheckLogin, handler.PermissionShopU, handler.CashCouponUploadImage)
+	//router.POST("/upload3", handler.PermissionShopU, handler.CashCouponUploadImage)
+	//router.POST("/upload4", handler.CashCouponUploadImage)
+	//router.POST("/upload", handler.Test, handler.Upload)
+	//router.POST("/test", handler.Test, handler.TestGet)
 	//router.POST("/upload", handler.CashCouponUploadImage)
 	//
 	//router.GET("/html/ui", handler.Index2)
