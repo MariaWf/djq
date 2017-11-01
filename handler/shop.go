@@ -84,7 +84,7 @@ func ShopGet4Open(c *gin.Context) {
 	argCashCoupon.NotIncludeHide = true
 	argCashCoupon.UnexpiredOnly = true
 	argCashCoupon.OrderBy = "priority desc"
-	argCashCoupon.DisplayNames = []string{"id", "name", "titleFirst","titleSecond","preImage", "expiryDate"}
+	argCashCoupon.DisplayNames = []string{"id", "name","preImage", "expiryDate"}
 	cashCouponList, err := service.Find(serviceCashCoupon, argCashCoupon)
 	if err != nil {
 		log.Println(err)
