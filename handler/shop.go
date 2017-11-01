@@ -22,7 +22,7 @@ func ShopList4Open(c *gin.Context) {
 	}
 	argObj.OrderBy = "priority desc"
 	argObj.NotIncludeHide = true
-	argObj.DisplayNames = []string{"id", "name", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "priority"}
+	argObj.DisplayNames = []string{"id", "name", "preImage","titleFirst","titleSecond", "totalCashCouponNumber", "totalCashCouponPrice", "priority"}
 	argObj.PageSize = 5
 	//list,err := service.Find(serviceObj,argObj)
 	//if err != nil {
@@ -84,7 +84,7 @@ func ShopGet4Open(c *gin.Context) {
 	argCashCoupon.NotIncludeHide = true
 	argCashCoupon.UnexpiredOnly = true
 	argCashCoupon.OrderBy = "priority desc"
-	argCashCoupon.DisplayNames = []string{"id", "name", "preImage", "expiryDate"}
+	argCashCoupon.DisplayNames = []string{"id", "name", "titleFirst","titleSecond","preImage", "expiryDate"}
 	cashCouponList, err := service.Find(serviceCashCoupon, argCashCoupon)
 	if err != nil {
 		log.Println(err)
@@ -107,7 +107,7 @@ func ShopList(c *gin.Context) {
 	argObj.OrderBy = "priority desc"
 
 	serviceObj := &service.Shop{}
-	argObj.DisplayNames = []string{"id", "name", "logo", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "introduction", "address", "priority", "hide"}
+	argObj.DisplayNames = []string{"id", "name","titleFirst","titleSecond", "logo", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "introduction", "address", "priority", "hide"}
 	result := service.ResultList(serviceObj, argObj)
 	c.JSON(http.StatusOK, result)
 }

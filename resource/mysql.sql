@@ -194,3 +194,6 @@ total_price int(8) not null default 0,
 total_pay int(8) not null default 0,
 del_flag tinyint(1) default false
 )default charset=utf8;
+
+alter table tbl_shop add title_first varchar(200) not null default '';
+alter table tbl_shop add title_second varchar(200) not null default '';
