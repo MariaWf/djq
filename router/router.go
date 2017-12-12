@@ -243,7 +243,7 @@ func Begin() {
 	//router.GET("/testShop", handler.TestShop)
 	//router.GET("/api", handler.Api)
 	//wxpay.GET("/index", handler.Wxpay)
-	//router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "/home/zhaohao/app/MP_verify_IrIxUvnx9Bob0ktY.txt")
+	router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "/home/zhaohao/app/MP_verify_IrIxUvnx9Bob0ktY.txt")
 	//router.StaticFile("/MP_verify_IrIxUvnx9Bob0ktY.txt", "E:/download/wx/MP_verify_IrIxUvnx9Bob0ktY.txt")
 
 	//router.GET("/getPublicKey", handler.ApiGlobal,handler.GetPublicKey)

@@ -131,7 +131,7 @@ func (service *Shop) Update(obj *model.Shop) (*model.Shop, error) {
 	defer mysql.Close(conn, &rollback)
 	daoObj := service.GetDaoInstance(conn)
 
-	_, err = dao.Update(daoObj, obj, "name","titleFirst","titleSecond", "logo", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "introduction", "address", "priority", "hide")
+	_, err = dao.Update(daoObj, obj, "name", "titleFirst", "titleSecond", "phoneNumber", "logo", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "introduction", "address", "priority", "hide")
 	if err != nil {
 		rollback = true
 		return nil, checkErr(err)

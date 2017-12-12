@@ -15,8 +15,9 @@ type Shop struct {
 	Address               string `form:"address" json:"address" db:"address" desc:"地址"`
 	Priority              int    `form:"priority" json:"priority" db:"priority" desc:"优先权重"`
 	Hide                  bool   `form:"hide" json:"hide" db:"hide" desc:"隐藏"`
-	TitleFirst                  string `form:"titleFirst" json:"titleFirst" db:"title_first" desc:"名称"`
-	TitleSecond                  string `form:"titleSecond" json:"titleSecond" db:"title_second" desc:"名称"`
+	TitleFirst                  string `form:"titleFirst" json:"titleFirst" db:"title_first" desc:"一级标题"`
+	TitleSecond                  string `form:"titleSecond" json:"titleSecond" db:"title_second" desc:"二级标题"`
+	PhoneNumber                  string `form:"phoneNumber" json:"phoneNumber" db:"phone_number" desc:"电话"`
 
 	ShopClassificationList    []*ShopClassification    `form:"shopClassificationList" json:"shopClassificationList" desc:"商家分类"`
 	ShopIntroductionImageList []*ShopIntroductionImage `form:"shopIntroductionImageList" json:"shopIntroductionImageList" desc:"商店介绍图"`
@@ -37,11 +38,11 @@ func (obj *Shop) GetTableName() string {
 }
 
 func (obj *Shop) GetDBNames() []string {
-	return []string{"id", "name", "logo", "pre_image", "total_cash_coupon_number", "total_cash_coupon_price", "introduction", "address", "priority", "hide","title_first","title_second"}
+	return []string{"id", "name", "logo", "pre_image", "total_cash_coupon_number", "total_cash_coupon_price", "introduction", "address", "priority", "hide","title_first","title_second","phone_number"}
 }
 
 func (obj *Shop) GetMapNames() []string {
-	return []string{"id", "name", "logo", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "introduction", "address", "priority", "hide","titleFirst","titleSecond"}
+	return []string{"id", "name", "logo", "preImage", "totalCashCouponNumber", "totalCashCouponPrice", "introduction", "address", "priority", "hide","titleFirst","titleSecond","phoneNumber"}
 }
 
 func (obj *Shop) GetValue4Map(name string) interface{} {
@@ -70,6 +71,8 @@ func (obj *Shop) GetValue4Map(name string) interface{} {
 		return obj.TitleFirst
 	case "titleSecond":
 		return obj.TitleSecond
+	case "phoneNumber":
+		return obj.PhoneNumber
 	}
 	panic(errors.New("对象shop属性[" + name + "]不存在"))
 }
@@ -108,6 +111,8 @@ func (obj *Shop) GetPointer4DB(name string) interface{} {
 		return &obj.TitleFirst
 	case "title_second":
 		return &obj.TitleSecond
+	case "phone_number":
+		return &obj.PhoneNumber
 	}
 	panic(errors.New("对象shop属性[" + name + "]不存在"))
 }
@@ -138,6 +143,8 @@ func (obj *Shop) GetValue4DB(name string) interface{} {
 		return obj.TitleFirst
 	case "title_second":
 		return obj.TitleSecond
+	case "phone_number":
+		return obj.PhoneNumber
 	}
 	panic(errors.New("对象shop属性[" + name + "]不存在"))
 }
