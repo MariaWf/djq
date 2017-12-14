@@ -197,3 +197,4 @@ del_flag tinyint(1) default false
 
 alter table tbl_shop add title_first varchar(200) not null default '';
 alter table tbl_shop add title_second varchar(200) not null default '';
+alter table tbl_shop add phone_number varchar(64) not null default '';

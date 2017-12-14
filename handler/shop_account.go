@@ -138,9 +138,16 @@ func ShopAccountGetMoney4Si(c *gin.Context) {
 		return
 	}
 	openId, err := sn.Get(session.SessionNameSiShopAccountOpenId)
-	if err != nil || shopAccountId == "" {
+	if err != nil{
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+		return
+	}
+	if openId == "" {
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountId, Value: "", Path: "/", MaxAge: -1})
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountName, Value: "", Path: "/", MaxAge: -1})
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountOpenId, Value: "", Path: "/", MaxAge: -1})
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("未知微信openId"))
 		return
 	}
 	serviceObj := &service.ShopAccount{}

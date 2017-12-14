@@ -88,7 +88,7 @@ func WxpayGetOpenId(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrWxpayGetOpenIdFail.Error()))
 		return
 	}
-	openId2, err := sn.Get(session.SessionNameUiUserOpenId)
+	openId2, err := sn.Get(session.SessionNameSiShopAccountOpenId)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrWxpayGetOpenIdFail.Error()))
@@ -98,7 +98,7 @@ func WxpayGetOpenId(c *gin.Context) {
 		sn2.Set(session.SessionNameSiShopAccountOpenId, openId)
 		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountOpenId, Value: openId, Path: "/", MaxAge: sn.CookieMaxAge})
 	}
-
+	//log.Println(openId)
 	c.JSON(http.StatusOK, util.BuildSuccessResult(openId))
 }
 

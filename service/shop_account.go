@@ -58,7 +58,7 @@ func (service *ShopAccount) GetMoney(shopAccountId, openId string) (money int, e
 		err = checkErr(err)
 		return
 	}
-	err = wxpay.SendRedPackResult(openId, money)
+	err = wxpay.SendRedPackResult(openId, money*100)
 	if err != nil {
 		rollback = true
 		err = checkErr(err)

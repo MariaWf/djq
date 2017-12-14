@@ -63,7 +63,7 @@ func SendRedPack(openId string, totalAmount int) (Params, error) {
 	params.SetString("client_ip", clientIp)   //Ip地址	client_ip	是	192.168.0.1	String(15)	调用接口的机器Ip地址
 	params.SetString("act_name", actName)     //活动名称	act_name	是	猜灯谜抢红包活动	String(32)	活动名称
 	params.SetString("remark", remark)        //备注	remark	是	猜越多得越多，快来抢！	String(256)	备注信息
-	params.SetString("scene_id", "PRODUCT_2") //场景id	scene_id	否	PRODUCT_8	String(32)
+	params.SetString("scene_id", "PRODUCT_4") //场景id	scene_id	否	PRODUCT_8	String(32)
 	//发放红包使用场景，红包金额大于200时必传
 	//PRODUCT_1:商品促销
 	//PRODUCT_2:抽奖
@@ -98,7 +98,7 @@ func SendRedPackResult(openId string, totalAmount int) (err error) {
 	if params["return_code"] == "FAIL" {
 		err = errors.New("发红包失败")
 		log.Println(errors.Wrap(err, params["return_msg"]))
-	} else if !client.CheckSign(params) {
+	} else if params["sign"] !="" && !client.CheckSign(params) {
 		err = errors.New("发红包失败")
 		log.Println(params, errors.Wrap(err, "校验签名不匹配"))
 	} else if params["result_code"] == "FAIL" {

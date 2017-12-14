@@ -174,6 +174,9 @@ func buyAction(c *gin.Context, ids ...string) (params wxpay.Params, err error) {
 	}
 	if openId == "" {
 		err = errors.New("未知微信openId")
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserId, Value: "", Path: "/", MaxAge: -1})
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserMobile, Value: "", Path: "/", MaxAge: -1})
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserOpenId, Value: "", Path: "/", MaxAge: -1})
 		return
 	}
 	params, err = serviceObj.Pay(userId, openId, clientIp, idList...)
