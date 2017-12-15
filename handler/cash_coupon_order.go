@@ -73,6 +73,10 @@ func CashCouponOrderActionBuyFromCashCoupon4Ui(c *gin.Context) {
 	}
 	params, err := buyAction(c, cashCouponOrderIds...)
 	if err != nil {
+		if util.ErrNeedMiLogin.Error() == err.Error(){
+			c.AbortWithStatusJSON(http.StatusOK,util.BuildNeedLoginResult())
+			return
+		}
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 		return
 	}
@@ -106,6 +110,10 @@ func CashCouponOrderActionBuyFromCashCouponOrder4Ui(c *gin.Context) {
 	cashCouponOrderIds := c.PostForm("ids")
 	params, err := buyAction(c, strings.Split(cashCouponOrderIds, constant.Split4Id)...)
 	if err != nil {
+		if util.ErrNeedMiLogin.Error() == err.Error(){
+			c.AbortWithStatusJSON(http.StatusOK,util.BuildNeedLoginResult())
+			return
+		}
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(err.Error()))
 	} else {
 		c.JSON(http.StatusOK, util.BuildSuccessResult(params))
