@@ -144,10 +144,29 @@ func ShopAccountGetMoney4Si(c *gin.Context) {
 		return
 	}
 	if openId == "" {
+		sn2, err2 := session.GetUi(c.Writer, c.Request)
+		if err2 != nil {
+			log.Println(err2)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+		openId, err = sn2.Get(session.SessionNameUiUserOpenId)
+		if err != nil{
+			log.Println(err)
+			c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrUnknown.Error()))
+			return
+		}
+	}
+	if openId == "" {
+		//util.CookieCleanAll(c.Writer)
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserId, Value: "", Path: "/", MaxAge: -1})
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserMobile, Value: "", Path: "/", MaxAge: -1})
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserOpenId, Value: "", Path: "/", MaxAge: -1})
 		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountId, Value: "", Path: "/", MaxAge: -1})
 		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountName, Value: "", Path: "/", MaxAge: -1})
 		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountOpenId, Value: "", Path: "/", MaxAge: -1})
-		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("未知微信openId"))
+		c.AbortWithStatusJSON(http.StatusOK, util.BuildNeedLoginResult())
+		//c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult("未知微信openId"))
 		return
 	}
 	serviceObj := &service.ShopAccount{}

@@ -78,7 +78,6 @@ func WxpayGetOpenId(c *gin.Context) {
 		} else {
 			openId = values["openid"].(string)
 			sn.Set(session.SessionNameUiUserOpenId, openId)
-			http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserOpenId, Value: openId, Path: "/", MaxAge: sn.CookieMaxAge})
 
 		}
 	}
@@ -88,7 +87,7 @@ func WxpayGetOpenId(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrWxpayGetOpenIdFail.Error()))
 		return
 	}
-	openId2, err := sn.Get(session.SessionNameSiShopAccountOpenId)
+	openId2, err := sn2.Get(session.SessionNameSiShopAccountOpenId)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatusJSON(http.StatusOK, util.BuildFailResult(ErrWxpayGetOpenIdFail.Error()))
@@ -96,9 +95,9 @@ func WxpayGetOpenId(c *gin.Context) {
 	}
 	if openId2 == "" {
 		sn2.Set(session.SessionNameSiShopAccountOpenId, openId)
-		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountOpenId, Value: openId, Path: "/", MaxAge: sn.CookieMaxAge})
 	}
-	//log.Println(openId)
+	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserOpenId, Value: openId, Path: "/", MaxAge: sn.CookieMaxAge})
+	http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountOpenId, Value: openId, Path: "/", MaxAge: sn.CookieMaxAge})
 	c.JSON(http.StatusOK, util.BuildSuccessResult(openId))
 }
 

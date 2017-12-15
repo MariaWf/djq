@@ -173,10 +173,31 @@ func buyAction(c *gin.Context, ids ...string) (params wxpay.Params, err error) {
 		return
 	}
 	if openId == "" {
-		err = errors.New("未知微信openId")
+		sn2, err2 := session.GetSi(c.Writer, c.Request)
+		if err2 != nil {
+			log.Println(err2)
+			err = ErrUnknown
+			return
+		}
+		openId, err = sn2.Get(session.SessionNameSiShopAccountOpenId)
+		if err != nil {
+			log.Println(err)
+			err = ErrUnknown
+			return
+		}
+	}
+	if openId == "" {
+		//util.CookieCleanAll(c.Writer)
 		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserId, Value: "", Path: "/", MaxAge: -1})
 		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserMobile, Value: "", Path: "/", MaxAge: -1})
 		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameUiUserOpenId, Value: "", Path: "/", MaxAge: -1})
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountId, Value: "", Path: "/", MaxAge: -1})
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountName, Value: "", Path: "/", MaxAge: -1})
+		http.SetCookie(c.Writer, &http.Cookie{Name: session.SessionNameSiShopAccountOpenId, Value: "", Path: "/", MaxAge: -1})
+		//c.AbortWithStatusJSON(http.StatusOK, util.BuildNeedLoginResult())
+		//err = util.BuildNeedLoginResult()
+		//err = errors.New("未知微信openId")
+		err = util.ErrNeedMiLogin
 		return
 	}
 	params, err = serviceObj.Pay(userId, openId, clientIp, idList...)
